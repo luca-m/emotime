@@ -1,6 +1,8 @@
 import os
 import argparse
 
+from os.path import join
+
 CONFIG={}
 DEFAULT_CONFIG_FNAME = "dataset.conf"
 
@@ -8,12 +10,17 @@ def initDatasetDirs(dsPath, dsConfig):
 	""" """
 	global CONFIG
 	execfile(dsConfig, CONFIG)
-	for f in CONFIG.CLASSES:
-		os.mkdirs(os.path.join(dsPath,f))
+	for clazz in CONFIG['CLASSES']:
+		os.mkdirs(join(dsPath,join(CONFIG['IMAGESFOLDER'],clazz)))
+		os.mkdirs(join(dsPath,join(CONFIG['FACESFOLDER'],clazz)))
+		os.mkdirs(join(dsPath,join(CONFIG['FEATURESFOLDER'],clazz)))
+	
+	os.mkdirs(join(dsPath,CONFIG['TRAINFOLDER']))		
+	os.mkdirs(join(dsPath,CONFIG['CLASSIFIERFOLDER']))		
 
 	with open( dsConfig,"r") as conf:
 		configuration = conf.read()
-		with open(os.path.join(dsPath,DEFAULT_CONFIG_FNAME)) as nconf:
+		with open(join(dsPath,DEFAULT_CONFIG_FNAME)) as nconf:
 			nconf.write(configuration)	
 
 if __name__ == "__main__":
