@@ -1,9 +1,10 @@
 cmake_minimum_required(VERSION 2.8)
-project( facegrabber )
+
+project( emotime )
 
 find_package( OpenCV REQUIRED )
 
-set(ASSETDIR ${facegrabber_SOURCE_DIR}/bin )
+set(ASSETDIR "${emotime_SOURCE_DIR}/assets" )
 
 add_subdirectory(src)
 
