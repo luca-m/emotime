@@ -3,7 +3,7 @@ project( facegrabber )
 
 find_package( OpenCV REQUIRED )
 
-set(ASSETDIR ${facegrabber_SOURCE_DIR}/bin CACHE INTERNAL FORCE)
+set(ASSETDIR ${facegrabber_SOURCE_DIR}/bin )
 
 add_subdirectory(src)
 
