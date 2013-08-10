@@ -10,8 +10,6 @@ from os.path import isfile
 from os.path import isdir
 
 _DATASET_CONFIG_FILE="dataset.conf"
-
-VERBOSE=False
 CONFIG={}
 
 
@@ -84,8 +82,10 @@ if __name__ == "__main__":
 	global VERBOSE
 	parser = argparse.ArgumentParser()
 	parser.add_argument("datasetFolder",help="Dataset folder")
-	parser.add_argument("--verbose",help="increase output verbosity")
+	parser.add_argument("-v","--verbose",action='store_true',help="verbosity")
 	args = parser.parse_args()
 	if args.verbose:
 		VERBOSE=True
+	else:
+		VERBOSE=False
 	prepareTrainingFiles(args.datasetFolder)
