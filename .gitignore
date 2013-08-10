@@ -5,6 +5,11 @@ Makefile
 cmake_install.cmake
 install_manifest.txt
 
+# folders 
+build/**
+dataset/**
+assets/**
+
 # C/C++
 *.o
 *.so
