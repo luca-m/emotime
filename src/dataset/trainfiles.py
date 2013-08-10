@@ -86,4 +86,6 @@ if __name__ == "__main__":
 	parser.add_argument("datasetFolder",help="Dataset folder")
 	parser.add_argument("--verbose",help="increase output verbosity")
 	args = parser.parse_args()
+	if args.verbose:
+		VERBOSE=True
 	prepareTrainingFiles(args.datasetFolder)
