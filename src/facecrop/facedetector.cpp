@@ -17,17 +17,16 @@ bool FaceDetector::detectFace(Mat & img, Rect & faceRegion) {
 	/* detect faces */
 	cascade_f.detectMultiScale(img, faces, 1.1, 2, 0 | CV_HAAR_SCALE_IMAGE,
 			cvSize(40, 60));
-
 	int maxI=-1;
-	int maxArea=std::numeric_limits<int>::min();
+	int maxArea=-1;
 	for (int i=0;i< faces.size();i++){
 		int area=faces.at(i).width * faces.at(i).height;
 		if ( area > maxArea){
 			maxI=i;
+			maxArea=area;
 		} 
 	}
-
-	if (maxI > 0) {
+	if (maxI >= 0) {
 		faceRegion.x = faces.at(maxI).x;
 		faceRegion.y = faces.at(maxI).y;
 		faceRegion.width = faces.at(maxI).width;
@@ -58,7 +57,11 @@ bool FaceDetector::detect(Mat & img , Rect & faceRegion) {
 	}
 	if (autoGrayscale){
 		Mat imgGray(img.size(),CV_8UC1);
-		cvtColor(img, imgGray, CV_BGR2GRAY);
+		if (img.channels()>2){
+			cvtColor(img, imgGray, CV_BGR2GRAY);
+		}else{
+			img.copyTo(imgGray);
+		}
 		if ( autoEqualize ) {
 			equalizeHist(imgGray, imgGray);
 		}
