@@ -30,7 +30,9 @@ TBD
 
 ## Dataset
 
-TBD
+The [Cohn-Kanade database](http://www.consortium.ri.cmu.edu/ckagree/) is one of the most used face database. In it's extended version (CK+) it contains also [FACS](http://en.wikipedia.org/wiki/Facial_Action_Coding_System) 
+code labels (aka Action Units) and emotion labels (neutral, anger, contempt, disgust, fear, happy, sadness, surprise).
+
 
 ----------------------------------------------
 Copyleft [CC-BY-NC 2013](http://creativecommons.org/licenses/by-nc/3.0/)
