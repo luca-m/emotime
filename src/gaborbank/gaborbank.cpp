@@ -44,6 +44,7 @@ int main( int argc, const char* argv[] )
 	if (argc != 5) {
 		cerr << "Error: missing parameters";
 		help();
+		return -3;
 	} 
 	try {
 		unsigned int width = abs(atoi(argv[1]));
