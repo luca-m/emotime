@@ -41,7 +41,7 @@ def prepareTrainingFile( (goodClass,badClass),  dsFolder ):
 			for f in goodImgs:
 				if VERBOSE:
 					print "INFO: Processing '%s'" % f 
-				tf.write("G")
+				tf.write("P")
 				img = cv.imread( f ,cv.CV_LOAD_IMAGE_GRAYSCALE)
 				for i in xrange (img.shape[1]):
 					for j in xrange(img.shape[0]):
@@ -54,7 +54,7 @@ def prepareTrainingFile( (goodClass,badClass),  dsFolder ):
 			for f in badImgs:  
 				if VERBOSE:
 					print "INFO: Processing '%s'" % f 
-				tf.write("B")
+				tf.write("N")
 				img = cv.imread( f ,cv.CV_LOAD_IMAGE_GRAYSCALE)
 				for i in xrange (img.shape[1]):
 					for j in xrange(img.shape[0]):
