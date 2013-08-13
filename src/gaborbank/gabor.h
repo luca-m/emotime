@@ -11,7 +11,7 @@
 #include <opencv2/opencv.hpp>
 
 /**
-* Obtain a bank of Gabor filter kernels with different orientations and frequencies
+* Obtain a bank of 40 Gabor filter kernels with different orientations and frequencies
 * 
 * @param bank vector of kernel to fill.
 */

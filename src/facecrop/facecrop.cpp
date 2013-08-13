@@ -34,10 +34,11 @@ void banner(){
 
 int main( int argc, const char* argv[] )
 {
-	banner();
+	
 	if (argc < 4) {
-		cerr << "Error: missing parameters";
+		banner();
 		help();
+		cerr << "ERR: missing parameters";
 		return -3;
 	}  
 	string config = string(argv[1]);
@@ -55,7 +56,7 @@ int main( int argc, const char* argv[] )
 
 	try {
 		FaceDetector detector(config);
-		Mat img = imread( infile, CV_LOAD_IMAGE_UNCHANGED);
+		Mat img = imread( infile, CV_LOAD_IMAGE_GRAYSCALE);
 		Rect face(0,0,0,0);
 		if ( !detector.detect(img, face) ){
 			cout << "WARNING : No face detected in '" << infile << "'" << endl;
@@ -69,8 +70,8 @@ int main( int argc, const char* argv[] )
 		imwrite( outfile, cropped );
 	}
 	catch (int e) {
-		cerr << "Exception #" << e;
-		return -1;
+		cerr << "ERR: Exception #" << e;
+		return -e;
 	}
 	return 0;
 }

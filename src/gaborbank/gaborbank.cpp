@@ -40,10 +40,11 @@ void banner(){
 
 int main( int argc, const char* argv[] )
 {
-	banner();
-	if (argc != 5) {
-		cerr << "Error: missing parameters";
+	
+	if (argc < 5) {
+		banner();
 		help();
+		cerr << "ERR: missing parameters";
 		return -3;
 	} 
 	try {
@@ -71,7 +72,7 @@ int main( int argc, const char* argv[] )
 		}
 	}
 	catch (int e) {
-		cerr << "Exception #" << e;
-		return -1;
+		cerr << "ERR: Exception #" << e;
+		return -e;
 	}
 }
