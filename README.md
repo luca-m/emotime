@@ -22,11 +22,45 @@ stuff that could be usefull to get in this topic:
 
 ## Project Structure
 
-TBD
+    build                     # where to build
+    assets                    # binary folder (will contains building outcome)
+    resources                 # contains some useful resources like opencv haartraining files
+    dataset                   # a folder where to initialize a dataset
+    src
+      \-- dataset             # utilities for handling dataset
+      \-- gaborbank           # utility for calculating gabor filters
+      \-- facecrop            # utility for cropping and registering faces
+      \-- adaboost            # utilities for training and use adaBoost classifier
+
+## Building
+
+    cd build
+    cmake .. ; make ; make install
+
+Note: make install actually doesn't install anything in the system, it will copy all binaries in the asset folder.
 
 ## Usage
 
-TBD
+##### Dataset initialization
+
+    ./initdataset.py [-h] [-v] dsPath config
+
+##### Fill dataset with CK+ database
+
+    ./filldatasetCohnKanade.py [-h] [-v] datasetFolder cohnKanadeFolder cohnKanadeEmotionsFolder
+    
+##### Crop all faces from imported images
+
+     ./cropFaces.py [-h] [-v] datasetFolder faceDetectorCfg
+     
+##### Calculate gabor filtered images
+
+    ./calcFeatures.py [-h] [-v] datasetFolder
+    
+##### Prepare training files (CSV format)
+
+    ./trainfiles.py [-h] [-v] datasetFolder
+
 
 ## Dataset
 
