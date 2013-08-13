@@ -39,12 +39,11 @@ int main( int argc, const char* argv[] )
 	if (argc < 3) {
 		banner();
 		help();
-		cerr << "Error: missing parameters";
+		cerr << "Error: missing parameters" << endl;
 		return -3;
 	} 
-	string infile = string(argv[1);
-	string outfile = string(argv[2]);
-	string s_nfeat = string (argv[3]); 
+	const char * infile = argv[1];
+	const char * outfile = argv[2];
 	
 	bool printErr=false;
 	if (argc > 4){
@@ -56,7 +55,7 @@ int main( int argc, const char* argv[] )
 	}
 
 	try {
-		int nfeat = abs(atoi(s_nfeat));
+		int nfeat = abs(atoi(argv[3]));
 
 		CvMLData cvml;
 		cvml.read_csv(infile);
@@ -79,10 +78,10 @@ int main( int argc, const char* argv[] )
 			cout << "Test Error:  " << fl2 << endl;
 		}
 
-		boost.save(outfile)
+		boost.save(outfile);
 	}
 	catch (int e) {
-		cerr << "ERR: Exception #" << e;
+		cerr << "ERR: Exception #" << e << endl;
 		return -e;
 	}
 	

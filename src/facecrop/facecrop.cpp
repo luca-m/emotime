@@ -38,7 +38,7 @@ int main( int argc, const char* argv[] )
 	if (argc < 4) {
 		banner();
 		help();
-		cerr << "ERR: missing parameters";
+		cerr << "ERR: missing parameters" << endl;
 		return -3;
 	}  
 	string config = string(argv[1]);
@@ -70,7 +70,7 @@ int main( int argc, const char* argv[] )
 		imwrite( outfile, cropped );
 	}
 	catch (int e) {
-		cerr << "ERR: Exception #" << e;
+		cerr << "ERR: Exception #" << e << endl;
 		return -e;
 	}
 	return 0;
