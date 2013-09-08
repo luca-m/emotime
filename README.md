@@ -61,14 +61,18 @@ Cross-compiling for windows
 
 Initialize and fill a dataset
 
-	TBD
+	./initdataset.py [-h] [-v] dsPath config
+	./filldatasetCohnKanade.py [-h] [-v] datasetFolder cohnKanadeFolder cohnKanadeEmotionsFolder
 
 Crop faces from dataset and calculation gabor filters features
 
-	TBD
+	./cropFaces.py [-h] [-v] datasetFolder faceDetectorCfg
+	./calcFeatures.py [-h] [-v] datasetFolder
+
 
 Prepare training files and train classifiers
 
+	./trainfiles.py [-h] [-v] datasetFolder
 	TBD
 
 Use trained classifier
