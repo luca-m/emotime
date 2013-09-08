@@ -15,7 +15,7 @@ CONFIG={}
 
 def multiclassOnetoOne():
 	""" """
-	return [x for x in itertools.permutations( CONFIG['CLASSES'] ,2 )]
+	return [x for x in itertools.combinations( CONFIG['CLASSES'] ,2 )]
 
 def prepareTrainingFile( (goodClass,badClass),  dsFolder ):
 	""" """
@@ -40,9 +40,13 @@ def prepareTrainingFile( (goodClass,badClass),  dsFolder ):
 			goodImgs.sort()
 			for f in goodImgs:
 				if VERBOSE:
-					print "INFO: Processing '%s'" % f 
+					print "INFO: Processing '%s'" % join(fold,f)
 				tf.write("P")
-				img = cv.imread( f ,cv.CV_LOAD_IMAGE_GRAYSCALE)
+				img = cv.imread( join(fold,f) ,cv.CV_LOAD_IMAGE_GRAYSCALE)
+				if img is None:
+					if VERBOSE:
+						print "WARNING: cannot open image %s" % join(fold,f)
+					continue;
 				for i in xrange (img.shape[1]):
 					for j in xrange(img.shape[0]):
 						value = img.item(j, i)
@@ -53,9 +57,13 @@ def prepareTrainingFile( (goodClass,badClass),  dsFolder ):
 			badImgs.sort()
 			for f in badImgs:  
 				if VERBOSE:
-					print "INFO: Processing '%s'" % f 
+					print "INFO: Processing '%s'" % join(fold,f)
 				tf.write("N")
-				img = cv.imread( f ,cv.CV_LOAD_IMAGE_GRAYSCALE)
+				img = cv.imread( join(fold,f) ,cv.CV_LOAD_IMAGE_GRAYSCALE)
+				if img is None:
+					if VERBOSE:
+						print "WARNING: cannot open image %s" % join(fold,f)
+					continue;
 				for i in xrange (img.shape[1]):
 					for j in xrange(img.shape[0]):
 						value = img.item(j, i)
@@ -68,7 +76,7 @@ def prepareTrainingFiles(dsFolder):
 	""" """
 	global CONFIG
 	configFile=join(dsFolder,_DATASET_CONFIG_FILE)
-	if not os.path.exist(configFile):
+	if not os.path.exists(configFile):
 		print "ERR: dataset configuration file '%s' not found" % _DATASET_CONFIG_FILE
 		return
 	if VERBOSE:

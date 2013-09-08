@@ -26,7 +26,7 @@ def calculateFeatures(dsFolder):
 		imgs=[ f for f in os.listdir(ipath) if isfile(join(ipath,f))]
 		for im in imgs:
 			iimPath=join(ipath,im)
-			oPath=join(opath,os.path.splitext(im)[0])
+			oPath=join(opath,os.path.splitext(im)[0] ) + CONFIG['FILTERED_FOLDER_SUFFIX']
 			try:
 				os.mkdir(oPath)
 			except:

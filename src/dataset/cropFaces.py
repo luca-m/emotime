@@ -8,7 +8,6 @@ from os.path import join
 from os.path import isfile
 
 _DATASET_CONFIG_FILE="dataset.conf"
-_CROPFACE_CMD="./facecrop %s %s %s --register"
 CONFIG={}
 
 
@@ -35,18 +34,14 @@ def cropFaces(dsFolder,faceDConfig):
 		for im in imgs:
 			iimPath=join(ipath,im)
 			oimPath=join(opath,im)
-			cmd=_CROPFACE_CMD % ( faceDConfig , iimPath , oimPath )
 			if VERBOSE:
-				print "INFO: running %s " % cmd
+				print "INFO: running %s " % ' '.join(["./facecrop",str(faceDConfig),str(iimPath),str(oimPath),"--register"])
 
 			retcode=subprocess.call(["./facecrop",str(faceDConfig),str(iimPath),str(oimPath),"--register"])
 
 			if retcode<0:
 				if VERBOSE:
-					print "WARNING: face cropping has returned error %d " % retcode
-			#p=subprocess.Popen(cmd, stdout=sys.stdout, stdin=sys.stdin, shell=False)
-			#p.wait()
-
+					print "WARNING: execution has returned error %d " % retcode
 
 if __name__ == "__main__":
 	global VERBOSE

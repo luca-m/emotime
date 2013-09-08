@@ -1,7 +1,10 @@
 Emotime
 =======
 
-Recognizing emotional states in faces
+_Recognizing emotional states in faces_
+
+----------------------------------------------
+Copyleft [CC-BY-NC 2013](http://creativecommons.org/licenses/by-nc/3.0/)
 
 ## Goal
 This project aim to recognize main facial expressions (neutral, anger, disgust, fear, joy, sadness, surprise) in image 
@@ -22,11 +25,55 @@ stuff that could be usefull to get in this topic:
 
 ## Project Structure
 
-TBD
+	src
+		\-->dataset 		scripts for crating and using a dataset for classiefiers training
+		\-->facecrop 		utility for crop and register faces from images
+		\-->gaborbank		utility for applying a set of gabor filters to an image
+		\-->adaboost 		utility for train and use adaboost classifiers
+	doc
+							folder containing documentation
+	resources
+							folder containing third party resources (eg. OpenCV classifiers)
+	assets
+							output folder, where binaries and script will be installed
+
+
+## Build
+
+Dependencies
+
+	* cmake
+	* Python 2.7 
+	* OpenCV 2.4.5
+
+Compiling on linux
+
+* mkdir build; cd build
+* cmake .. ; make ; make install
+
+Cross-compiling for windows
+
+* mkdir build; cd build
+* TBD
+
 
 ## Usage
 
-TBD
+Initialize and fill a dataset
+
+	TBD
+
+Crop faces from dataset and calculation gabor filters features
+
+	TBD
+
+Prepare training files and train classifiers
+
+	TBD
+
+Use trained classifier
+
+	TBD
 
 ## Dataset
 
@@ -34,6 +81,5 @@ The [Cohn-Kanade database](http://www.consortium.ri.cmu.edu/ckagree/) is one of 
 code labels (aka Action Units) and emotion labels (neutral, anger, contempt, disgust, fear, happy, sadness, surprise).
 
 
-----------------------------------------------
-Copyleft [CC-BY-NC 2013](http://creativecommons.org/licenses/by-nc/3.0/)
+
 

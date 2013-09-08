@@ -67,6 +67,7 @@ int main( int argc, const char* argv[] )
 		CvBoost boost;
 		
 		boost.train(&cvml, CvBoostParams(CvBoost::REAL, nfeat, 0, 1, false, 0), false);
+		boost.train(&cvml, CvBoostParams(CvBoost::REAL, nfeat, 0, 1, false, 0), false);
 		
 		std::vector<float> train_responses, test_responses;
 		
