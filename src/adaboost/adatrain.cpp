@@ -8,6 +8,8 @@
 #include <string>
 #include <opencv2/opencv.hpp>
 
+#define TRAINING_PORTION 0.7f
+
 #if defined(WIN32) || defined(_WIN32) 
 #define PATH_SEPARATOR "\\" 
 #else 
@@ -56,12 +58,12 @@ int main( int argc, const char* argv[] )
 
 	try {
 		int nfeat = abs(atoi(argv[3]));
-
+		
 		CvMLData cvml;
 		cvml.read_csv(infile);
 		cvml.set_response_idx(0);
 		
-		CvTrainTestSplit cvtts(200, true);
+		CvTrainTestSplit cvtts(TRAINING_PORTION, true);
 		cvml.set_train_test_split(&cvtts);
 		
 		CvBoost boost;
