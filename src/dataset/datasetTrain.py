@@ -42,7 +42,7 @@ if __name__ == "__main__":
   parser.add_argument("-v","--verbose",action='store_true',help="verbosity")
   args = parser.parse_args()
   config={}
-  configFile=join(dsFolder,_DATASET_CONFIG_FILE)
+  configFile=join(args.datasetFolder,_DATASET_CONFIG_FILE)
   if not os.path.exists(configFile):
     print "ERR: dataset configuration file '%s' not found" % _DATASET_CONFIG_FILE
     exit(-1)

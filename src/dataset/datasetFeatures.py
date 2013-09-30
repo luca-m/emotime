@@ -40,7 +40,7 @@ if __name__ == "__main__":
   parser.add_argument("datasetFolder",help="Dataset folder")
   args = parser.parse_args()
   config={}
-  configFile=join(dsFolder,_DATASET_config_FILE)
+  configFile=join(args.datasetFolder,_DATASET_config_FILE)
   if not os.path.exists(configFile):
     print "ERR: dataset configuration file '%s' not found" % _DATASET_CONFIG_FILE
     exit(-1)
