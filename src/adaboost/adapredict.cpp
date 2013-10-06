@@ -25,7 +25,7 @@ float adapredict_predict( CvBoost & boost, std::vector<cv::Mat> & bank, cv::Mat 
 		// Face cropping
 		FaceDetector detector(faceDetectConf);
 		facecrop_cropFace( detector, img, image, true );
-		delete &detector;
+		//delete &detector;
 	} else {
 		image=img;
 	}
@@ -38,8 +38,11 @@ float adapredict_predict( CvBoost & boost, std::vector<cv::Mat> & bank, cv::Mat 
 	}
 
 	gaborbank_getFilteredImgSize(scaled, bank, suggSize);
+	cout << "DEBUG: Creating out matrix"<< endl;
 	dest = new Mat( suggSize.width, suggSize.height, CV_8UC1 );
+	cout << "DEBUG: Filtering "<< endl;
 	gaborbank_filterImage(scaled, bank, *dest);
+	cout << "DEBUG: Predicting"<< endl;
 	float prediction = boost.predict( *dest, Mat(), Range::all(), false, false);
 	delete dest;
 

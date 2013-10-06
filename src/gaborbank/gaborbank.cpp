@@ -3,6 +3,8 @@
 */
 #include "gaborbank.h"
 
+#include <iostream>
+
 void gaborbank_getGaborBank(std::vector<cv::Mat> & bank) {
 	double _sigma;	/// Sigma of the Gaussian envelope
 	double _theta;  /// Orientation of the normal to the parallel stripes of the Gabor function
@@ -38,12 +40,13 @@ void gaborbank_filterImage( cv::Mat & src, std::vector<cv::Mat> & bank, cv::Mat 
 		size.width= src.cols;
 		for (k=0; k < bank.size(); k++) {
 			cv::Mat kern = bank.at(k);
-			cv::Mat filtered = cv::Mat(size.width, size.height, CV_8UC1);
+			cv::Mat filtered = cv::Mat(size, CV_8UC1);
+			std::cout << "DEBUG: Filtering with filer #"<< k <<" w"<<size.width<<" h"<<size.height<<" - "<<(k*size.height)<<std::endl;
 			filter2D(src,filtered,0,kern);
 			// Write all the filtered image vertically stacked.
 			for (i=0; i< size.width ; i ++ ){
-				for (j=0; j < size.width; j++ ){
-					dest.at<unsigned char>(j + (k*size.height) , i) = filtered.at<unsigned char>(j , i);
+				for (j=0; j < size.height; j++ ){
+					dest.at<unsigned char>(i, j + (k*size.height))= filtered.at<unsigned char>(i,j);
 				}
 			}
 		}
