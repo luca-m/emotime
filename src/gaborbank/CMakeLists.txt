@@ -1,5 +1,6 @@
-add_executable( gaborbank gaborbank.cpp gabor.h gabor.cpp )
-target_link_libraries( gaborbank ${OpenCV_LIBS} )
 
-INSTALL(TARGETS gaborbank DESTINATION ${ASSETDIR} )
+add_executable( gaborbank_cli gaborbank_cli.cpp gaborbank.cpp )
+target_link_libraries( gaborbank_cli ${OpenCV_LIBS} )
+
+INSTALL(TARGETS gaborbank_cli DESTINATION ${ASSETDIR} )
 

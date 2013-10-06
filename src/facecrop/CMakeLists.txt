@@ -1,5 +1,5 @@
-add_executable( facecrop facecrop.cpp facedetector.h facedetector.cpp registration.h registration.cpp)
-target_link_libraries( facecrop ${OpenCV_LIBS} )
+add_executable( facecrop_cli facecrop_cli.cpp facecrop.cpp facedetector.cpp registration.cpp )
+target_link_libraries( facecrop_cli ${OpenCV_LIBS} )
 
-INSTALL(TARGETS facecrop DESTINATION ${ASSETDIR} )
+INSTALL(TARGETS facecrop_cli DESTINATION ${ASSETDIR} )
 
