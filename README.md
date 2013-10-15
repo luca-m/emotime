@@ -22,6 +22,7 @@ stuff that could be usefull to get in this topic:
  * [Tutorial on Gabor Filters](http://mplab.ucsd.edu/tutorials/gabor.pdf)
  * [Gabor wavelet transform and its application](http://disp.ee.ntu.edu.tw/~pujols/Gabor%20wavelet%20transform%20and%20its%20application.pdf)
  * [Gabor Filter Visualization](http://www.cs.umd.edu/class/spring2005/cmsc838s/assignment-projects/gabor-filter-visualization/report.pdf)
+ * [Meta-Analyis of the First Facial Expression Recognition Challenge](http://ieeexplore.ieee.org/xpl/articleDetails.jsp?arnumber=6222016)
 
 ## Project Structure
 
@@ -72,7 +73,7 @@ Initialize and fill a dataset
 Crop faces from dataset and calculation gabor filters features
 
 	python2 datasetCropFaces.py [-h] datasetFolder faceDetectorCfg
-  python2 datasetFeatures.py [-h] datasetFolder
+	python2 datasetFeatures.py [-h] datasetFolder
 
 
 Prepare training files and train classifiers
