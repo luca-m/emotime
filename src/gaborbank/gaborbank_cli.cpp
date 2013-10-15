@@ -64,28 +64,15 @@ int main( int argc, const char* argv[] )
 
 		gaborbank_getFilteredImgSize(scaled,bank,suggSize);
 
-		Mat * dest = new Mat( suggSize.width, suggSize.height, CV_8UC1 );
+		Mat * dest = new Mat( suggSize, CV_8UC1 );
 
-		gaborbank_filterImage(scaled,bank,*dest);
+		gaborbank_filterImage(scaled, bank, *dest);
 
 		stringstream ss;
 		ss << outfolder << PATH_SEPARATOR << "filtered" << ".png";
 		string outfile = ss.str();
 		imwrite( outfile, *dest );
 
-		/* Old approach
-
-		for (unsigned int i=0; i < bank.size(); i++) {
-			Mat kern = bank.at(i);
-			Mat filtered = Mat(width, height, CV_8UC1);
-			filter2D(scaled,filtered,0,kern);
-			stringstream ss;
-			ss << outfolder << PATH_SEPARATOR << i << ".png";
-			string outfile = ss.str();
-			imwrite( outfile, filtered );
-		}
-		*/
-		
 	}
 	catch (int e) {
 		cerr << "ERR: Exception #" << e << endl;

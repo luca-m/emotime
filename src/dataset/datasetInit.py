@@ -14,7 +14,7 @@ def dataset_init(dsPath, dsConfig):
   """
   config={}
   execfile(dsConfig, config)
-  for clazz in CONFIG['CLASSES']:
+  for clazz in config['CLASSES']:
     pth = join(dsPath,join(config['IMAGESFOLDER'],clazz))
     if not os.path.exists(pth):
       os.makedirs(pth)

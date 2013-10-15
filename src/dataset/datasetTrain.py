@@ -25,7 +25,7 @@ def dataset_trainAdaboost(trainFolder, outFolder):
       fields=len(r.readline().split(','))
     # Train
     print "INFO: Training '%s' " % f
-    retcode=subprocess.call( ["./adatrain", join(trainFolder,f), join(outFolder,of), str(fields), '-p' ] )
+    retcode=subprocess.call( ["./adatrain_cli", join(trainFolder,f), join(outFolder,of), str(fields), '-p' ] )
     if retcode<0:
       print "WARN: execution has returned error %d " % retcode
   print "INFO: adaboost training finished"

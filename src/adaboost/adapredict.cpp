@@ -18,8 +18,11 @@ float adapredict_predictNoPreprocess( CvBoost & boost, cv::Mat & img ){
 float adapredict_predict( CvBoost & boost, std::vector<cv::Mat> & bank, cv::Mat & img, cv::Size scaleSize, const char * faceDetectConf ){
 	Size suggSize;
 	Mat * dest;
-	Mat image;
+	Mat * feat;
+  Mat image;
 	Mat scaled;
+  float prediction;
+  unsigned int i,j;
 
 	if ( faceDetectConf != NULL ) {
 		// Face cropping
@@ -40,11 +43,24 @@ float adapredict_predict( CvBoost & boost, std::vector<cv::Mat> & bank, cv::Mat 
 	gaborbank_getFilteredImgSize(scaled, bank, suggSize);
 	cout << "DEBUG: Creating out matrix"<< endl;
 	dest = new Mat( suggSize.width, suggSize.height, CV_8UC1 );
-	cout << "DEBUG: Filtering "<< endl;
+	
+  cout << "DEBUG: Filtering "<< endl;
 	gaborbank_filterImage(scaled, bank, *dest);
-	cout << "DEBUG: Predicting"<< endl;
-	float prediction = boost.predict( *dest, Mat(), Range::all(), false, false);
-	delete dest;
+	
+  cout << "DEBUG: Predicting"<< endl;
+	feat = new Mat( suggSize.height*suggSize.width , 1 , CV_32FC1 );
 
+  cout << feat->cols << " " << feat->rows << endl;
+   
+	for (i=0; i < suggSize.width; i++ ){
+		for (j=0; j < suggSize.height; j++ ){
+			feat->at<float>(i+j, 0 ) = (float) dest->at<unsigned char>(i,j);
+		}
+	}
+  
+  prediction = boost.predict( *feat, Mat(), Range::all(), false, false);
+	
+  delete dest;
+  delete feat;
 	return prediction;
 }

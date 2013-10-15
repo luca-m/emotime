@@ -32,7 +32,7 @@ void gaborbank_getFilteredImgSize( cv::Mat src, std::vector<cv::Mat> & bank , cv
 }
 
 void gaborbank_filterImage( cv::Mat & src, std::vector<cv::Mat> & bank, cv::Mat & dest ){
-		cv::Size size;
+		cv::Size size(0,0);
 		unsigned int i=0;	
 		unsigned int j=0;
 		unsigned int k=0;
@@ -40,13 +40,12 @@ void gaborbank_filterImage( cv::Mat & src, std::vector<cv::Mat> & bank, cv::Mat 
 		size.width= src.cols;
 		for (k=0; k < bank.size(); k++) {
 			cv::Mat kern = bank.at(k);
-			cv::Mat filtered = cv::Mat(size, CV_8UC1);
-			std::cout << "DEBUG: Filtering with filer #"<< k <<" w"<<size.width<<" h"<<size.height<<" - "<<(k*size.height)<<std::endl;
+			cv::Mat filtered = cv::Mat(size,CV_8UC1);
 			filter2D(src,filtered,0,kern);
 			// Write all the filtered image vertically stacked.
-			for (i=0; i< size.width ; i ++ ){
-				for (j=0; j < size.height; j++ ){
-					dest.at<unsigned char>(i, j + (k*size.height))= filtered.at<unsigned char>(i,j);
+			for (i=0; i< size.height ; i ++ ){
+				for (j=0; j < size.width; j++ ){
+					dest.at<unsigned char>(i+(k*size.height), j)= filtered.at<unsigned char>(i,j);
 				}
 			}
 		}

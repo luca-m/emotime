@@ -49,6 +49,11 @@ int main( int argc, const char *argv[] ) {
 		CvBoost boost;
 		boost.load(config);
 
+    if( !boost.get_weak_predictors() ) {
+      cout << "Could not read the classifier " << config << endl;
+      return -1;
+    }
+
 		float prediction = adapredict_predictNoPreprocess( boost, img );
 
 		cout << "Precicted value:  " << prediction << endl; 

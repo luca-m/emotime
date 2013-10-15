@@ -18,7 +18,7 @@ def _dataset_multiclass1to1( config ):
   """ 
       
   """
-  return [x for x in itertools.combinations( config['CLASSES'] , 2 )]
+  return itertools.combinations( config['CLASSES'] , 2 )
 
 def dataset_prepTrain1to1Gabor( (goodClass,badClass),  dsFolder, config ):
   """ 
@@ -38,12 +38,17 @@ def dataset_prepTrain1to1Gabor( (goodClass,badClass),  dsFolder, config ):
   outfpath=join(join(dsFolder,config['TRAINFOLDER']),"%s_%s%s"%(goodClass,badClass,config['FEATURE_FILE_SUFFIX']))
   with open( outfpath , "w") as tf:
     # Open gabor filtered images for each sample and prepare csv row
+
+
     for fold in goodFolders:
+      #
+      # POSITIVE SAMPLE
+      #
       goodImgs=[ f for f in os.listdir(fold) if isfile(join(fold,f))]
       goodImgs.sort()
       
       for f in goodImgs:
-        print "INFO: Processing '%s'" % join(fold,f)
+        print "INFO: Processing (P) '%s'" % join(fold,f)
         tf.write("P")     # POSITIVE
         img = cv.imread( join(fold,f) , cv.CV_LOAD_IMAGE_GRAYSCALE)
         if img is None:
@@ -57,11 +62,14 @@ def dataset_prepTrain1to1Gabor( (goodClass,badClass),  dsFolder, config ):
       tf.write("\n")
     
     for fold in badFolders:
+      #
+      # NEGATIVE SAMPLE
+      #
       badImgs=[f for f in os.listdir(fold) if isfile(join(fold,f))]
       badImgs.sort()
       
       for f in badImgs:
-        print "INFO: Processing '%s'" % join(fold,f)
+        print "INFO: Processing (N) '%s'" % join(fold,f)
         tf.write("N")     # NEGATIVE
         img = cv.imread( join(fold,f) ,cv.CV_LOAD_IMAGE_GRAYSCALE)
         if img is None:
@@ -82,7 +90,7 @@ def dataset_prepTrainFiles( dsFolder, config):
       Prepare training files
   """
   for x in _dataset_multiclass1to1(config):
-    print "INFO: prepare gabor trainig file for %s" % x
+    print "INFO: prepare trainig file for %s" % str(x)
     dataset_prepTrain1to1Gabor( x, dsFolder, config )
 
 
