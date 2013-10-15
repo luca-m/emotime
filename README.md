@@ -49,7 +49,7 @@ Dependencies
 
 _NOTE: OpenCV CvMLData is used for loading training files, but if you try to run the ML-Training procedure as is you could encounter some problem related to OpenCV default values and size of training data.
 For the sake of simplicity you MAY NEEED to make CvMLData.read_csv capable of reading bigger data. In order to do it you should RECOMPILE and REINSTALL OpenCV after a very quick modification.
-In detail you should go to `opencv-2.x.x` folder, then edit `modules/ml/src/data.cpp`, find the `read_csv` method, find the `storage = cvCreateMemStorage();` line and specify a bigger value than the default one (eg.`storage = cvCreateMemStorage(128*1026)` instead of 64K)  _
+In detail you should go to `opencv-2.x.x` folder, then edit `modules/ml/src/data.cpp`, find the `read_csv` method, find the `storage = cvCreateMemStorage();` line and specify a bigger value than the default one (eg.`storage = cvCreateMemStorage(256*2048)` instead of 64K)  _
 
 Compiling on linux
 
