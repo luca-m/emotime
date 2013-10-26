@@ -5,6 +5,10 @@ Makefile
 cmake_install.cmake
 install_manifest.txt
 
+# IDE
+*.swp
+*~
+
 # folders 
 build/**
 dataset/**
