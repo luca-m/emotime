@@ -19,7 +19,7 @@ std::set<unsigned int> featselect_firstSplit( CvBoost & boost );
  *  
  * @param boost boosted 
  * */
-std::set<unsigned int> featselect_varImportance( CvBoost & boost ){
+std::set<unsigned int> featselect_varImportance( CvBoost & boost );
 /**
  * Filter the specified vector of features.
  *
