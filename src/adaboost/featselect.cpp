@@ -72,7 +72,7 @@ std::set<unsigned int> featselect_load(const char * file_path){
 bool featselect_save( std::set<unsigned int> & selected, const char * file_path, bool append){
   try{
     std::ofstream file;
-    file.open(file_path,  ios::out | (append?ios::app:0) );
+    file.open(file_path,  ios::out | (append?ios::app:ios::out) );
     for (set<unsigned int>::iterator it=selected.begin(); it!=selected.end(); ++it){
       unsigned int idx = *it;
       file << idx << endl;
