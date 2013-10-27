@@ -14,31 +14,55 @@ using namespace cv;
 using namespace std;
 
 std::set<unsigned int> featselect_firstSplit( CvBoost & boost ){
-    set<unsigned int> * selected = new set<unsigned int>();  
-    CvBoostTree * predictor;
-    CvSeq *predictors = boost.get_weak_predictors();
-    if (predictors){
-        #ifdef DEBUG
-        cout << "DEBUG: Number of weak predictors=" << predictors->total << endl;
-        #endif
-        for (int i = 0; i < predictors->total; i++) {
-          predictor = *CV_SEQ_ELEM(predictors, CvBoostTree*, i);
-          const CvDTreeNode * node = predictor->get_root();
-          CvDTreeSplit * split = node->split; 
-          #ifdef DEBUG
-          cout<<"DEBUG: Predictor="<<i<<", Root var_idx="<<split->var_idx<<", Quality="<<split->quality<<endl;
-          #endif
-          selected->insert(split->var_idx);
-          //const Mat * var_importance;
-          //var_importance = (Mat*) predictor->get_var_importance();
-          //for (int j = 0; j < var_importance->cols * var_importance->rows; j++) {
-          //   double val = var_importance->at<double>(0,j);
-          //  break; 
-          //}
-        }
-   }
+  set<unsigned int> * selected = new set<unsigned int>();  
+  CvBoostTree * predictor;
+  CvSeq *predictors = boost.get_weak_predictors();
+  if (predictors){
+    #ifdef DEBUG
+    cout << "DEBUG: Number of weak predictors=" << predictors->total << endl;
+    #endif
+    for (int i = 0; i < predictors->total; i++) {
+      predictor = *CV_SEQ_ELEM(predictors, CvBoostTree*, i);
+      const CvDTreeNode * node = predictor->get_root();
+      CvDTreeSplit * split = node->split; 
+      #ifdef DEBUG
+      cout<<"DEBUG: Predictor="<<i<<", Root var_idx="<<split->var_idx<<", Quality="<<split->quality<<endl;
+      #endif
+      selected->insert(split->var_idx);
+    }
+  }
 	return *selected;
 }
+
+std::set<unsigned int> featselect_varImportance( CvBoost & boost ){
+  set<unsigned int> * selected = new set<unsigned int>();  
+  CvBoostTree * predictor;
+  CvSeq *predictors = boost.get_weak_predictors();
+  if (predictors){
+     #ifdef DEBUG
+     cout << "DEBUG: Number of weak predictors=" << predictors->total << endl;
+     #endif
+     for (int i = 0; i < predictors->total; i++) {
+       predictor = *CV_SEQ_ELEM(predictors, CvBoostTree*, i);
+       const CvDTreeNode * node = predictor->get_root();
+       const CvMat * var_importance = predictor->get_var_importance();
+       for (int j = 0; j < var_importance->cols * var_importance->rows; j++) {
+         double val = var_importance->data.db[j];
+         if (val > 0) {
+           #ifdef DEBUG
+           cout<<"DEBUG: Predictor="<<i<<", Root var_idx="<<j<<", Importance="<<val<<endl;
+           #endif
+           selected->insert(j);
+         }
+       }
+     }
+  }
+	return *selected;
+}
+
+
+
+
 
 cv::Mat featselect_select(cv::Mat & feat_vec, std::set<unsigned int> & selected ){
   Mat * feat_selected = new Mat( selected.size(), 1, CV_32FC1); 
