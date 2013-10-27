@@ -1,10 +1,6 @@
-/*
- * gaborbank.cpp
+/**
  *
- *  Created on: Aug 07, 2013
- *      Author: stk
- */
-
+ * */
 #include <iostream>
 #include <sstream>
 #include <string>
@@ -23,18 +19,18 @@ using namespace cv;
 
 void help(){
 	cout << "Usage:" << endl;
-	cout << "   gaborbank_cli <imageWidth> <imageHeight> <inputImage> <outputFolder>" << endl;
+	cout << "   gaborbank_cli <imageWidth> <imageHeight> <inputImage> <outputFile>" << endl;
 	cout << "Parameters:" << endl;
 	cout << "   <imageWidth>    - Width of the image, the input image will be scaled" << endl;
 	cout << "   <imageHeight>   - Height of the image, the input image will be scaled" << endl;
 	cout << "   <inputImage>    - Input image" << endl;
-	cout << "   <outputFolder>  - Output folder where to store filtered images" << endl;
+	cout << "   <outputFile>    - Output file  where to store filtered images" << endl;
 	cout << endl;
 }
 void banner(){
  	cout << "GaborBank Utility:" << endl;
  	cout << "     Filter with a bank of Gabor filters with different "<< endl;
- 	cout << "     orientations and frequencies. (the real part only)" << endl;
+ 	cout << "     orientations and frequencies. (Gabor magnitude)" << endl;
 }
 
 int main( int argc, const char* argv[] )
@@ -56,23 +52,17 @@ int main( int argc, const char* argv[] )
 		Mat scaled;
 		resize( img, scaled, Size(width,height), 0, 0, CV_INTER_AREA );
 
-		vector<Mat> bank;
-
+		vector<GaborKern*> bank;
 		gaborbank_getGaborBank(bank);
-
-		Size suggSize;
-
-		gaborbank_getFilteredImgSize(scaled,bank,suggSize);
-
-		Mat * dest = new Mat( suggSize, CV_8UC1 );
-
-		gaborbank_filterImage(scaled, bank, *dest);
+    cout << "INFO: filtering with "<< bank.size() << " filters" << endl;
+		Mat dest = gaborbank_filterImage(scaled, bank);
 
 		stringstream ss;
-		ss << outfolder << PATH_SEPARATOR << "filtered" << ".png";
+		ss << outfolder ;
 		string outfile = ss.str();
-		imwrite( outfile, *dest );
-
+    cout << "INFO: saving to " << outfile << endl; 
+		imwrite( outfile, dest );
+    dest.release();
 	}
 	catch (int e) {
 		cerr << "ERR: Exception #" << e << endl;
