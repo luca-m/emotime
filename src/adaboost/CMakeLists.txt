@@ -8,3 +8,12 @@ add_executable( adapredict_cli adapredict_cli.cpp adapredict.cpp  ../gaborbank/g
 target_link_libraries( adapredict_cli ${OpenCV_LIBS} )
 INSTALL(TARGETS adapredict_cli DESTINATION ${ASSETDIR} )
 
+add_executable( featselect_cli featselect_cli.cpp featselect.cpp )
+target_link_libraries( featselect_cli ${OpenCV_LIBS} )
+INSTALL(TARGETS featselect_cli DESTINATION ${ASSETDIR} )
+
+
+## TESTING ONLY
+#add_executable( varimportance_cli varimportance_cli.cpp )
+#target_link_libraries( varimportance_cli ${OpenCV_LIBS} )
+#INSTALL(TARGETS varimportance_cli DESTINATION ${ASSETDIR} )
