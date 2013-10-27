@@ -26,6 +26,7 @@ def dataset_calcGaborBank(dsFolder,config):
       except:
         print "WARN: directory '%s' already exist." % oPath
         pass
+      opath=join(opath,"filtered.png")
       retcode=subprocess.call(["./gaborbank_cli",str(config['SIZE']['width']),str(config['SIZE']['height']),str(iimPath),str(oPath)])
       if retcode<0:
         print "WARN: execution has returned error %d " % retcode
