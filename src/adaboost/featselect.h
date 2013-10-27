@@ -27,8 +27,17 @@ cv::Mat featselect_select(cv::Mat & feat_vec, std::set<unsigned int> & selected 
  * */
 std::set<unsigned int> featselect_load(const char * file_path);
 /**
+ * Save selected features index to file.
  *
+ * @param selected
+ * @param file_path
+ * @param append
+ * */
+bool featselect_save( std::set<unsigned int> & selected, const char * file_path, bool append);
+/**
+ * Merge current selected features with those ones contained in the file path specified.
+ *
+ * @param selected
  * @param file_path
  * */
-bool featselect_save( std::set<unsigned int> & selected, const char * file_path);
-
+bool featselect_merge( std::set<unsigned int> & selected, const char * file_path);

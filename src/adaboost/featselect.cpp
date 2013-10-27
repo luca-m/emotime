@@ -55,25 +55,45 @@ cv::Mat featselect_select(cv::Mat & feat_vec, std::set<unsigned int> & selected 
 
 std::set<unsigned int> featselect_load(const char * file_path){
   set<unsigned int> * selected = new set<unsigned int>();
-  std::ifstream file;
-  unsigned int idx;
-  file.open(file_path);
-  while ( file >> idx ){
-   selected->insert(idx); 
+  try {
+    std::ifstream file;
+    unsigned int idx;
+    file.open(file_path);
+    while ( file >> idx ){
+     selected->insert(idx); 
+    }
+    file.close();
+  } catch (ifstream::failure e){
+    cerr << "ERR: cant read file " << file_path << endl;
   }
-  file.close();
   return *selected;
 }
 
-bool featselect_save( std::set<unsigned int> & selected, const char * file_path){
-  std::ofstream file;
-  file.open(file_path);
+bool featselect_save( std::set<unsigned int> & selected, const char * file_path, bool append){
+  try{
+    std::ofstream file;
+    file.open(file_path,  ios::out | (append?ios::app:0) );
+    for (set<unsigned int>::iterator it=selected.begin(); it!=selected.end(); ++it){
+      unsigned int idx = *it;
+      file << idx << endl;
+    }
+    file.close();
+    return true;
+  } catch (ofstream::failure e){
+    cerr << "ERR: cant write file " << file_path << endl;
+    return false; 
+  }
+}
+
+bool featselect_merge( std::set<unsigned int> & selected, const char * file_path){
+  set<unsigned int> read = featselect_load(file_path);
   for (set<unsigned int>::iterator it=selected.begin(); it!=selected.end(); ++it){
     unsigned int idx = *it;
-    file << idx << endl;
+    read.insert(idx);
   }
-  file.close();
-  return true;
+  bool res = featselect_save( read, file_path, false);
+  read.clear();
+  return res;
 }
 
 
