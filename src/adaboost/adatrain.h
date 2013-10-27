@@ -25,6 +25,6 @@ using namespace cv;
 * @param printErr		Print training error in STDERR
 * @return true if training is successfull
 */
-bool adaboost_trainCSV(CvBoost & boost, const char * csvFilePath, int nFeatures, bool printErr );
+bool adatrain_trainCSV(CvBoost & boost, const char * csvFilePath, int nFeatures, bool printErr );
 
 #endif // _H_ADATRAIN

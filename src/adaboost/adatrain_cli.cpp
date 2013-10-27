@@ -1,13 +1,10 @@
 /**
  *
  */
-
-
 #include <iostream>
 #include <sstream>
 
 #include "adatrain.h"
-
 
 void help() {
 	cout << "Usage:" << endl;
@@ -24,7 +21,6 @@ void banner() {
 	cout << "AdaTrain Utility:" << endl;
 	cout << "     Train an AdaBoost classifier " << endl;
 }
-
 int main( int argc, const char *argv[] ) {
 	if (argc < 3) {
 		banner();
@@ -48,7 +44,7 @@ int main( int argc, const char *argv[] ) {
 		int nfeat = abs(atoi(argv[3]));
 		CvBoost boost;
 
-		adaboost_trainCSV(boost, infile, nfeat, printErr);
+		adatrain_trainCSV(boost, infile, nfeat, printErr);
 
 		boost.save(outfile);
 	} catch (int e) {

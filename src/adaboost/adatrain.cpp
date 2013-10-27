@@ -3,7 +3,7 @@
  */
 #include "adatrain.h"
 
-bool adaboost_trainCSV(CvBoost & boost, const char * csvFilePath, int nFeatures, bool printErr ){
+bool adatrain_trainCSV(CvBoost & boost, const char * csvFilePath, int nFeatures, bool printErr ){
 		CvMLData cvml;
 		cvml.read_csv(csvFilePath);
 		cvml.set_response_idx(0);

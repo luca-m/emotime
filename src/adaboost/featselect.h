@@ -16,8 +16,9 @@ std::set<unsigned int> featselect_firstSplit( CvBoost & boost );
 /**
  * Filter the specified vector of features.
  *
- * @param feat_vec feature vector (Nx1) 
+ * @param feat_vec feature vector (NxM) 
  * @param selected selected features index set
+ * @return A Nx1 matrix containing the selected features.
  * */
 cv::Mat featselect_select(cv::Mat & feat_vec, std::set<unsigned int> & selected );
 /**
