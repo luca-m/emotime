@@ -55,34 +55,35 @@ cv::Mat featselect_select(cv::Mat & feat_vec, std::set<unsigned int> & selected 
 
 std::set<unsigned int> featselect_load(const char * file_path){
   set<unsigned int> * selected = new set<unsigned int>();
+  std::ifstream file;
   try {
-    std::ifstream file;
     unsigned int idx;
     file.open(file_path);
     while ( file >> idx ){
      selected->insert(idx); 
     }
-    file.close();
   } catch (ifstream::failure e){
     cerr << "ERR: cant read file " << file_path << endl;
   }
+  file.close();
   return *selected;
 }
 
 bool featselect_save( std::set<unsigned int> & selected, const char * file_path, bool append){
+  std::ofstream file;
+  bool res=true;
   try{
-    std::ofstream file;
     file.open(file_path,  ios::out | (append?ios::app:ios::out) );
     for (set<unsigned int>::iterator it=selected.begin(); it!=selected.end(); ++it){
       unsigned int idx = *it;
       file << idx << endl;
     }
-    file.close();
-    return true;
   } catch (ofstream::failure e){
     cerr << "ERR: cant write file " << file_path << endl;
-    return false; 
+    res=false; 
   }
+  file.close();
+  return res;
 }
 
 bool featselect_merge( std::set<unsigned int> & selected, const char * file_path){

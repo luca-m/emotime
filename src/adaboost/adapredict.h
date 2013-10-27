@@ -7,6 +7,7 @@
 #include "../facecrop/facecrop.h"
 
 using namespace cv;
+
 /**
 * Return the prediction using the specified image.
 * It calculate features required for classification. 
@@ -49,5 +50,6 @@ cv::Mat adapredict_imageToFeatVec(cv::Mat & src);
 * @return the prediction
 */
 float adapredict_predict( CvBoost & boost, std::vector<struct GaborKern*> & bank, cv::Mat & img, cv::Size & scaleSize, const char * faceDetectConf );
+
 #endif // _H_ADAPREDICT
 

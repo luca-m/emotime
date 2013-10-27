@@ -23,6 +23,7 @@ float adapredict_predictPreprocess( CvBoost & boost, cv::Mat & img, cv::Size & s
 cv::Mat adapredict_imageToFeatVec(cv::Mat & src){
   unsigned int i,j;
 	Mat * feat_v = new Mat( src.size() , CV_32FC1 );
+  // NOTE: scan first X then Y (horizontal, vertical)
 	for (i=0; i < src.rows; i++ ){
 		for (j=0; j < src.cols; j++ ){
 			feat_v->at<float>(i+j, 0 ) = src.at<float>(i,j);
