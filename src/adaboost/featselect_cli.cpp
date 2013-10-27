@@ -16,7 +16,7 @@ void help() {
 	cout << "   <adaConfig>   - OpenCV XML configuration file containig " << endl;
 	cout << "                   the trained boosted decision trees." << endl;
 	cout << "   <outputFile>  - Output file where to store the list of selected feature index." << endl;
-	cout << "                   NOTE: data will be merged to the file data." << endl;
+	cout << "                   NOTE: selected feat will be merged to the feature indexes already contained in the output file." << endl;
 	cout << endl;
 }
 void banner() {
