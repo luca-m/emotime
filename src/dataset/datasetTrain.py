@@ -36,10 +36,9 @@ def dataset_selectFeatures(classifierFolder, filterFile):
   print "INFO: starting feature selection."
   for f in os.listdir(classifierFolder):
     if string.lower(splitext(f)[1]) == ".xml":
-      retcode=subprocess.call( ["./featselect_cli", join(classifierFolder,f), join(classifierFolder,filterFile) ] )
+      retcode=subprocess.call( ["./featselect_cli", join(classifierFolder, f), join(classifierFolder, filterFile) ] )
       if retcode<0:
-        print "WARN: extracting selected features for '%s' has returned error (%d) " % (f,retcode)
-
+        print "WARN: extracting selected features for '%s' has returned error (%d)" % (f, retcode)
   print "INFO: selected feature index written to %s" % (filterFile)
 
 def dataset_trainAdaboost(trainFolder, outFolder):
@@ -56,7 +55,8 @@ def dataset_trainAdaboost(trainFolder, outFolder):
     with open(join(trainFolder,f),'r') as r:
       fields=len(r.readline().split(','))
     bagoftask.append( ["./adatrain_cli", join(trainFolder,f), join(outFolder,of), str(fields), '-p' ] ) 
-  print "INFO: bag of task prepared. Start training.."
+  
+  print "INFO: tasks prepared, starting training procedure"
   nprocs=min( 1, int(multiprocessing.cpu_count()*abs(_USAGE)), multiprocessing.cpu_count() )
   results=[]
   pool=multiprocessing.Pool(processes=nprocs)
@@ -69,24 +69,26 @@ def run_training(dsFolder, config):
   """
       Start training
   """
-  classifFldr=join(dsFolder,config['CLASSIFIERFOLDER']) 
-  trainFldr=join(dsFolder,config['TRAINFOLDER']) 
-  print "INFO: training decision trees using AdaBoost (REAL).."
+  classifFldr=join(dsFolder, config['CLASSIFIERFOLDER']) 
+  trainFldr=join(dsFolder, config['TRAINFOLDER']) 
+  
+  print "INFO: training decision trees using AdaBoost"
   results=dataset_trainAdaboost( trainFldr, classifFldr )
-  print "INFO: selectiong features using trained boosted decision trees.."
+  
+  print "INFO: selectiong features using trained boosted decision trees"
   dataset_selectFeatures( classifFldr , join(classifFldr,"adaboost_featselection"+_FILTER_FILE_EXT))
 
 if __name__ == "__main__":
   parser = argparse.ArgumentParser()
-  parser.add_argument("datasetFolder",help="Dataset folder")
-  parser.add_argument("-v","--verbose",action='store_true',help="verbosity")
+  parser.add_argument("datasetFolder", help="Dataset folder")
+  parser.add_argument("-v", "--verbose", action='store_true', help="verbosity")
   args = parser.parse_args()
   config={}
   configFile=join(args.datasetFolder,_DATASET_CONFIG_FILE)
   if not os.path.exists(configFile):
     print "ERR: dataset configuration file '%s' not found" % _DATASET_CONFIG_FILE
     exit(-1)
-  print "INFO: Reading configuration file at '%s' " %configFile
+  print "INFO: Reading configuration file at '%s'" % configFile
   execfile(configFile, config)
   run_training(args.datasetFolder, config)
 
