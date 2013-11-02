@@ -9,6 +9,7 @@
 #include <iostream>
 
 #include "facecrop.h"
+#include "../utils/matrix_io.h"
 
 using namespace std; 
 using namespace cv;
@@ -29,9 +30,7 @@ void banner(){
  	cout << "     Crop faces from images" << endl;
 }
 
-int main( int argc, const char* argv[] )
-{
-	
+int main( int argc, const char* argv[] ){
 	if (argc < 4) {
 		banner();
 		help();
@@ -42,7 +41,6 @@ int main( int argc, const char* argv[] )
 	string infile = string(argv[2]);
 	string outfile = string(argv[3]);
 	bool regist=false;
-
 	if (argc==5){
 		string par=string(argv[4]);
 		string reg=string("--register");
@@ -50,13 +48,12 @@ int main( int argc, const char* argv[] )
 			regist=true;
 		}
 	}
-
 	try {
 		FaceDetector detector(config);
-		Mat img = imread( infile, CV_LOAD_IMAGE_GRAYSCALE);
+		Mat img = matrix_io_load(infile);
 		Mat cropped=img;
 		facecrop_cropFace( detector, img, cropped, regist );
-		imwrite( outfile, cropped );
+		matrix_io_save(cropped, outfile); 
 	}
 	catch (int e) {
 		cerr << "ERR: Exception #" << e << endl;

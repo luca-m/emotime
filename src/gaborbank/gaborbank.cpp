@@ -74,12 +74,14 @@ void gaborbank_getGaborBank(std::vector<struct GaborKern *> & bank) {
   double _lambda;       /// Wavelength of sinusoidal factor
   double _gamma;        /// Spatial aspect ratio (ellipticity of the support of the Gabor function)
   double _psi;          /// Phase offset
-  _gamma = 1;
+  _gamma = sqrt(2);
   _sigma = 4.0;
   _lambda = sqrt(2);
   _psi=0;
-  int fwidth=7;
-  for (fwidth=7;fwidth<17;fwidth+=(17-7)/3) {
+  int fwidth;
+  int minfwidth=7;
+  int maxfwidth=15;
+  for (fwidth=minfwidth;fwidth<maxfwidth;fwidth+=(int)(maxfwidth-minfwidth)/3) {
     for (_lambda = CV_PI/32.0; _lambda < CV_PI/2.; _lambda += (CV_PI/2.0-CV_PI/32.0)/5.0 ) {
       cv::Size kernelSize(fwidth,fwidth);
       for (_theta = 0.0; _theta < (CV_PI); _theta += (CV_PI/8.0)) {

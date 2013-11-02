@@ -6,12 +6,8 @@
 #include <string>
 
 #include "gaborbank.h"
-
-#if defined(WIN32) || defined(_WIN32) 
-#define PATH_SEPARATOR "\\" 
-#else 
-#define PATH_SEPARATOR "/" 
-#endif 
+#include "../adaboost/featselect.h"
+#include "../utils/matrix_io.h"
 
 using namespace std;
 using namespace cv;
@@ -19,12 +15,13 @@ using namespace cv;
 
 void help(){
 	cout << "Usage:" << endl;
-	cout << "   gaborbank_cli <imageWidth> <imageHeight> <inputImage> <outputFile>" << endl;
+	cout << "   gaborbank_cli <imageWidth> <imageHeight> <inputImage> <outputFile> [<filterFile>]" << endl;
 	cout << "Parameters:" << endl;
 	cout << "   <imageWidth>    - Width of the image, the input image will be scaled" << endl;
 	cout << "   <imageHeight>   - Height of the image, the input image will be scaled" << endl;
 	cout << "   <inputImage>    - Input image" << endl;
 	cout << "   <outputFile>    - Output file  where to store filtered images" << endl;
+	cout << "   <filterFile>    - Text file containing the list of pixel to keep" << endl;
 	cout << endl;
 }
 void banner(){
@@ -46,9 +43,17 @@ int main( int argc, const char* argv[] )
 		unsigned int width = abs(atoi(argv[1]));
 		unsigned int height = abs(atoi(argv[2]));
 		string infile = string(argv[3]);
-		string outfolder = string(argv[4]);
+		string outfile = string(argv[4]);
+    bool filter=false;
+    const char * filterfile;
+    
+    if (argc == 6){
+      filter=true;
+      filterfile=argv[5];
+      cout << "INFO: filtering with filter at "<< filterfile << endl;
+    }
 	
-		Mat img = imread(infile, CV_LOAD_IMAGE_GRAYSCALE);
+		Mat img = matrix_io_load( infile );
 		Mat scaled;
 		resize( img, scaled, Size(width,height), 0, 0, CV_INTER_AREA );
 
@@ -57,11 +62,14 @@ int main( int argc, const char* argv[] )
     cout << "INFO: filtering with "<< bank.size() << " filters" << endl;
 		Mat dest = gaborbank_filterImage(scaled, bank);
 
-		stringstream ss;
-		ss << outfolder ;
-		string outfile = ss.str();
+    if (filter){
+      set<unsigned int> selected=featselect_load(filterfile); 
+      dest = featselect_select(dest,selected);
+    }
+
     cout << "INFO: saving to " << outfile << endl; 
-		imwrite( outfile, dest );
+    matrix_io_save( dest, outfile );
+
     dest.release();
 	}
 	catch (int e) {

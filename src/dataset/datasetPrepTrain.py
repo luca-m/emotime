@@ -14,7 +14,14 @@ from os.path import isdir
 
 _DATASET_CONFIG_FILE="dataset.conf"
 
-def _dataset_multiclass1to1( config ):
+def _dataset_multiclass1toAll(config):
+  """ 
+  
+  """
+  for x in [ (x,[y for y in config['CLASSES'] if y != x]) for x in config['CLASSES']]:
+    yield x
+
+def _dataset_multiclass1to1(config):
   """ 
       
   """

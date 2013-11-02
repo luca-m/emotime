@@ -5,6 +5,7 @@
 #include <sstream>
 
 #include "adapredict.h"
+#include "../utils/matrix_io.h"
 
 using namespace std;
 using namespace cv;
@@ -39,7 +40,7 @@ int main( int argc, const char *argv[] ) {
     }
   }
 	const char *config = argv[1];
-	const char *infile = argv[2];
+	string infile = string(argv[2]);
   cv::Size s(0,0);
   const char * detectorConf;
   float prediction;
@@ -50,7 +51,7 @@ int main( int argc, const char *argv[] ) {
   }
 
 	try {		
-		Mat img = imread( infile, CV_LOAD_IMAGE_GRAYSCALE );
+		Mat img = matrix_io_load(infile);
 		CvBoost boost;
 		boost.load(config);
 
