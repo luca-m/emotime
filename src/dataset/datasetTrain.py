@@ -23,7 +23,7 @@ def _subproc_call( param ):
       print "INFO: '%s' has completed successfully " % comstr
       return (comstr,True)
     else:
-      print "WARN: '%s' has encountered problems" % comstr 
+      print "ERR: '%s' has encountered problems" % comstr 
       return (comstr,False)
 
 def dataset_selectFeatures(classifierFolder, filterFile, config):
@@ -54,7 +54,7 @@ def dataset_trainAdaboost(trainFolder, outFolder, config):
     bagoftask.append( [config['TRAIN_ADA_TOOL'], join(trainFolder,f), join(outFolder,of), str(fields), '-p' ] ) 
   
   print "INFO: tasks prepared, starting training procedure"
-  nprocs=min( 1, int(multiprocessing.cpu_count()*abs(config['TRAIN_ADA_CPU_USAGE'])), multiprocessing.cpu_count() )
+  nprocs=max( 1, int(multiprocessing.cpu_count()*abs(float(config['TRAIN_ADA_CPU_USAGE']))) )
   results=[]
   pool=multiprocessing.Pool(processes=nprocs)
   res=pool.map_async(_subproc_call,bagoftask,callback=results.append)

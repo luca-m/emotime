@@ -4,8 +4,9 @@
 """
 import os
 import argparse
-from os.path import join
 import datasetConfigParser as dcp
+
+from os.path import join
 
 def dataset_init(dsPath, config, cfgFile, dsCfgName):
   """ 

@@ -6,7 +6,9 @@ import cv2
 import os
 import itertools
 import argparse
+import multiprocessing
 import datasetConfigParser as dcp
+import numpy as np
 
 from os.path import join
 from os.path import isfile
@@ -18,7 +20,8 @@ def _dataset_load_matrix(filepath):
   """ """
   name,ext=splitext(basename(filepath))
   if ext in ['.yml','.xml']:
-    return cv2.cv.Load(filepath, name=name)
+    cvmat=cv2.cv.Load(filepath, name=name)
+    return np.asarray(cvmat)
   else:
     return cv2.imread(filepath, cv2.CV_LOAD_IMAGE_GRAYSCALE)
 
@@ -32,16 +35,18 @@ def _dataset_multiclass1to1(config):
   for x,y in itertools.combinations( config['CLASSES'] , 2 ):
     yield ([x],[y])
 
+def _dataset_prepare(param):
+  """ dataset_prepare wrapper """
+  return dataset_prepare( param[0], param[1], param[2] )
 def dataset_prepare( (goodClass,badClass), dsFolder, config):
   """ 
      Prepare train file with positive and negative samples.
   """
-  print "INFO: Preparing training file for '%s' vs. '%s' " % (','.join(goodClass), ','.join(badClass))
-
   badClass = sorted(badClass)
   goodClass = sorted(goodClass)
-
-  goodPath=[join(dsFolder, join(config['FEATURES_FOLDER'], goodClass)) for x in goodClass]
+  print "INFO: Preparing training file for '%s' vs. '%s' " % (','.join(goodClass), ','.join(badClass))
+  
+  goodPath=[join(dsFolder, join(config['FEATURES_FOLDER'], x)) for x in goodClass]
   badPath= [join(dsFolder, join(config['FEATURES_FOLDER'], x)) for x in badClass]
   #
   # Note: a goodFolder should contain the filtered images (various orientation and frequency ) 
@@ -50,16 +55,16 @@ def dataset_prepare( (goodClass,badClass), dsFolder, config):
   #
   goodFolders=[]
   for x in goodPath:
-    goodFolders.exptend( [ join(goodPath, f) for f in os.listdir(goodPath) if isdir(join(goodPath, f)) and f.endswith(config['FILTERED_FOLDER_SUFFIX']) ] )
+    goodFolders.extend( [join(x, f) for f in os.listdir(x) if isdir(join(x, f)) and f.endswith(config['FILTERED_FOLDER_SUFFIX']) ] )
   goodFolders.sort()
 
   badFolders=[]
   for x in badPath:
-    badFolders.extend( [ join(badPath, f) for f in os.listdir(badPath) if isdir(join(badPath, f)) and f.endswith(config['FILTERED_FOLDER_SUFFIX']) ] )
+    badFolders.extend( [join(x, f) for f in os.listdir(x) if isdir(join(x, f)) and f.endswith(config['FILTERED_FOLDER_SUFFIX']) ] )
   badFolders.sort()
 
   outfpath=join( join(dsFolder, config['TRAIN_FOLDER']), "%s_vs_%s%s" % ( '_'.join(goodClass), '_'.join(badClass), config['FEATURE_FILE_SUFFIX']) )
-  
+ 
   with open(outfpath, "w") as tf: 
     #
     # POSITIVE SAMPLES
@@ -76,8 +81,8 @@ def dataset_prepare( (goodClass,badClass), dsFolder, config):
           continue
         for j in xrange(img.shape[1]):
           for i in xrange(img.shape[0]):
-            value = float(img.item(j, i))
-            tf.write(",%d" % value)
+            value = float(img.item(i, j))
+            tf.write(",%f" % value)
       tf.write("\n")
     #
     # NEGATIVE SAMPLES
@@ -94,8 +99,8 @@ def dataset_prepare( (goodClass,badClass), dsFolder, config):
           continue
         for j in xrange(img.shape[1]):
           for i in xrange(img.shape[0]):
-            value = float(img.item(j, i))
-            tf.write(",%d" % value)
+            value = float(img.item(i, j))
+            tf.write(",%f" % value)
       tf.write("\n")
   print "INFO: Done"
 
@@ -108,9 +113,13 @@ def dataset_prepTrainFiles(dsFolder, config):
   #  dataset_prepare(x, dsFolder, config)
   
   print "INFO: preparing training files for 1 to All multiclass"
+  bagoftask=[]
   for x in _dataset_multiclass1toAll(config):
-    dataset_prepare(x, dsFolder, config)
-
+    #dataset_prepare(x, dsFolder, config)
+    bagoftask.append((x, dsFolder, config))
+  nprocs=max( 1, int(multiprocessing.cpu_count()*abs(float(config['TRAIN_ADA_CPU_USAGE']))) )
+  pool=multiprocessing.Pool(processes=nprocs)
+  res=pool.map(_dataset_prepare, bagoftask)
 
 if __name__ == "__main__":
   parser = argparse.ArgumentParser()
@@ -119,8 +128,8 @@ if __name__ == "__main__":
   args = parser.parse_args()
   try:
     config={}
-    config=dcp.parse_ini_config(join(args.dsFolder ,args.cfg))
-    dataset_prepTrainFiles(args.datasetFolder, config)
+    config=dcp.parse_ini_config(join(args.dsFolder, args.cfg))
+    dataset_prepTrainFiles(args.dsFolder, config)
   except Exception as e:
     print "ERR: something wrong (%s)" % str(e)
   
