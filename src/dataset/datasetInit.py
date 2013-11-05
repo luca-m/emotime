@@ -1,50 +1,49 @@
 #!/usr/bin/env python2
 """
-  
+   Initialize a dataset  
 """
 import os
 import argparse
 from os.path import join
+import datasetConfigParser as dcp
 
-_DEFAULT_CONFIG_FNAME="dataset.conf"
-
-def dataset_init(dsPath, config):
+def dataset_init(dsPath, config, cfgFile, dsCfgName):
   """ 
       Initialize dataset 
   """
   for clazz in config['CLASSES']:
-    pth = join(dsPath, join(config['IMAGESFOLDER'], clazz))
+    pth = join(dsPath, join(config['IMAGES_FOLDER'], clazz))
     if not os.path.exists(pth):
       os.makedirs(pth)
-    pth = join(dsPath, join(config['FACESFOLDER'], clazz))
+    pth = join(dsPath, join(config['FACES_FOLDER'], clazz))
     if not os.path.exists(pth):
       os.makedirs(pth)
-    pth=join(dsPath, join(config['FEATURESFOLDER'], clazz))
+    pth=join(dsPath, join(config['FEATURES_FOLDER'], clazz))
     if not os.path.exists(pth):
       os.makedirs(pth)
-  pth=join(dsPath, config['TRAINFOLDER'])
+  pth=join(dsPath, config['TRAIN_FOLDER'])
   if not os.path.exists(pth):
     os.makedirs(pth)
-  pth=join(dsPath, config['CLASSIFIERFOLDER'])
+  pth=join(dsPath, config['CLASSIFIER_FOLDER'])
   if not os.path.exists(pth):
     os.makedirs(pth)
   # Copy configuration
-  with open(dsConfig, "r") as conf:
+  with open(cfgFile, "r") as conf:
     configuration = conf.read()
-    with open(join(dsPath, _DEFAULT_CONFIG_FNAME), "w") as nconf:
+    with open(join(dsPath, dsCfgName), "w") as nconf:
       nconf.write(configuration)
 
 if __name__ == "__main__":
   parser = argparse.ArgumentParser()
-  parser.add_argument("dsPath", help="Dataset folder path")
-  parser.add_argument("config", help="Configuration file")
+  parser.add_argument("--cfg", default="dataset.cfg", help="Dataset config file name")
+  parser.add_argument("dsFolder", help="Dataset folder path")
+  parser.add_argument("config", help="Configuration file to use for dataset initialization")
   args = parser.parse_args()
-  config={}
-  configFile=join(args.datasetFolder, _DATASET_CONFIG_FILE)
-  if not os.path.exists(configFile):
-    print "ERR: dataset configuration file '%s' not found" % _DATASET_CONFIG_FILE
-    exit(-1)
-  print "INFO: Reading configuration file at '%s'" % configFile
-  execfile(configFile, config)
-  dataset_init(args.dsPath, config)
+  
+  try:
+    config={}
+    config=dcp.parse_ini_config(args.config)
+    dataset_init(args.dsFolder, config, args.config, args.cfg)
+  except Exception as e:
+    print "ERR: something wrong (%s)" % str(e)
 

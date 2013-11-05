@@ -1,22 +1,19 @@
 #!/usr/bin/env python2
 """
-    
+   Train with Adaboost and select relevant features 
 """
 import argparse
 import os
 import subprocess
 import multiprocessing
 import string
+import datasetConfigParser as dcp
+
 from os.path import join
 from os.path import isfile
 from os.path import isdir
 from os.path import basename
 from os.path import splitext
-
-
-_DATASET_CONFIG_FILE="dataset.conf"
-_FILTER_FILE_EXT=".dat"
-_USAGE=.5
 
 def _subproc_call( param ):
     """ Wrap a subprocess.call """
@@ -29,19 +26,19 @@ def _subproc_call( param ):
       print "WARN: '%s' has encountered problems" % comstr 
       return (comstr,False)
 
-def dataset_selectFeatures(classifierFolder, filterFile):
+def dataset_selectFeatures(classifierFolder, filterFile, config):
   """
       Prepare the feature filter using trained boost trees
   """
   print "INFO: starting feature selection."
   for f in os.listdir(classifierFolder):
     if string.lower(splitext(f)[1]) == ".xml":
-      retcode=subprocess.call( ["./featselect_cli", join(classifierFolder, f), join(classifierFolder, filterFile) ] )
+      retcode=subprocess.call( [config['TRAIN_FEATSEL_TOOL'], join(classifierFolder, f), join(classifierFolder, filterFile) ] )
       if retcode<0:
         print "WARN: extracting selected features for '%s' has returned error (%d)" % (f, retcode)
   print "INFO: selected feature index written to %s" % (filterFile)
 
-def dataset_trainAdaboost(trainFolder, outFolder):
+def dataset_trainAdaboost(trainFolder, outFolder, config):
   """
       Train adaboos classifiers
   """
@@ -54,10 +51,10 @@ def dataset_trainAdaboost(trainFolder, outFolder):
     # Detect number of features
     with open(join(trainFolder,f),'r') as r:
       fields=len(r.readline().split(','))
-    bagoftask.append( ["./adatrain_cli", join(trainFolder,f), join(outFolder,of), str(fields), '-p' ] ) 
+    bagoftask.append( [config['TRAIN_ADA_TOOL'], join(trainFolder,f), join(outFolder,of), str(fields), '-p' ] ) 
   
   print "INFO: tasks prepared, starting training procedure"
-  nprocs=min( 1, int(multiprocessing.cpu_count()*abs(_USAGE)), multiprocessing.cpu_count() )
+  nprocs=min( 1, int(multiprocessing.cpu_count()*abs(config['TRAIN_ADA_CPU_USAGE'])), multiprocessing.cpu_count() )
   results=[]
   pool=multiprocessing.Pool(processes=nprocs)
   res=pool.map_async(_subproc_call,bagoftask,callback=results.append)
@@ -65,30 +62,31 @@ def dataset_trainAdaboost(trainFolder, outFolder):
   print "INFO: AdaBoost training finished."
   return results
 
-def run_training(dsFolder, config):
+def dataset_run_training(dsFolder, config):
   """
       Start training
   """
-  classifFldr=join(dsFolder, config['CLASSIFIERFOLDER']) 
-  trainFldr=join(dsFolder, config['TRAINFOLDER']) 
+  classifFldr=join(dsFolder, config['CLASSIFIER_FOLDER']) 
+  trainFldr=join(dsFolder, config['TRAIN_FOLDER']) 
   
   print "INFO: training decision trees using AdaBoost"
-  results=dataset_trainAdaboost( trainFldr, classifFldr )
+  results=dataset_trainAdaboost(trainFldr, classifFldr, config)
   
   print "INFO: selectiong features using trained boosted decision trees"
-  dataset_selectFeatures( classifFldr , join(classifFldr,"adaboost_featselection"+_FILTER_FILE_EXT))
+  dataset_selectFeatures(classifFldr, join(classifFldr, config['TRAIN_ADA_FILTER_FNAME']), config)
 
 if __name__ == "__main__":
   parser = argparse.ArgumentParser()
-  parser.add_argument("datasetFolder", help="Dataset folder")
+  parser.add_argument("--cfg", default="dataset.cfg", help="Dataset config file name")
+  parser.add_argument("dsFolder", help="Dataset base folder")
   parser.add_argument("-v", "--verbose", action='store_true', help="verbosity")
   args = parser.parse_args()
-  config={}
-  configFile=join(args.datasetFolder,_DATASET_CONFIG_FILE)
-  if not os.path.exists(configFile):
-    print "ERR: dataset configuration file '%s' not found" % _DATASET_CONFIG_FILE
-    exit(-1)
-  print "INFO: Reading configuration file at '%s'" % configFile
-  execfile(configFile, config)
-  run_training(args.datasetFolder, config)
+  
+  try:
+    config={}
+    config=dcp.parse_ini_config(join(args.dsFolder, args.cfg))
+    dataset_run_training(args.dsFolder, config)
+  except Exception as e:
+    print "ERR: something wrong (%s)" % str(e)
+  
 

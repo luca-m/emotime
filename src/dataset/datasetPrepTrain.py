@@ -2,20 +2,17 @@
 """
    
 """
-
 import cv2 
 import os
 import itertools
 import argparse
+import datasetConfigParser as dcp
 
 from os.path import join
 from os.path import isfile
 from os.path import isdir
 from os.path import splitext
 from os.path import basename 
-
-_DATASET_CONFIG_FILE="dataset.conf"
-
 
 def _dataset_load_matrix(filepath):
   """ """
@@ -44,8 +41,8 @@ def dataset_prepare( (goodClass,badClass), dsFolder, config):
   badClass = sorted(badClass)
   goodClass = sorted(goodClass)
 
-  goodPath=[join(dsFolder, join(config['FEATURESFOLDER'], goodClass)) for x in goodClass]
-  badPath=[ join(dsFolder, join(config['FEATURESFOLDER'], x)) for x in badClass]
+  goodPath=[join(dsFolder, join(config['FEATURES_FOLDER'], goodClass)) for x in goodClass]
+  badPath= [join(dsFolder, join(config['FEATURES_FOLDER'], x)) for x in badClass]
   #
   # Note: a goodFolder should contain the filtered images (various orientation and frequency ) 
   #       of a single sample image. So each line of the training file will be composed by its
@@ -61,7 +58,7 @@ def dataset_prepare( (goodClass,badClass), dsFolder, config):
     badFolders.extend( [ join(badPath, f) for f in os.listdir(badPath) if isdir(join(badPath, f)) and f.endswith(config['FILTERED_FOLDER_SUFFIX']) ] )
   badFolders.sort()
 
-  outfpath=join( join(dsFolder, config['TRAINFOLDER']), "%s_vs_%s%s" % ( '_'.join(goodClass), '_'.join(badClass), config['FEATURE_FILE_SUFFIX']) )
+  outfpath=join( join(dsFolder, config['TRAIN_FOLDER']), "%s_vs_%s%s" % ( '_'.join(goodClass), '_'.join(badClass), config['FEATURE_FILE_SUFFIX']) )
   
   with open(outfpath, "w") as tf: 
     #
@@ -117,14 +114,13 @@ def dataset_prepTrainFiles(dsFolder, config):
 
 if __name__ == "__main__":
   parser = argparse.ArgumentParser()
-  parser.add_argument("datasetFolder",help="Dataset folder")
+  parser.add_argument("--cfg", default="dataset.cfg", help="Dataset config file name")
+  parser.add_argument("dsFolder",help="Dataset base folder")
   args = parser.parse_args()
-  config={}
-  configFile=join(args.datasetFolder,_DATASET_CONFIG_FILE)
-  if not os.path.exists(configFile):
-    print "ERR: dataset configuration file '%s' not found" % _DATASET_CONFIG_FILE
-    exit(-1)
-  print "INFO: Reading configuration file at '%s' " %configFile
-  execfile(configFile, config)
-  dataset_prepTrainFiles(args.datasetFolder, config)
-
+  try:
+    config={}
+    config=dcp.parse_ini_config(join(args.dsFolder ,args.cfg))
+    dataset_prepTrainFiles(args.datasetFolder, config)
+  except Exception as e:
+    print "ERR: something wrong (%s)" % str(e)
+  

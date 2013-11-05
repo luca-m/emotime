@@ -68,7 +68,7 @@ int main( int argc, const char* argv[] )
     }
 
     cout << "INFO: saving to " << outfile << endl; 
-    matrix_io_save( dest, outfile );
+    matrix_io_save(dest, outfile);
 
     dest.release();
 	}

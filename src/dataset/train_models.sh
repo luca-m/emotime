@@ -1,8 +1,7 @@
 #!/bin/bash
 
 DS_FOLDER=../dataset
-DS_CONFIG=default.conf
-FACEDETECTOR=../resources/haarcascade_frontalface_default.xml
+DS_CONFIG=default.cfg
 
 
 
@@ -12,7 +11,7 @@ FACEDETECTOR=../resources/haarcascade_frontalface_default.xml
 #
 
 echo "1.1) Cropping faces"
-python2 ./datasetCropFaces.py $DS_FOLDER $FACEDETECTOR
+python2 ./datasetCropFaces.py $DS_FOLDER 
 echo "------------------------"
 
 echo "1.2.a) Calculating features using bank of Gabor magnitude filters"
