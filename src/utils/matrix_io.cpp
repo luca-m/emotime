@@ -1,4 +1,9 @@
+/**
+ *
+ * */
 #include "matrix_io.h"
+#include <iostream>
+#include <fstream>
 #include <algorithm>
 
 using namespace std;
@@ -21,7 +26,7 @@ cv::Mat matrix_io_load( std::string & filePath){
     if(format==XMLEXT || format==YMLEXT) {
        string name = matrix_io_fileName(file);  
        #ifdef DEBUG
-        cout<<"DEBUG: matrix name is " << name << ", file format is "<< format << endl;
+       cout<<"DEBUG: matrix name is "<<name<<", file format is "<<format<<endl;
        #endif 
        FileStorage fs(file, FileStorage::READ);
        Mat * mat = new Mat();
@@ -34,8 +39,8 @@ cv::Mat matrix_io_load( std::string & filePath){
     }
   }
 	catch (int e) {
-		cerr << "ERR: Exception #" << e << endl;
-		return  *(new Mat(0,0,CV_32FC1));
+		cerr<<"ERR: Exception #" << e << endl;
+		return *(new Mat(0,0,CV_32FC1));
 	}
 
 }
@@ -59,7 +64,7 @@ bool matrix_io_save( cv::Mat & mat, std::string & filePath){
     return true;
   }
 	catch (int e) {
-		cerr << "ERR: Exception #" << e << endl;
+		cerr<<"ERR: Exception #" << e << endl;
 		return false;
 	}
 

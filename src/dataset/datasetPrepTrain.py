@@ -9,7 +9,9 @@ import argparse
 import multiprocessing
 import datasetConfigParser as dcp
 import numpy as np
+import string
 
+from string import lower
 from os.path import join
 from os.path import isfile
 from os.path import isdir
@@ -75,14 +77,19 @@ def dataset_prepare( (goodClass,badClass), dsFolder, config):
       for f in goodImgs:
         print "INFO: Processing (P) '%s'" % join(fold, f)
         tf.write("P")     # POSITIVE
-        img=_dataset_load_matrix(join(fold,f))
-        if img is None:
-          print "WARN: cannot open image %s, skip it" % join(fold, f)
-          continue
-        for j in xrange(img.shape[1]):
-          for i in xrange(img.shape[0]):
-            value = float(img.item(i, j))
-            tf.write(",%f" % value)
+
+        if lower(config['TRAIN_EMBED_IN_CSV'])=='true':
+          img=_dataset_load_matrix(join(fold,f))
+          if img is None:
+            print "WARN: cannot open image %s, skip it" % join(fold, f)
+            continue
+          for j in xrange(img.shape[1]):
+            for i in xrange(img.shape[0]):
+              value = float(img.item(i, j))
+              tf.write(",%f" % value)
+        else:
+          tf.write(",%s" % join(fold, f))
+      
       tf.write("\n")
     #
     # NEGATIVE SAMPLES
@@ -93,16 +100,22 @@ def dataset_prepare( (goodClass,badClass), dsFolder, config):
       for f in badImgs:
         print "INFO: Processing (N) '%s'" % join(fold, f)
         tf.write("N")     # NEGATIVE
-        img=_dataset_load_matrix(join(fold, f))
-        if img is None:
-          print "WARN: cannot open image %s, skip it" % join(fold, f)
-          continue
-        for j in xrange(img.shape[1]):
-          for i in xrange(img.shape[0]):
-            value = float(img.item(i, j))
-            tf.write(",%f" % value)
+       
+        if lower(config['TRAIN_EMBED_IN_CSV'])=='true':
+          img=_dataset_load_matrix(join(fold, f))
+          if img is None:
+            print "WARN: cannot open image %s, skip it" % join(fold, f)
+            continue
+          for j in xrange(img.shape[1]):
+            for i in xrange(img.shape[0]):
+              value = float(img.item(i, j))
+              tf.write(",%f" % value)
+        else:
+          tf.write(",%s" % join(fold, f))
+      
       tf.write("\n")
   print "INFO: Done"
+  return
 
 def dataset_prepTrainFiles(dsFolder, config):
   """

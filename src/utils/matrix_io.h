@@ -3,9 +3,6 @@
 
 #include <opencv2/opencv.hpp>
 #include <string>
-#include <sstream>
-#include <iostream>
-
 
 #if defined(WIN32) || defined(_WIN32) 
 #define PATH_SEPARATOR "\\" 
@@ -44,5 +41,3 @@ cv::Mat matrix_io_load( std::string & filePath);
 bool matrix_io_save( cv::Mat & mat, std::string & filePath);
 
 #endif // _H_MATRIX_IO
-
-
