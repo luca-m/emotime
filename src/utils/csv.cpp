@@ -14,7 +14,7 @@ bool csv_load_traindata(const char * csvFile, std::vector<std::string> & sampleF
     string sampleC;
     int sclass;
     while( getline(csvf, sampleC, ',') ) {
-      getline(csvf, sampleF, ',');
+      getline(csvf, sampleF, '\n');
       if (sampleC==string("N")) {
         sclass=0;
       } else {

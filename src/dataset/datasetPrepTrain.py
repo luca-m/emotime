@@ -17,6 +17,7 @@ from os.path import isfile
 from os.path import isdir
 from os.path import splitext
 from os.path import basename 
+from os.path import abspath 
 
 def _dataset_load_matrix(filepath):
   """ """
@@ -88,7 +89,7 @@ def dataset_prepare( (goodClass,badClass), dsFolder, config):
               value = float(img.item(i, j))
               tf.write(",%f" % value)
         else:
-          tf.write(",%s" % join(fold, f))
+          tf.write(",%s" % abspath(join(fold, f)))
       
       tf.write("\n")
     #
@@ -111,7 +112,7 @@ def dataset_prepare( (goodClass,badClass), dsFolder, config):
               value = float(img.item(i, j))
               tf.write(",%f" % value)
         else:
-          tf.write(",%s" % join(fold, f))
+          tf.write(",%s" % abspath(join(fold, f)))
       
       tf.write("\n")
   print "INFO: Done"

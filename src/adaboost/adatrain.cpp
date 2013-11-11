@@ -44,6 +44,9 @@ bool adatrain_trainManual(CvBoost & boost, std::vector<std::string> & matrixFile
     string fpath=matrixFiles.at(i);
     int label=classes.at(i);
     sample = matrix_io_load(fpath);
+    #ifdef DEBUG
+    cerr<<"DEBUG: matrix '"<<fpath<<"' rows="<<sample.rows<<",cols="<<sample.cols<<",type="<<sample.type()<<",CV_32FC1="<<CV_32FC1<<endl;
+    #endif
     Mat sample_float;
     if (sample.type()!=CV_32FC1) {
       sample.convertTo(sample_float, CV_32FC1);

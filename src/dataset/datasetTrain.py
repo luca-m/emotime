@@ -33,7 +33,7 @@ def dataset_selectFeatures(classifierFolder, filterFile, config):
   print "INFO: starting feature selection."
   for f in os.listdir(classifierFolder):
     if string.lower(splitext(f)[1]) == ".xml":
-      retcode=subprocess.call( [config['TRAIN_FEATSEL_TOOL'], join(classifierFolder, f), join(classifierFolder, filterFile) ] )
+      retcode=subprocess.call( [config['TRAIN_FEATSEL_TOOL'], '{0}'.format(join(classifierFolder, f)), '{0}'.format(join(classifierFolder, filterFile)) ] )
       if retcode<0:
         print "WARN: extracting selected features for '%s' has returned error (%d)" % (f, retcode)
   print "INFO: selected feature index written to %s" % (filterFile)
@@ -45,13 +45,15 @@ def dataset_trainAdaboost(trainFolder, outFolder, config):
   bagoftask=[]
   print "INFO: starting adaboost training"
   for f in os.listdir(trainFolder):
-    ext=os.path.splitext(f)
+    ext=os.path.splitext(f)[1]
     of=f[:-len(ext)]+'.xml'
-    fields=0
+    
+    #fields=0
     # Detect number of features
-    with open(join(trainFolder,f),'r') as r:
-      fields=len(r.readline().split(','))
-    bagoftask.append( [config['TRAIN_ADA_TOOL'], join(trainFolder,f), join(outFolder,of), str(fields), '-p' ] ) 
+    #with open(join(trainFolder,f),'r') as r:
+    #  fields=len(r.readline().split(','))
+
+    bagoftask.append( [config['TRAIN_ADA_TOOL'], '{0}'.format(join(trainFolder, f)), '{0}'.format(join(outFolder, of)) ])#, str(fields)] ) 
   
   print "INFO: tasks prepared, starting training procedure"
   nprocs=max( 1, int(multiprocessing.cpu_count()*abs(float(config['TRAIN_ADA_CPU_USAGE']))) )

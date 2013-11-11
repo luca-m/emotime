@@ -84,15 +84,15 @@ void gaborbank_getGaborBank(std::vector<struct GaborKern *> & bank) {
   for (fwidth=minfwidth;fwidth<maxfwidth;fwidth+=(int)(maxfwidth-minfwidth)/3) {
     for (_lambda = CV_PI/32.0; _lambda < CV_PI/2.; _lambda += (CV_PI/2.0-CV_PI/32.0)/5.0 ) {
       cv::Size kernelSize(fwidth,fwidth);
-      for (_theta = 0.0; _theta < (CV_PI); _theta += (CV_PI/8.0)) {
+      for (_theta = 0.0; _theta < (CV_PI/2.0); _theta += ((CV_PI/2.0)/4.0)) {
          struct GaborKern * kern = new struct GaborKern;
          kern->real = gaborbank_getGaborKernel(kernelSize, _sigma, _theta, _lambda, _gamma, _psi, CV_32F, true).clone();
          kern->imag = gaborbank_getGaborKernel(kernelSize, _sigma, _theta, _lambda, _gamma, _psi, CV_32F, false).clone();
          bank.push_back(kern);
          #ifdef DEBUG
-         imshow("real",real);
-         imshow("imag",imag);
-         waitKey(0);
+         //imshow("real",kern->real);
+         //imshow("imag",kern->imag);
+         //waitKey(0);
          #endif
       }
     }

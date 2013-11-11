@@ -19,14 +19,14 @@ std::string matrix_io_fileName( std::string & file){
   return file.substr( std::max( (int) file.find_last_of(PATH_SEPARATOR)+1, 0 ) , file.length()-nameBegin-extLen ); 
 }
 
-cv::Mat matrix_io_load( std::string & filePath){
+cv::Mat matrix_io_load(std::string & filePath){
   try {
 		string file = filePath;
     string format =  matrix_io_fileExt(file); 
     if(format==XMLEXT || format==YMLEXT) {
        string name = matrix_io_fileName(file);  
        #ifdef DEBUG
-       cout<<"DEBUG: matrix name is "<<name<<", file format is "<<format<<endl;
+       cout<<"DEBUG: matrix name is '"<<name<<"', file format is "<<format<<endl;
        #endif 
        FileStorage fs(file, FileStorage::READ);
        Mat * mat = new Mat();
