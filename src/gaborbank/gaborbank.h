@@ -4,6 +4,17 @@
 #ifndef _H_GABORBANK
 #define _H_GABORBANK
 
+
+#define GABOR_WIDTH_MIN        7
+#define GABOR_WIDTH_MAX        15
+#define GABOR_LAMBDA_MIN       (CV_PI/32.0)
+#define GABOR_LAMBDA_MAX       (CV_PI/2.0)
+#define GABOR_THETA_MIN        0.001
+#define GABOR_THETA_MAX        (CV_PI/2.0)
+#define GABOR_DEFAULT_NWIDTH   2.0
+#define GABOR_DEFAULT_NLAMBDA  3.0
+#define GABOR_DEFAULT_NTHETA   4.0
+
 #include <opencv2/opencv.hpp>
 
 /**
@@ -27,7 +38,18 @@ typedef struct GaborKern {
  * */
 cv::Mat gaborbank_getGaborKernel(cv::Size ksize, double sigma, double theta, double lambd, double gamma, double psi, int ktype, bool real);
 /**
- * Obtain a bank of 40 Gabor filter kernels with different orientations and frequencies
+ * Obtain a bank of Gabor filter kernels with different orientations and frequencies using custom values
+ *
+ * See http://en.wikipedia.org/wiki/Gabor_filter for parameter detail
+ * 
+ * @param bank vector of kernel to fill.
+ * @param nwidths
+ * @param nlambdas
+ * @param nthetas
+ * */
+void gaborbank_getCustomGaborBank(std::vector<struct GaborKern *> & bank, double nwidths, double nlambdas, double nthetas); 
+/**
+ * Obtain a bank of Gabor filter kernels with different orientations and frequencies using default values
  * 
  * @param bank vector of kernel to fill.
  * */

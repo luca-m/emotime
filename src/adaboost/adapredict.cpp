@@ -22,6 +22,9 @@ float adapredict_predictPreprocess( CvBoost & boost, cv::Mat & img, cv::Size & s
 
 cv::Mat adapredict_imageToFeatVec(cv::Mat & src){
   unsigned int i,j;
+  #ifdef DEBUG
+  cout<<"DEBUG: converting matrix to vector"<< endl;
+  #endif
 	Mat * feat_v = new Mat( src.size() , CV_32FC1 );
   // NOTE: scan first X then Y (horizontal, vertical)
 	for (i=0; i < src.rows; i++ ){
@@ -39,6 +42,9 @@ float adapredict_predict( CvBoost & boost, std::vector<struct GaborKern*> & bank
   float prediction;
 
 	if (faceDetectConf!=NULL) {
+    #ifdef DEBUG
+    cout<<"DEBUG: crop face from image"<<endl;
+    #endif
 		// Face cropping
 		FaceDetector detector(faceDetectConf);
 		facecrop_cropFace( detector, img, image, true );
@@ -47,18 +53,18 @@ float adapredict_predict( CvBoost & boost, std::vector<struct GaborKern*> & bank
 		image=img;
 	}
 	if ( scaleSize.height!=0 && scaleSize.width!=0 ) {
-		resize( image, scaled, scaleSize, 0, 0, CV_INTER_AREA );
+    #ifdef DEBUG
+    cout<<"DEBUG: resize image"<<endl;
+    #endif
+		resize(image, scaled, scaleSize, 0, 0, CV_INTER_AREA);
 	} else {
 		scaled=image;
 	}
-  #ifdef DEBUG
-  cout << "DEBUG: adapredict is extracting features.."<< endl;
-  #endif
 	Mat dest = gaborbank_filterImage(scaled, bank);
+	Mat feat = adapredict_imageToFeatVec(dest);
   #ifdef DEBUG
-  cout << "DEBUG: Predicting.."<< endl;
+  cout<<"DEBUG: predicting"<< endl;
   #endif
-	Mat feat = adapredict_imageToFeatVec( dest );
   prediction = boost.predict( feat, Mat(), Range::all(), false, false);
   feat.release();
 	return prediction;

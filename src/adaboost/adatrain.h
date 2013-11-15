@@ -6,7 +6,7 @@
 #include <string>
 #include <opencv2/opencv.hpp>
 
-#define ADATRAIN_TRAINING_PORTION 0.7f
+#define ADATRAIN_TRAINING_PORTION 0.9f
 
 using namespace std;
 using namespace cv;

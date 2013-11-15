@@ -29,7 +29,13 @@ def dataset_calcGaborBank(dsFolder, config):
         print "WARN: creation of directory failed (%s)" % str(e)
         pass
       featFile=join(featFolder, config['GABOR_FEAT_FNAME'])
-      retcode=subprocess.call([config['GABOR_TOOL'], str(config['SIZE']['width']), str(config['SIZE']['height']), str(faceFile), str(featFile)])
+      cmd=[config['GABOR_TOOL'], str(config['SIZE']['width']), str(config['SIZE']['height']), 
+           config['GABOR_NWIDTHS'], config['GABOR_NLAMBDAS'], config['GABOR_NTHETAS'], 
+           str(faceFile), str(featFile)]
+      if 'GABOR_FILTER_FILE' in config.keys():
+        if config['GABOR_FILTER_FILE'] != 'NA':
+          cmd.append(config['GABOR_FILTER_FILE'])
+      retcode=subprocess.call(cmd)
       if retcode<0:
         print "WARN: execution has returned error %d" % retcode
 

@@ -1,13 +1,18 @@
-/*
- * registration.cpp
+/**
  *
- *  Created on: Aug 10, 2013
- *      Author: stk
  */
-
 #include "registration.h"
 
- void registerImage( cv::Mat & src, cv::Mat & dst){
- 	cv::equalizeHist(src,dst);
+#ifdef DEBUG
+#include <iostream>
+#endif 
+
+using namespace std;
+
+void registerImage(cv::Mat & src, cv::Mat & dst){
+  #ifdef DEBUG
+  cout<<"DEBUG: registering image"<<endl;
+  #endif 
+  cv::equalizeHist(src,dst);
  	return;
- }
+}

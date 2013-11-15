@@ -65,9 +65,9 @@ Mat gaborbank_getGaborKernel(Size ksize, double sigma, double theta, double lamb
  * For parameters value detail.
  *
  */
-void gaborbank_getGaborBank(std::vector<struct GaborKern *> & bank) {
+void gaborbank_getCustomGaborBank(std::vector<struct GaborKern *> & bank, double nwidths, double nlambdas, double nthetas) {
   #ifdef DEBUG
-  cout << "DEBUG: generating gabor bank" << endl; 
+  cout<<"DEBUG: generating gabor bank with nwidths="<<nwidths<<",nlambdas="<<nlambdas<<",nthetas="<<nthetas<<endl; 
   #endif
   double _sigma;        /// Sigma of the Gaussian envelope
   double _theta;        /// Orientation of the normal to the parallel stripes of the Gabor function
@@ -79,17 +79,18 @@ void gaborbank_getGaborBank(std::vector<struct GaborKern *> & bank) {
   _lambda = sqrt(2);
   _psi=0;
   int fwidth;
-  int minfwidth=7;
-  int maxfwidth=15;
-  for (fwidth=minfwidth;fwidth<maxfwidth;fwidth+=(int)(maxfwidth-minfwidth)/3) {
-    for (_lambda = CV_PI/32.0; _lambda < CV_PI/2.; _lambda += (CV_PI/2.0-CV_PI/32.0)/5.0 ) {
-      cv::Size kernelSize(fwidth,fwidth);
-      for (_theta = 0.0; _theta < (CV_PI/2.0); _theta += ((CV_PI/2.0)/4.0)) {
+  int minfwidth=GABOR_WIDTH_MIN;
+  int maxfwidth=GABOR_WIDTH_MAX;
+  for ( fwidth=minfwidth; fwidth<maxfwidth; fwidth+=(int)((maxfwidth-minfwidth)/((double)nwidths))) {
+    cv::Size kernelSize(fwidth, fwidth);
+    for ( _lambda=GABOR_LAMBDA_MIN; _lambda<GABOR_LAMBDA_MAX; _lambda+=(GABOR_LAMBDA_MAX-GABOR_LAMBDA_MIN)/((double)nlambdas) ) {
+      for ( _theta=GABOR_THETA_MIN; _theta<GABOR_THETA_MAX; _theta+=(GABOR_THETA_MAX-GABOR_THETA_MIN)/((double)nthetas) ) {
          struct GaborKern * kern = new struct GaborKern;
          kern->real = gaborbank_getGaborKernel(kernelSize, _sigma, _theta, _lambda, _gamma, _psi, CV_32F, true).clone();
          kern->imag = gaborbank_getGaborKernel(kernelSize, _sigma, _theta, _lambda, _gamma, _psi, CV_32F, false).clone();
          bank.push_back(kern);
          #ifdef DEBUG
+         //cout<<"DEBUG: generated gabor kernels with width="<<fwidth<<",lambda="<<_lambda<<",tetha="<<_theta<<endl;
          //imshow("real",kern->real);
          //imshow("imag",kern->imag);
          //waitKey(0);
@@ -97,14 +98,15 @@ void gaborbank_getGaborBank(std::vector<struct GaborKern *> & bank) {
       }
     }
   }
+
 }
-/**
- *
- *
- * */
+void gaborbank_getGaborBank(std::vector<struct GaborKern *> & bank) {
+  gaborbank_getCustomGaborBank(bank,GABOR_DEFAULT_NWIDTH,GABOR_DEFAULT_NLAMBDA,GABOR_DEFAULT_NTHETA);  
+  return;
+}
 Size gaborbank_getFilteredImgSize( cv::Mat & src, std::vector<struct GaborKern *> & bank ){
   #ifdef DEBUG
-  cout << "DEBUG: calculating correct size for filtered image." << endl; 
+  cout<<"DEBUG: calculating correct size for filtered image."<<endl; 
   #endif
 	// The output image will contain all the filtered image vertically stacked.
   Size s = Size(0,0); 
@@ -112,13 +114,9 @@ Size gaborbank_getFilteredImgSize( cv::Mat & src, std::vector<struct GaborKern *
 	s.width = src.cols;
   return s;
 }
-/**
- *
- *
- * */
 Mat gaborbank_filterImage( cv::Mat & src, std::vector<struct GaborKern *> & bank ){
   #ifdef DEBUG
-  cout << "INFO: filtering.." << endl; 
+  cout<<"INFO: process the image with bank of gabor filters"<<endl; 
   #endif
 	Size size(0,0);
 	unsigned int i=0;	
@@ -139,6 +137,7 @@ Mat gaborbank_filterImage( cv::Mat & src, std::vector<struct GaborKern *> & bank
 		Mat magn  = Mat(size,CV_32F);
 		filter2D(src, freal, CV_32F, real);
 		filter2D(src, fimag, CV_32F, imag);
+    // Calculating Gabor magnitude
     pow(freal,2,freal);
     pow(fimag,2,fimag);
     add(fimag,freal,magn);
@@ -151,7 +150,6 @@ Mat gaborbank_filterImage( cv::Mat & src, std::vector<struct GaborKern *> & bank
 			}
 		}
 	}
-  //delete s;
   return *dest;
 }
 

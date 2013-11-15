@@ -1,8 +1,5 @@
-/*
- * registration.h
+/**
  *
- *  Created on: Aug 10, 2013
- *      Author: stk
  */
 #ifndef REGISTR_H_
 #define REGISTR_H_

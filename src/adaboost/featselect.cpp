@@ -19,7 +19,7 @@ std::set<unsigned int> featselect_firstSplit( CvBoost & boost ){
   CvSeq *predictors = boost.get_weak_predictors();
   if (predictors){
     #ifdef DEBUG
-    cout << "DEBUG: Number of weak predictors=" << predictors->total << endl;
+    cout<<"DEBUG: Number of weak predictors="<<predictors->total<<endl;
     #endif
     for (int i = 0; i < predictors->total; i++) {
       predictor = *CV_SEQ_ELEM(predictors, CvBoostTree*, i);
@@ -40,7 +40,7 @@ std::set<unsigned int> featselect_varImportance( CvBoost & boost ){
   CvSeq *predictors = boost.get_weak_predictors();
   if (predictors){
      #ifdef DEBUG
-     cout << "DEBUG: Number of weak predictors=" << predictors->total << endl;
+     cout<<"DEBUG: Number of weak predictors="<<predictors->total<<endl;
      #endif
      for (int i = 0; i < predictors->total; i++) {
        predictor = *CV_SEQ_ELEM(predictors, CvBoostTree*, i);
@@ -83,7 +83,7 @@ std::set<unsigned int> featselect_load(const char * file_path){
      selected->insert(idx); 
     }
   } catch (ifstream::failure e){
-    cerr << "ERR: cant read file " << file_path << endl;
+    cerr<<"ERR: cant read file "<<file_path<<endl;
   }
   file.close();
   return *selected;
@@ -96,10 +96,10 @@ bool featselect_save( std::set<unsigned int> & selected, const char * file_path,
     file.open(file_path,  ios::out | (append?ios::app:ios::out) );
     for (set<unsigned int>::iterator it=selected.begin(); it!=selected.end(); ++it){
       unsigned int idx = *it;
-      file << idx << endl;
+      file<<idx<<endl;
     }
   } catch (ofstream::failure e){
-    cerr << "ERR: cant write file " << file_path << endl;
+    cerr<<"ERR: cant write file "<<file_path<<endl;
     res=false; 
   }
   file.close();
@@ -108,6 +108,9 @@ bool featselect_save( std::set<unsigned int> & selected, const char * file_path,
 
 bool featselect_merge( std::set<unsigned int> & selected, const char * file_path){
   set<unsigned int> read = featselect_load(file_path);
+  #ifdef DEBUG
+  cout<<"DEBUG: merging selected features with '"<<file_path<<"'"<<endl;
+  #endif 
   for (set<unsigned int>::iterator it=selected.begin(); it!=selected.end(); ++it){
     unsigned int idx = *it;
     read.insert(idx);
