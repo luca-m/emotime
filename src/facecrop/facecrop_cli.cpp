@@ -9,11 +9,11 @@
 #include <iostream>
 
 #include "facecrop.h"
-#include "../utils/matrix_io.h"
+#include "matrix_io.h"
 
 using namespace std; 
 using namespace cv;
-using namespace facecrop;
+using namespace emotime;
 
 void help(){
 	cout<<"Usage:"<<endl;

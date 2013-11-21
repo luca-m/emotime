@@ -45,7 +45,7 @@ int main( int argc, const char *argv[] ) {
 		CvBoost boost;
 		boost.load(config);
 
-    set<unsigned int> feats_idx = featselect_firstSplit( boost ); 
+    set<unsigned int> feats_idx = featselect_varImportance(boost);  //featselect_firstSplit( boost ); 
     for (set<unsigned int>::iterator it=feats_idx.begin(); it!=feats_idx.end(); ++it){
       cout << *it << endl;
     }

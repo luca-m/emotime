@@ -6,8 +6,8 @@
 #include <string>
 
 #include "gaborbank.h"
-#include "../adaboost/featselect.h"
-#include "../utils/matrix_io.h"
+#include "featselect.h"
+#include "matrix_io.h"
 
 using namespace std;
 using namespace cv;

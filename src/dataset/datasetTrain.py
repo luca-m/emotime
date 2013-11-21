@@ -59,8 +59,8 @@ def dataset_trainAdaboost(trainFolder, outFolder, config):
   nprocs=max( 1, int(multiprocessing.cpu_count()*abs(float(config['TRAIN_ADA_CPU_USAGE']))) )
   results=[]
   pool=multiprocessing.Pool(processes=nprocs)
-  res=pool.map_async(_subproc_call,bagoftask,callback=results.append)
-  res.wait()
+  res=pool.map_async(_subproc_call,bagoftask,callback=results.append).get(2**32) # workaround for properly handling SIGINT
+  #res.wait()
   print "INFO: AdaBoost training finished."
   return results
 

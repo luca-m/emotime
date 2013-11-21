@@ -9,7 +9,7 @@
 
 using namespace std;
 
-namespace facecrop {
+namespace emotime{
 
 bool FaceDetector::detectFace(Mat & img, Rect & faceRegion) {
 	vector<Rect> faces;

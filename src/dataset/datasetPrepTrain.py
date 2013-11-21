@@ -133,7 +133,7 @@ def dataset_prepTrainFiles(dsFolder, config):
     bagoftask.append((x, dsFolder, config))
   nprocs=max( 1, int(multiprocessing.cpu_count()*abs(float(config['TRAIN_ADA_CPU_USAGE']))) )
   pool=multiprocessing.Pool(processes=nprocs)
-  res=pool.map(_dataset_prepare, bagoftask)
+  res=pool.map_async(_dataset_prepare, bagoftask).get(2**32) # Workaround for handling SIGINT properly
 
 if __name__ == "__main__":
   parser = argparse.ArgumentParser()

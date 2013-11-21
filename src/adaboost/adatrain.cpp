@@ -2,7 +2,7 @@
  *
  */
 #include "adatrain.h"
-#include "../utils/matrix_io.h"
+#include "matrix_io.h"
 
 #include <iostream>
 

@@ -12,7 +12,7 @@
 
 using namespace cv;
 
-namespace facecrop {
+namespace emotime{
 
 class FaceDetector{
 

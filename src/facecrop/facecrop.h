@@ -18,6 +18,6 @@
 * @param regist 	register output image (at the moment: equalization)
 * @return true if face is detected and cropped properly
 */
-bool facecrop_cropFace( facecrop::FaceDetector & detector, cv::Mat & img, cv::Mat & cropped, bool regist );
+bool facecrop_cropFace( emotime::FaceDetector & detector, cv::Mat & img, cv::Mat & cropped, bool regist );
 
 #endif // _H_FACECROP 

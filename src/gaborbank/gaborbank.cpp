@@ -116,7 +116,7 @@ Size gaborbank_getFilteredImgSize( cv::Mat & src, std::vector<struct GaborKern *
 }
 Mat gaborbank_filterImage( cv::Mat & src, std::vector<struct GaborKern *> & bank ){
   #ifdef DEBUG
-  cout<<"INFO: process the image with bank of gabor filters"<<endl; 
+  cout<<"DEBUG: process the image with bank of "<<bank.size()<<" gabor filters"<<endl; 
   #endif
 	Size size(0,0);
 	unsigned int i=0;	

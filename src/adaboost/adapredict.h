@@ -3,8 +3,8 @@
 #define _H_ADAPREDICT
 
 #include <opencv2/opencv.hpp>
-#include "../gaborbank/gaborbank.h"
-#include "../facecrop/facecrop.h"
+#include "gaborbank.h"
+#include "facecrop.h"
 
 using namespace cv;
 
@@ -40,16 +40,16 @@ cv::Mat adapredict_imageToFeatVec(cv::Mat & src);
 /**
 * Return the prediction using the specified image and the specified filters for feature extraction.
 * It is also able to preprocess the specified image for face extraction and registration.
-* NOTE: greyscale image only
+* NOTE: greyscale image only (or better CV_32FC1)
 * 
 * @param boost
 * @param bank the GaborKernel vector to use for feature computation.
 * @param img the target image.
 * @param scaleSize new size of the image to use for feature calculation. If cv::Size(0,0) no resizing will be made.
-* @param cropFace 	face detector configuration. If NULL no face cropping will be made.
+* @param facedetector   face detector to use for face extraction. If NULL no face cropping will be made.
 * @return the prediction
 */
-float adapredict_predict( CvBoost & boost, std::vector<struct GaborKern*> & bank, cv::Mat & img, cv::Size & scaleSize, const char * faceDetectConf );
+float adapredict_predict( CvBoost & boost, std::vector<struct GaborKern*> & bank, cv::Mat & img, cv::Size & scaleSize, emotime::FaceDetector * facedetector );
 
 #endif // _H_ADAPREDICT
 
