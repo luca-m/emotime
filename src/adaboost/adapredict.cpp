@@ -59,7 +59,13 @@ float adapredict_predict( CvBoost & boost, std::vector<struct GaborKern*> & bank
   } else {
     scaled=image;
   }
-  Mat dest = gaborbank_filterImage(scaled, bank);
+  Mat dest;
+  if (bank.size()>0) {
+    dest=gaborbank_filterImage(scaled, bank);
+  } else {
+    dest=scaled;
+  }
+  
   Mat feat = adapredict_imageToFeatVec(dest);
   #ifdef DEBUG
   cout<<"DEBUG: predicting"<< endl;
