@@ -14,16 +14,17 @@ using namespace cv;
 
 namespace emotime {
   
-  enum Emotions {
-    Neutral = 0,
-    Anger = 1,
-    Contempt = 2,
-    Disgust= 3,
-    Fear= 4,
-    Happy= 5,
-    Sadness= 6,
-    Surprise= 7
+  enum Emotion {
+    NEUTRAL = 0,
+    ANGER = 1,
+    CONTEMPT = 2,
+    DISGUST= 3,
+    FEAR= 4,
+    HAPPY= 5,
+    SADNESS= 6,
+    SURPRISE= 7
   };
+
 
   /**
    * Generic class for performing multi-class classification using binary classifiers.
@@ -36,7 +37,7 @@ namespace emotime {
     /**
      * Map containing all known detectors
      * */
-    map<string, pair<Emotions, D> > detectors;
+    map<string, pair<Emotion, D> > detectors;
     /**
      * Pointer to the prediction routine 
      * 
@@ -53,7 +54,7 @@ namespace emotime {
      * @param prediction_routine the prediction routine to use when predicting a value with a detector of the specified type <D>
      * */
     EmoDetector( float (*prediction_routine) (D &, Mat &) ){
-      detectors = map<string, pair<Emotions, D> >();
+      detectors = map<string, pair<Emotion, D> >();
       predict = prediction_routine;
     }
     /**
@@ -61,7 +62,7 @@ namespace emotime {
      *
      * @param prediction_routine the prediction routine to use when predicting a value with a detector of the specified type <D>
      * */
-    EmoDetector( map<string, pair<Emotions, D> > detmap, float (*prediction_routine) (D &, Mat &) ){
+    EmoDetector( map<string,pair<Emotion, D> > detmap, float (*prediction_routine) (D &, Mat &) ){
       detectors = detmap;
       predict = prediction_routine;
     }
@@ -70,7 +71,7 @@ namespace emotime {
      * */
     ~EmoDetector(){
       detectors.clear();
-      predict = NULL;
+      //predict = NULL;
     }
     /**
      * Return true if 
@@ -86,8 +87,8 @@ namespace emotime {
      *  @param emo 
      *  @param detector
      * */
-    void putDetector(string & name, Emotions emo, D & detector){
-      detectors.insert( pair<string, pair<Emotions,D> >(name, make_pair(emo,detector)) );
+    void putDetector(string & name, Emotion emo, D & detector){
+      detectors.insert( make_pair(name, make_pair(emo,detector)) );
     }
     /**
      * Get a detector by name
@@ -96,7 +97,7 @@ namespace emotime {
      * @return pointer to the detector. Raise an exception if not found. 
      * */
     D getDetector(string & name){
-      if (!contains(name)){
+      if (!this->contains(name)){
         throw 10;
         cerr<<"ERR: could not find detector with name '"<<name<<"'"<<endl;
       } else {
@@ -110,8 +111,8 @@ namespace emotime {
      * */
     vector<D> getDetectors(){
       vector<D>  dects = vector<D>();
-      for( map<string,pair<Emotions,D> >::iterator ii=detectors.begin(); ii!=detectors.end(); ++ii){
-        dects.push_back( (*ii).second.second ); 
+      for( typename map<string, std::pair<Emotion,D> >::iterator ii=detectors.begin(); ii!=detectors.end(); ++ii){
+        dects.push_back(ii->second.second ); 
       }
       return dects;
     }
@@ -121,9 +122,9 @@ namespace emotime {
      * @param emo
      * @return list of detectors
      * */
-    vector<D> getDetectors(Emotions emo){
+    vector<D> getDetectors(Emotion emo){
       vector<D> dects = vector<D>();
-      for( map<string,pair<Emotions,D> >::iterator ii=detectors.begin(); ii!=detectors.end(); ++ii){
+      for( typename map<string,pair<Emotion,D> >::iterator ii=detectors.begin(); ii!=detectors.end(); ++ii){
         if ( (*ii).second.first==emo){
           dects.push_back( (*ii).second.second );
         } 
@@ -134,13 +135,20 @@ namespace emotime {
      * Predict the class of the sample frame using a majority voting strategy.
      *
      * */
-    pair<Emotions, float> predictMayorityOneVsAll(cv::Mat & frame){
-      map<Emotions,float> votes;
+    pair<Emotion, float> predictMayorityOneVsAll(cv::Mat & frame){
+      map<Emotion,float> votes; 
 
-      for( map<string,pair<Emotions,D> >::iterator ii=detectors.begin(); ii!=detectors.end(); ++ii){
-        Emotions emo = ii->second.first;
+      #ifdef DEBUG
+      cerr<<"DEBUG: predictiong by voting"<<endl;
+      #endif
+
+      for( typename map<string,pair<Emotion,D> >::iterator ii=detectors.begin(); ii!=detectors.end(); ++ii){
+        Emotion emo = ii->second.first;
         float prediction = predict(ii->second.second, frame);
-        map<Emotions, float>::iterator it = votes.find(emo);  
+        #ifdef DEBUG
+        cerr<<"DEBUG: "<<ii->first<<" has predicted "<<prediction<<endl;
+        #endif
+        map<Emotion, float>::iterator it = votes.find(emo);  
         if (it==votes.end()){
           votes.insert(make_pair(emo, prediction));
         } else{
@@ -148,17 +156,19 @@ namespace emotime {
         } 
       }
       
-      pair<Emotions,float> max_pair = make_pair(Neutral, numeric_limits<float>::min());
-      for(map<Emotions,float>::iterator ii=detectors.begin(); ii!=detectors.end(); ++ii){
+      pair<Emotion,float> max_pair = make_pair(NEUTRAL, numeric_limits<float>::min());
+      for( map<Emotion,float>::iterator ii=votes.begin(); ii!=votes.end(); ++ii){
         if (ii->second > max_pair.second){
           max_pair.first=ii->first;
           max_pair.second=ii->second;
         }
       } 
+      #ifdef DEBUG
+      cerr<<"DEBUG: Most voted emotion is "<<max_pair.first<<" with score "<<max_pair.second<<endl;
+      #endif
       return max_pair;
     }
-
-  };
+  }; // end of EmoDetector
 }
 
 #endif

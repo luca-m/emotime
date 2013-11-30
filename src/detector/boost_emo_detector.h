@@ -22,14 +22,14 @@ using namespace emotime;
  * @param 
  * @return 
  * */
-float boost_predict(CvBoost detector, Mat frame);
+float boost_predict(CvBoost detector, cv::Mat frame);
 /**
  * Create an EmoDetector using CvBoost as 2-class detectors
  *
  * @param
  * @return
  * */
-EmoDetector<CvBoost> boost_EmoDetector_create( map<string, pair<Emotions, CvBoost> >  detectors);
+EmoDetector<CvBoost> boost_EmoDetector_create(std::map<std::string, std::pair<emotime::Emotion, CvBoost> > & detectors);
 
 #endif
 

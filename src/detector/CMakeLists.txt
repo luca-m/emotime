@@ -1,4 +1,10 @@
 
-add_executable(boost_emo_detector_cli boost_emo_detector_cli.cpp boost_emo_detector.hpp emo_detector.hpp ../utils/matrix_io.cpp)
+add_executable(boost_emo_detector_cli boost_emo_detector_cli.cpp 
+                                      boost_emo_detector.cpp emo_detector.hpp 
+                                      ../utils/matrix_io.cpp
+                                      ../gaborbank/gaborbank.cpp 
+                                      ../facecrop/facecrop.cpp
+                                      ../facecrop/facedetector.cpp
+                                      ../facecrop/registration.cpp)
 target_link_libraries(boost_emo_detector_cli ${OpenCV_LIBS} )
 INSTALL(TARGETS boost_emo_detector_cli DESTINATION ${ASSETDIR} )

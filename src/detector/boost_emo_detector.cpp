@@ -9,9 +9,8 @@ float boost_predict(CvBoost & detector, Mat & frame){
   return detector.predict(frame, Mat(), Range::all(), false, false);  
 }
 
-EmoDetector<CvBoost> boost_EmoDetector_create( map<string, pair<Emotions, CvBoost> >  detectors);
-  EmoDetector<CvBoost> emodet= EmoDetector<CvBoost>( detectors, &boost_predict);
-  pair<Emotions,CvBoost> entry;
+EmoDetector<CvBoost> boost_EmoDetector_create( map<string, pair<Emotion,CvBoost> > & detectors){
+  EmoDetector<CvBoost> emodet = EmoDetector<CvBoost>( detectors, &boost_predict);
   return emodet;
 }
 
