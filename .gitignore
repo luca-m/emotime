@@ -11,6 +11,8 @@ install_manifest.txt
 *.swp
 *.swo
 *~
+.ycm_*
+
 # folders 
 build/**
 dataset/**
