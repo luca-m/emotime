@@ -6,15 +6,16 @@ cmake_install.cmake
 install_manifest.txt
 
 # IDE
+*.sublime-project
+*.sublime-workspace
 *.swp
 *~
-
 # folders 
 build/**
 dataset/**
 assets/**
 
-# C/C++
+# Compiled
 *.o
 *.so
-
+*.pyc
