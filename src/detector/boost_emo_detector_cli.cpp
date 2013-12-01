@@ -68,40 +68,47 @@ int main( int argc, const char *argv[] ) {
     // load classifiers and try to detect the emotion they have been trained to detect
     for (size_t i=0; i<classifierPaths.size();i++){
       string clpath= classifierPaths.at(i);
-      size_t found = string::npos;
       CvBoost tree = CvBoost();
       #ifdef DEBUG
       cerr<<"DEBUG: loading boosted tree "<<clpath<<endl;
       #endif 
       tree.load(clpath.c_str());
+      
       string fname = matrix_io_fileBaseName(clpath);
-      #ifdef DEBUG
-      cerr<<"DEBUG: properly adding classifier "<<fname<<endl;
-      #endif 
-      if ( (found=fname.find(string(emotionStrings(NEUTRAL))))==0){
-        classifiers.insert( make_pair(string(emotionStrings(NEUTRAL)), make_pair(NEUTRAL,tree)) );
+      Emotion emo=UNKNOWN;
+
+      if ( fname.find(emotionStrings(NEUTRAL))==0){
+        emo=NEUTRAL;
       } else 
-      if ( (found=fname.find(string(emotionStrings(ANGER))))==0){
-        classifiers.insert( make_pair(string(emotionStrings(ANGER)), make_pair(ANGER,tree)) );
+      if ( fname.find(emotionStrings(ANGER))==0){
+        emo=ANGER;
       } else  
-      if ( (found=fname.find(string(emotionStrings(CONTEMPT))))==0){
-        classifiers.insert( make_pair(string(emotionStrings(CONTEMPT)), make_pair(CONTEMPT,tree)) );
+      if ( fname.find(emotionStrings(CONTEMPT))==0){
+        emo=CONTEMPT;
       } else  
-      if ( (found=fname.find(string(emotionStrings(DISGUST))))==0){
-        classifiers.insert( make_pair(string(emotionStrings(DISGUST)), make_pair(DISGUST,tree)) );
+      if ( fname.find(emotionStrings(DISGUST))==0){
+        emo=DISGUST;
       } else  
-      if ( (found=fname.find(string(emotionStrings(FEAR))))==0){
-        classifiers.insert( make_pair(string(emotionStrings(FEAR)), make_pair(FEAR,tree)) );
+      if ( fname.find(emotionStrings(FEAR))==0){
+        emo=FEAR;
       } else  
-      if ( (found=fname.find(string(emotionStrings(HAPPY))))==0){
-        classifiers.insert( make_pair(string(emotionStrings(HAPPY)), make_pair(HAPPY,tree)) );
+      if ( fname.find(emotionStrings(HAPPY))==0){
+        emo=HAPPY;
       } else  
-      if ( (found=fname.find(string(emotionStrings(SADNESS))))==0){
-        classifiers.insert( make_pair(string(emotionStrings(SADNESS)), make_pair(SADNESS,tree)) );
+      if ( fname.find(emotionStrings(SADNESS))==0){
+        emo=SADNESS;
       } else  
-      if ( (found=fname.find(string(emotionStrings(SURPRISE))))==0){
-        classifiers.insert( make_pair(string(emotionStrings(SURPRISE)), make_pair(SURPRISE,tree)) );
-      } 
+      if ( fname.find(emotionStrings(SURPRISE))==0){
+        emo=SURPRISE;
+      }
+
+     #ifdef DEBUG
+     cerr<<"DEBUG: "<<emotionStrings(emo)<<" (classifier "<<fname<<")"<<endl;
+     #endif 
+
+     classifiers.insert( make_pair(emotionStrings(emo),make_pair(emo,tree)) );
+    // pair<string,pair<Emotion,CvBoost> > entry(emotionStrings(ANGER), make_pair(ANGER,tree));
+    // classifiers.insert(entry);
     }
 
 		Mat img = matrix_io_load(infile);

@@ -148,7 +148,7 @@ namespace emotime {
 
       if (detectors.size()==0){
         #ifdef DEBUG
-        cerr<<"DEBUG: no detector found! Unable to predict anything"<<endl;
+        cerr<<"WARN: no detector found! Unable to predict anything"<<endl;
         #endif
         return make_pair(UNKNOWN,0.0f);
       }
