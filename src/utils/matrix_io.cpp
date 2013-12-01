@@ -18,6 +18,10 @@ std::string matrix_io_fileName( std::string & file){
   int extLen= file.substr(nameEnd, file.length()-nameEnd).length();
   return file.substr( std::max( (int) file.find_last_of(PATH_SEPARATOR)+1, 0 ) , file.length()-nameBegin-extLen ); 
 }
+std::string matrix_io_fileBaseName(std::string & file){
+  int nameBegin=std::max( (int) file.find_last_of(PATH_SEPARATOR)+1, 0 );
+  return file.substr(nameBegin, string::npos); 
+}
 
 cv::Mat matrix_io_load(std::string & filePath){
   try {

@@ -26,6 +26,12 @@ std::string matrix_io_fileExt(std::string & file);
  * */
 std::string matrix_io_fileName(std::string & file);
 /**
+ * Retrieve  the file basename of a filepath
+ *
+ * @param file
+ * */
+std::string matrix_io_fileBaseName(std::string & file);
+/**
  * Load matrix from an image or from a data file (xml,yml)
  *
  * @param filePath Add ".xml" or ".yml" to file path for using data file 
