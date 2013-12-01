@@ -9,6 +9,7 @@ install_manifest.txt
 *.sublime-project
 *.sublime-workspace
 *.swp
+*.swo
 *~
 # folders 
 build/**
