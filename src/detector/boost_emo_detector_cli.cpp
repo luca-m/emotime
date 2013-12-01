@@ -51,7 +51,7 @@ int main( int argc, const char *argv[] ) {
   nlambdas= abs(atoi(argv[6]));
   nthetas = abs(atoi(argv[7]));
   vector<string> classifierPaths; 
-  map<string, pair<emotime::Emotion,CvBoost> > classifiers; 
+  map<string, pair<Emotion, CvBoost *> > classifiers; 
   
   if (argc>=9){
     // Read boost XML paths
@@ -68,7 +68,7 @@ int main( int argc, const char *argv[] ) {
     // load classifiers and try to detect the emotion they have been trained to detect
     for (size_t i=0; i<classifierPaths.size();i++){
       string clpath= classifierPaths.at(i);
-      CvBoost tree = CvBoost();
+      CvBoost tree = *(new CvBoost());
       #ifdef DEBUG
       cerr<<"DEBUG: loading boosted tree "<<clpath<<endl;
       #endif 
@@ -77,38 +77,29 @@ int main( int argc, const char *argv[] ) {
       string fname = matrix_io_fileBaseName(clpath);
       Emotion emo=UNKNOWN;
 
-      if ( fname.find(emotionStrings(NEUTRAL))==0){
+      if (fname.find(emotionStrings(NEUTRAL))==0){
         emo=NEUTRAL;
-      } else 
-      if ( fname.find(emotionStrings(ANGER))==0){
+      } else if (fname.find(emotionStrings(ANGER))==0){
         emo=ANGER;
-      } else  
-      if ( fname.find(emotionStrings(CONTEMPT))==0){
+      } else if (fname.find(emotionStrings(CONTEMPT))==0){
         emo=CONTEMPT;
-      } else  
-      if ( fname.find(emotionStrings(DISGUST))==0){
+      } else if (fname.find(emotionStrings(DISGUST))==0){
         emo=DISGUST;
-      } else  
-      if ( fname.find(emotionStrings(FEAR))==0){
+      } else if (fname.find(emotionStrings(FEAR))==0){
         emo=FEAR;
-      } else  
-      if ( fname.find(emotionStrings(HAPPY))==0){
+      } else if (fname.find(emotionStrings(HAPPY))==0){
         emo=HAPPY;
-      } else  
-      if ( fname.find(emotionStrings(SADNESS))==0){
+      } else if (fname.find(emotionStrings(SADNESS))==0){
         emo=SADNESS;
-      } else  
-      if ( fname.find(emotionStrings(SURPRISE))==0){
+      } else if (fname.find(emotionStrings(SURPRISE))==0){
         emo=SURPRISE;
       }
-
-     #ifdef DEBUG
-     cerr<<"DEBUG: "<<emotionStrings(emo)<<" (classifier "<<fname<<")"<<endl;
-     #endif 
-
-     classifiers.insert( make_pair(emotionStrings(emo),make_pair(emo,tree)) );
-    // pair<string,pair<Emotion,CvBoost> > entry(emotionStrings(ANGER), make_pair(ANGER,tree));
-    // classifiers.insert(entry);
+      #ifdef DEBUG
+      cerr<<"DEBUG: detector for emotion="<<emotionStrings(emo)<<endl;
+      #endif 
+      pair<Emotion,CvBoost *> value = make_pair(emo, &tree);
+      pair<string, pair<Emotion,CvBoost*> > entry(emotionStrings(emo), value);
+      classifiers.insert(entry);
     }
 
 		Mat img = matrix_io_load(infile);
@@ -120,9 +111,8 @@ int main( int argc, const char *argv[] ) {
     #ifdef DEBUG
     cerr<<"DEBUG: extracting face"<<endl;
     #endif
-    
-    FaceDetector facedetector=FaceDetector(config);
-    bool hasFace=facecrop_cropFace( facedetector, img, cropped, true);
+    FaceDetector facedetector=FaceDetector(config, true, true);
+    bool hasFace=facecrop_cropFace(facedetector, img, cropped, true);
     if (!hasFace){
       cerr<<"ERR: cannot detect any face in image "<<infile<<endl;
       return -4;
@@ -133,20 +123,18 @@ int main( int argc, const char *argv[] ) {
     #ifdef DEBUG
     cerr<<"DEBUG: creating feature vector"<<endl;
     #endif
-    
     vector<struct GaborKern *> bank;
     gaborbank_getCustomGaborBank(bank, (double) nwidths, (double) nlambdas, (double) nthetas);
 		features = gaborbank_filterImage(scaled, bank);
-    features.reshape(1, 1);
+    features.reshape(1, 1); // to feature vector
     
     #ifdef DEBUG
     cerr<<"DEBUG: creating emo detector"<<endl;
     #endif
-
     EmoDetector<CvBoost> emodetector=boost_EmoDetector_create(classifiers);
     pair<Emotion,float> prediction= emodetector.predictMayorityOneVsAll(features);
 
-    cout<<"Emotion predicted: "<<prediction.first<<" with score "<<prediction.second<<endl;
+    cout<<"Emotion predicted: "<<emotionStrings(prediction.first)<<" with score "<<prediction.second<<endl;
 
 	} catch (int e) {
 		cerr<<"ERR: Exception #"<<e<<endl;

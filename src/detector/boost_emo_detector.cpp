@@ -7,13 +7,13 @@ using namespace emotime;
 
 float boost_predict(CvBoost & detector, Mat & frame){
   #ifdef DEBUG
-  cerr<<"Predicting.."<<endl;
+  cerr<<"DEBUG: Predicting.."<<endl;
   #endif
   return detector.predict(frame, Mat(), Range::all(), false, false);  
 }
 
-EmoDetector<CvBoost> boost_EmoDetector_create( map<string, pair<Emotion,CvBoost> > & detectors){
-  EmoDetector<CvBoost> emodet = EmoDetector<CvBoost>( detectors, &boost_predict);
+EmoDetector<CvBoost> boost_EmoDetector_create( map<string, pair<Emotion, CvBoost *> > & detectors){
+  EmoDetector<CvBoost> emodet = EmoDetector<CvBoost>(detectors, &boost_predict);
   return emodet;
 }
 

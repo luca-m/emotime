@@ -15,7 +15,7 @@ using namespace std;
 
 bool facecrop_cropFace( emotime::FaceDetector & detector, cv::Mat & img, cv::Mat & cropped, bool regist ){
 		Rect face(0, 0, 0, 0);
-		if ( !detector.detect(img, face) ){
+		if (!detector.detect(img, face)){
       #ifdef DEBUG
       cout<<"DEBUG: no face detected"<<endl;
       #endif

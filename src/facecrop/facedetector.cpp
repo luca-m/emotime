@@ -11,9 +11,23 @@ using namespace std;
 
 namespace emotime{
 
+FaceDetector::FaceDetector(string face_config_file, bool equalize, bool toGrayscale) {
+	cascade_f.load(face_config_file);
+	autoEqualize=equalize;
+	autoGrayscale=toGrayscale;
+	assert(	!cascade_f.empty() );
+}
+FaceDetector::FaceDetector(string face_config_file) {
+	cascade_f.load(face_config_file);
+	autoEqualize=true;
+	autoGrayscale=true;
+	assert(	!cascade_f.empty() );
+}
+FaceDetector::~FaceDetector() {
+}
+
 bool FaceDetector::detectFace(Mat & img, Rect & faceRegion) {
 	vector<Rect> faces;
-	bool hasFace = false;
   #ifdef DEBUG
   cout<<"DEBUG: detecting faces"<<endl;
   #endif
@@ -22,7 +36,7 @@ bool FaceDetector::detectFace(Mat & img, Rect & faceRegion) {
 			cvSize(40, 60));
 	int maxI=-1;
 	int maxArea=-1;
-	for (int i=0;i<faces.size();i++){
+	for (unsigned int i=0;i<faces.size();i++){
 		int area=faces.at(i).width*faces.at(i).height;
 		if (area>maxArea){
 			maxI=i;
@@ -44,17 +58,6 @@ bool FaceDetector::detectFace(Mat & img, Rect & faceRegion) {
 		return false;
 	}
 }
-
-FaceDetector::FaceDetector(string face_config_file) {
-	cascade_f.load(face_config_file);
-	autoEqualize=true;
-	autoGrayscale=true;
-	assert(	!cascade_f.empty() );
-}
-
-FaceDetector::~FaceDetector() {
-}
-
 bool FaceDetector::detect(Mat & img, Rect & faceRegion) {
 	if (img.rows == 0 || img.rows == 0){
 		return false;
@@ -71,7 +74,7 @@ bool FaceDetector::detect(Mat & img, Rect & faceRegion) {
 		}
 		if (autoEqualize) {
       #ifdef DEBUG
-      cout<<"DEBUG: equalizing"<<endl;
+      cout<<"DEBUG: auto equalization (on image copy)"<<endl;
       #endif
 			equalizeHist(imgGray, imgGray);
 		}

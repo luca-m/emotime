@@ -1,13 +1,14 @@
 #ifndef _H_EMO_DETECTOR
 #define _H_EMO_DETECTOR
 
-#include <opencv2/opencv.hpp>
 #include <iostream>
 #include <string>
 #include <vector>
 #include <map>
 #include <utility>
 #include <limits>
+
+#include <opencv2/opencv.hpp>
 
 using namespace std;
 using namespace cv;
@@ -42,7 +43,7 @@ namespace emotime {
     /**
      * Map containing all known detectors
      * */
-    map<string, pair<Emotion, D> > detectors;
+    map<string, pair<Emotion, D *> > detectors;
     /**
      * Pointer to the prediction routine 
      * 
@@ -58,8 +59,8 @@ namespace emotime {
      *
      * @param prediction_routine the prediction routine to use when predicting a value with a detector of the specified type <D>
      * */
-    EmoDetector( float (*prediction_routine) (D &, Mat &) ){
-      detectors = map<string, pair<Emotion, D> >();
+    EmoDetector( float (*prediction_routine) (D &, cv::Mat &) ){
+      detectors = map<string, pair<Emotion, D *> >();
       predict = prediction_routine;
     }
     /**
@@ -67,7 +68,7 @@ namespace emotime {
      *
      * @param prediction_routine the prediction routine to use when predicting a value with a detector of the specified type <D>
      * */
-    EmoDetector( map<string,pair<Emotion, D> > detmap, float (*prediction_routine) (D &, Mat &) ){
+    EmoDetector( map<string, pair<Emotion, D *> > detmap, float (*prediction_routine) (D &, cv::Mat &) ){
       #ifdef DEBUG
       cerr<<"DEBUG: adding "<<detmap.size()<<" detectors"<<endl;
       #endif
@@ -96,7 +97,7 @@ namespace emotime {
      *  @param detector
      * */
     void putDetector(string & name, Emotion emo, D & detector){
-      detectors.insert( make_pair(name, make_pair(emo,detector)) );
+      detectors.insert( pair<string, pair<Emotion,D *> >(name, make_pair(emo, &detector)) );
     }
     /**
      * Get a detector by name
@@ -109,7 +110,7 @@ namespace emotime {
         throw 10;
         cerr<<"ERR: could not find detector with name '"<<name<<"'"<<endl;
       } else {
-        return & detectors[name].second;
+        return (detectors[name].second);
       } 
     }
     /**
@@ -119,8 +120,8 @@ namespace emotime {
      * */
     vector<D> getDetectors(){
       vector<D>  dects = vector<D>();
-      for( typename map<string, std::pair<Emotion,D> >::iterator ii=detectors.begin(); ii!=detectors.end(); ++ii){
-        dects.push_back(ii->second.second ); 
+      for( typename map<string, std::pair<Emotion, D *> >::iterator ii=detectors.begin(); ii!=detectors.end(); ++ii){
+        dects.push_back(*(ii->second.second)); 
       }
       return dects;
     }
@@ -132,9 +133,9 @@ namespace emotime {
      * */
     vector<D> getDetectors(Emotion emo){
       vector<D> dects = vector<D>();
-      for( typename map<string,pair<Emotion,D> >::iterator ii=detectors.begin(); ii!=detectors.end(); ++ii){
+      for( typename map<string, pair<Emotion, D *> >::iterator ii=detectors.begin(); ii!=detectors.end(); ++ii){
         if ( (*ii).second.first==emo){
-          dects.push_back( (*ii).second.second );
+          dects.push_back(*(ii->second.second));
         } 
       }
       return dects;
@@ -157,9 +158,9 @@ namespace emotime {
       cerr<<"DEBUG: predictiong by voting"<<endl;
       #endif
 
-      for( typename map<string,pair<Emotion,D> >::iterator ii=detectors.begin(); ii!=detectors.end(); ++ii){
+      for( typename map<string, pair<Emotion, D *> >::iterator ii=detectors.begin(); ii!=detectors.end(); ++ii){
         Emotion emo = ii->second.first;
-        float prediction = predict(ii->second.second, frame);
+        float prediction = predict(*(ii->second.second), frame);
         #ifdef DEBUG
         cerr<<"DEBUG: "<<ii->first<<" has predicted "<<prediction<<endl;
         #endif
@@ -171,8 +172,8 @@ namespace emotime {
         } 
       }
       
-      pair<Emotion,float> max_pair = make_pair(NEUTRAL, numeric_limits<float>::min());
-      for( map<Emotion,float>::iterator ii=votes.begin(); ii!=votes.end(); ++ii){
+      pair<Emotion,float> max_pair = make_pair(UNKNOWN, numeric_limits<float>::min());
+      for( map<Emotion, float>::iterator ii=votes.begin(); ii!=votes.end(); ++ii){
         if (ii->second > max_pair.second){
           max_pair.first=ii->first;
           max_pair.second=ii->second;

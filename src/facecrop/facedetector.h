@@ -33,7 +33,8 @@ public:
 	 *
 	 * @param face_config_file
 	 */
-	FaceDetector( string face_config_file );
+	FaceDetector(string face_config_file, bool equalize, bool toGrayscale);
+	FaceDetector(string face_config_file);
 	virtual ~FaceDetector();
 	/**
 	 *
