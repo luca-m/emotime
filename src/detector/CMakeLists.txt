@@ -1,6 +1,6 @@
 
 add_executable(boost_emo_detector_cli boost_emo_detector_cli.cpp 
-                                      boost_emo_detector.cpp emo_detector.hpp 
+               emo_detector.cpp boost_emo_detector.cpp emo_detector.hpp 
                                       ../utils/matrix_io.cpp
                                       ../gaborbank/gaborbank.cpp 
                                       ../facecrop/facecrop.cpp

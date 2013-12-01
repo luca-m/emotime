@@ -6,6 +6,9 @@ using namespace cv;
 using namespace emotime;
 
 float boost_predict(CvBoost & detector, Mat & frame){
+  #ifdef DEBUG
+  cerr<<"Predicting.."<<endl;
+  #endif
   return detector.predict(frame, Mat(), Range::all(), false, false);  
 }
 

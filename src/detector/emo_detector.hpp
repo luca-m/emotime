@@ -22,9 +22,14 @@ namespace emotime {
     FEAR= 4,
     HAPPY= 5,
     SADNESS= 6,
-    SURPRISE= 7
+    SURPRISE= 7,
+    UNKNOWN= 8
   };
 
+  /** 
+   * Retrieve the string associated with an emotion
+   * */ 
+  string emotionStrings(Emotion emo);
 
   /**
    * Generic class for performing multi-class classification using binary classifiers.
@@ -63,6 +68,9 @@ namespace emotime {
      * @param prediction_routine the prediction routine to use when predicting a value with a detector of the specified type <D>
      * */
     EmoDetector( map<string,pair<Emotion, D> > detmap, float (*prediction_routine) (D &, Mat &) ){
+      #ifdef DEBUG
+      cerr<<"DEBUG: adding "<<detmap.size()<<" detectors"<<endl;
+      #endif
       detectors = detmap;
       predict = prediction_routine;
     }
@@ -138,6 +146,13 @@ namespace emotime {
     pair<Emotion, float> predictMayorityOneVsAll(cv::Mat & frame){
       map<Emotion,float> votes; 
 
+      if (detectors.size()==0){
+        #ifdef DEBUG
+        cerr<<"DEBUG: no detector found! Unable to predict anything"<<endl;
+        #endif
+        return make_pair(UNKNOWN,0.0f);
+      }
+
       #ifdef DEBUG
       cerr<<"DEBUG: predictiong by voting"<<endl;
       #endif
@@ -164,7 +179,7 @@ namespace emotime {
         }
       } 
       #ifdef DEBUG
-      cerr<<"DEBUG: Most voted emotion is "<<max_pair.first<<" with score "<<max_pair.second<<endl;
+      cerr<<"DEBUG: Most voted emotion is "<<emotionStrings(max_pair.first)<<" with score "<<max_pair.second<<endl;
       #endif
       return max_pair;
     }

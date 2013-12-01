@@ -13,17 +13,6 @@
 using namespace std;
 using namespace cv;
 using namespace emotime;
-  
-const char * EmotionStrings[] = {
-     "neutral",
-     "anger",
-     "contempt",
-     "disgust",
-     "fear",
-     "happy",
-     "sadness",
-     "surprise"
-  };
 
 void help() {
 	cout<<"Usage:"<<endl;
@@ -64,7 +53,7 @@ int main( int argc, const char *argv[] ) {
   vector<string> classifierPaths; 
   map<string, pair<emotime::Emotion,CvBoost> > classifiers; 
   
-  if (argc > 9){
+  if (argc>=9){
     // Read boost XML paths
     for (int i=8; i<argc;i++){
       classifierPaths.push_back(string(argv[i]));
@@ -81,30 +70,37 @@ int main( int argc, const char *argv[] ) {
       string clpath= classifierPaths.at(i);
       size_t found = string::npos;
       CvBoost tree = CvBoost();
+      #ifdef DEBUG
+      cerr<<"DEBUG: loading boosted tree "<<clpath<<endl;
+      #endif 
       tree.load(clpath.c_str());
-      if ( (found=clpath.find(string(EmotionStrings[NEUTRAL])))==0){
-        classifiers.insert( make_pair(string(EmotionStrings[NEUTRAL]), make_pair(NEUTRAL,tree)) );
+      string fname = matrix_io_fileBaseName(clpath);
+      #ifdef DEBUG
+      cerr<<"DEBUG: properly adding classifier "<<fname<<endl;
+      #endif 
+      if ( (found=fname.find(string(emotionStrings(NEUTRAL))))==0){
+        classifiers.insert( make_pair(string(emotionStrings(NEUTRAL)), make_pair(NEUTRAL,tree)) );
       } else 
-      if ( (found=clpath.find(string(EmotionStrings[ANGER])))==0){
-        classifiers.insert( make_pair(string(EmotionStrings[ANGER]), make_pair(ANGER,tree)) );
+      if ( (found=fname.find(string(emotionStrings(ANGER))))==0){
+        classifiers.insert( make_pair(string(emotionStrings(ANGER)), make_pair(ANGER,tree)) );
       } else  
-      if ( (found=clpath.find(string(EmotionStrings[CONTEMPT])))==0){
-        classifiers.insert( make_pair(string(EmotionStrings[CONTEMPT]), make_pair(CONTEMPT,tree)) );
+      if ( (found=fname.find(string(emotionStrings(CONTEMPT))))==0){
+        classifiers.insert( make_pair(string(emotionStrings(CONTEMPT)), make_pair(CONTEMPT,tree)) );
       } else  
-      if ( (found=clpath.find(string(EmotionStrings[DISGUST])))==0){
-        classifiers.insert( make_pair(string(EmotionStrings[DISGUST]), make_pair(DISGUST,tree)) );
+      if ( (found=fname.find(string(emotionStrings(DISGUST))))==0){
+        classifiers.insert( make_pair(string(emotionStrings(DISGUST)), make_pair(DISGUST,tree)) );
       } else  
-      if ( (found=clpath.find(string(EmotionStrings[FEAR])))==0){
-        classifiers.insert( make_pair(string(EmotionStrings[FEAR]), make_pair(FEAR,tree)) );
+      if ( (found=fname.find(string(emotionStrings(FEAR))))==0){
+        classifiers.insert( make_pair(string(emotionStrings(FEAR)), make_pair(FEAR,tree)) );
       } else  
-      if ( (found=clpath.find(string(EmotionStrings[HAPPY])))==0){
-        classifiers.insert( make_pair(string(EmotionStrings[HAPPY]), make_pair(HAPPY,tree)) );
+      if ( (found=fname.find(string(emotionStrings(HAPPY))))==0){
+        classifiers.insert( make_pair(string(emotionStrings(HAPPY)), make_pair(HAPPY,tree)) );
       } else  
-      if ( (found=clpath.find(string(EmotionStrings[SADNESS])))==0){
-        classifiers.insert( make_pair(string(EmotionStrings[SADNESS]), make_pair(SADNESS,tree)) );
+      if ( (found=fname.find(string(emotionStrings(SADNESS))))==0){
+        classifiers.insert( make_pair(string(emotionStrings(SADNESS)), make_pair(SADNESS,tree)) );
       } else  
-      if ( (found=clpath.find(string(EmotionStrings[SURPRISE])))==0){
-        classifiers.insert( make_pair(string(EmotionStrings[SURPRISE]), make_pair(SURPRISE,tree)) );
+      if ( (found=fname.find(string(emotionStrings(SURPRISE))))==0){
+        classifiers.insert( make_pair(string(emotionStrings(SURPRISE)), make_pair(SURPRISE,tree)) );
       } 
     }
 
