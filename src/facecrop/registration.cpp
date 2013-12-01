@@ -11,8 +11,8 @@ using namespace std;
 
 void registerImage(cv::Mat & src, cv::Mat & dst){
   #ifdef DEBUG
-  cout<<"DEBUG: registering image (equalizing)"<<endl;
+  cerr<<"DEBUG: registering image (equalizing)"<<endl;
   #endif 
-  cv::equalizeHist(src,dst);
+  cv::equalizeHist(src, dst);
  	return;
 }

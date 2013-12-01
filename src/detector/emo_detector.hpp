@@ -160,9 +160,12 @@ namespace emotime {
 
       for( typename map<string, pair<Emotion, D *> >::iterator ii=detectors.begin(); ii!=detectors.end(); ++ii){
         Emotion emo = ii->second.first;
+        #ifdef DEBUG
+        cerr<<"DEBUG: detector "<<ii->first<<" is predicting ";
+        #endif
         float prediction = predict(*(ii->second.second), frame);
         #ifdef DEBUG
-        cerr<<"DEBUG: "<<ii->first<<" has predicted "<<prediction<<endl;
+        cerr<<"("<<prediction<<")"<<endl;
         #endif
         map<Emotion, float>::iterator it = votes.find(emo);  
         if (it==votes.end()){

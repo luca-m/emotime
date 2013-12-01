@@ -22,10 +22,10 @@ float adapredict_predictPreprocess( CvBoost & boost, cv::Mat & img, cv::Size & s
 }
 
 cv::Mat adapredict_imageToFeatVec(cv::Mat & src){
-  //unsigned int i,j;
   #ifdef DEBUG
   cout<<"DEBUG: converting matrix to vector"<< endl;
   #endif
+  //unsigned int i,j;
   //Mat * feat_v = new Mat( 1, src.cols*src.rows , CV_32FC1 );
   //// NOTE: scan first X then Y (horizontal, vertical)
   //for (i=0; i < src.rows; i++ ){
@@ -68,9 +68,12 @@ float adapredict_predict( CvBoost & boost, std::vector<struct GaborKern*> & bank
   
   Mat feat = adapredict_imageToFeatVec(dest);
   #ifdef DEBUG
-  cout<<"DEBUG: predicting"<< endl;
+  cout<<"DEBUG: predicting";
   #endif
   prediction = boost.predict( feat, Mat(), Range::all(), false, false);
+  #ifdef DEBUG
+  cout<<" ("<<prediction<<")"<<endl;
+  #endif
   feat.release();
   return prediction;
 }

@@ -70,7 +70,7 @@ int main( int argc, const char *argv[] ) {
       string clpath= classifierPaths.at(i);
       CvBoost tree = *(new CvBoost());
       #ifdef DEBUG
-      cerr<<"DEBUG: loading boosted tree "<<clpath<<endl;
+      cerr<<"DEBUG: loading boosted tree "<<clpath;
       #endif 
       tree.load(clpath.c_str());
       
@@ -95,7 +95,7 @@ int main( int argc, const char *argv[] ) {
         emo=SURPRISE;
       }
       #ifdef DEBUG
-      cerr<<"DEBUG: detector for emotion="<<emotionStrings(emo)<<endl;
+      cerr<<" ("<<emotionStrings(emo)<<")"<<endl;
       #endif 
       pair<Emotion,CvBoost *> value = make_pair(emo, &tree);
       pair<string, pair<Emotion,CvBoost*> > entry(emotionStrings(emo), value);
@@ -107,10 +107,9 @@ int main( int argc, const char *argv[] ) {
 		Mat scaled;
     Mat features;
     
-    // Extract the face
-    #ifdef DEBUG
-    cerr<<"DEBUG: extracting face"<<endl;
-    #endif
+    //#ifdef DEBUG
+    //cerr<<"DEBUG: extracting face"<<endl;
+    //#endif
     FaceDetector facedetector=FaceDetector(config, true, true);
     bool hasFace=facecrop_cropFace(facedetector, img, cropped, true);
     if (!hasFace){
@@ -119,7 +118,6 @@ int main( int argc, const char *argv[] ) {
     } 
 		resize(cropped, scaled, size, 0, 0, CV_INTER_AREA);
     
-    // Calculate feature vector
     #ifdef DEBUG
     cerr<<"DEBUG: creating feature vector"<<endl;
     #endif
@@ -131,8 +129,9 @@ int main( int argc, const char *argv[] ) {
     #ifdef DEBUG
     cerr<<"DEBUG: creating emo detector"<<endl;
     #endif
-    EmoDetector<CvBoost> emodetector=boost_EmoDetector_create(classifiers);
-    pair<Emotion,float> prediction= emodetector.predictMayorityOneVsAll(features);
+    EmoDetector<CvBoost> emodetector=boost_EmoDetector_create_no_preprocess(classifiers);
+    //EmoDetector<CvBoost> emodetector=boost_EmoDetector_create(classifiers, size, nwidths, nlambdas, nthetas, NULL );
+    pair<Emotion,float> prediction=emodetector.predictMayorityOneVsAll(features);
 
     cout<<"Emotion predicted: "<<emotionStrings(prediction.first)<<" with score "<<prediction.second<<endl;
 
