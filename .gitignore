@@ -17,6 +17,7 @@ install_manifest.txt
 build/**
 dataset/**
 assets/**
+papers/
 
 # Compiled
 *.o
