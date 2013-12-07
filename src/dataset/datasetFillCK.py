@@ -53,7 +53,10 @@ def dataset_fillCohnKanade( dsFolder, ckFolder, ckEmoFolder, config):
       pic=pics[-1]
       print "INFO: Picture '%s' has been marked as %s" % (pic, emo)
       orig=join(ckFolder, join(subj, join(s, pic)))
-      dest=join(dsFolder, join(config['IMAGES_FOLDER'], join(emo, pic)))
+      dest_dir=join(dsFolder, join(config['IMAGES_FOLDER'], emo))
+      if not os.path.isdir(dest_dir):
+        os.makedirs(dest_dir)
+      dest=join(dest_dir, pic)
       try:
         shutil.copy(orig, dest)
       except:
