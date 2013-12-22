@@ -66,13 +66,18 @@ int main( int argc, const char *argv[] ) {
 
 	try {
     // load classifiers and try to detect the emotion they have been trained to detect
+    CvBoost * tree;
     for (size_t i=0; i<classifierPaths.size();i++){
       string clpath= classifierPaths.at(i);
-      CvBoost tree = *(new CvBoost());
+      tree = new CvBoost();
       #ifdef DEBUG
-      cerr<<"DEBUG: loading boosted tree "<<clpath;
+      cerr<<"DEBUG: Loading boosted tree "<<clpath;
       #endif 
-      tree.load(clpath.c_str());
+      tree->load(clpath.c_str());
+      if( !tree->get_weak_predictors() ) {
+        cerr<<"ERR: Could not read the classifier '"<<clpath<<"' (skip)"<<endl;
+        continue;
+      }
       
       string fname = matrix_io_fileBaseName(clpath);
       Emotion emo=UNKNOWN;
@@ -97,7 +102,7 @@ int main( int argc, const char *argv[] ) {
       #ifdef DEBUG
       cerr<<" ("<<emotionStrings(emo)<<")"<<endl;
       #endif 
-      pair<Emotion,CvBoost *> value = make_pair(emo, &tree);
+      pair<Emotion,CvBoost *> value = make_pair(emo, tree);
       pair<string, pair<Emotion,CvBoost*> > entry(emotionStrings(emo), value);
       classifiers.insert(entry);
     }
@@ -108,11 +113,11 @@ int main( int argc, const char *argv[] ) {
     FacePreProcessor preprocessor=FacePreProcessor(string(config), size.width, size.height, nwidths, nlambdas, nthetas);
     bool canPreprocess=preprocessor.preprocess(img, features);
     if (!canPreprocess){
-      cerr<<"ERR: Cannot preprocess this image."<<infile<<endl;
+      cerr<<"ERR: Cannot preprocess this image '"<<infile<<"'"<<endl;
       return -4;
     } 
     #ifdef DEBUG
-    cerr<<"DEBUG: creating emo detector"<<endl;
+    cerr<<"DEBUG: BoostEmoDetector (features cols="<<features.cols<<",rows="<<features.rows<<",type="<<features.channels()<<")"<<endl;
     #endif
     BoostEmoDetector emodetector=BoostEmoDetector(classifiers);
     pair<Emotion,float> prediction=emodetector.predictMayorityOneVsAll(features);

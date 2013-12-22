@@ -3,6 +3,7 @@
 
 #include "emo_detector.hpp"
 #include "facedetector.h"
+#include "adapredict.h"
 
 using namespace std;
 using namespace cv;
@@ -13,13 +14,15 @@ namespace emotime{
   class BoostEmoDetector: public EmoDetector<CvBoost>{
     public:
       BoostEmoDetector(): EmoDetector<CvBoost>() {
-      
       }
       BoostEmoDetector(map<string,pair<Emotion,CvBoost*> > detmap ): EmoDetector<CvBoost>(detmap){
-      
       }
-      virtual float predict(CvBoost &detector, cv::Mat & frame){
-        return detector.predict(frame, Mat(), Range::all(), false, false);  
+      virtual float predict(CvBoost *detector, cv::Mat & frame){
+        #ifdef DEBUG
+        cout<<"DEBUG: prediction with CvBoost at "<<detector<<", Frame r="<<frame.rows<<" c="<<frame.cols<<",t="<<frame.type()<<endl;
+        #endif
+        float pred=detector->predict(frame, Mat(), Range::all(), false, false);  
+        return pred;
       }
   };
 

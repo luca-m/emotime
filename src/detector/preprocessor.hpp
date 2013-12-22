@@ -46,7 +46,7 @@ namespace emotime{
         this->nwidths=nwidths; 
         this->nlambdas=nlambdas; 
         this->nthetas=nthetas; 
-        facedet=FaceDetector(faceDetectorConfig, true/*equalize*/, true/*toGray*/);
+        facedet=FaceDetector(faceDetectorConfig); //, true/*equalize*/, true/*toGray*/);
         gaborbank_getCustomGaborBank(gaborbank, this->nwidths, this->nlambdas, this->nthetas);
      }
      ~FacePreProcessor(){
@@ -54,37 +54,45 @@ namespace emotime{
        //delete gaborbank; // should usa a class not a structure..
      }
      bool extractFace(Mat & src, Mat & out){
-	     bool faceFound=facecrop_cropFace(this->facedet, src, out, true/*register/equalize*/);
+       Mat face;
+	     bool faceFound=facecrop_cropFace(this->facedet, src, face, true/*register/equalize*/);
        if (!faceFound){
          #ifdef DEBUG
-         cout<<"DEBUG: FacePreProcessr has found no face."<<endl;
+         cout<<"DEBUG: FacePreprocessor has found no face."<<endl;
          #endif 
          return false;
        }
        #ifdef DEBUG
-       cout<<"DEBUG: FacePreProcessr has extracted a face."<<endl;
-       #endif 
+       cout<<"DEBUG: FacePreprocessor has extracted a face (w="<<face.size().width<<",h="<<face.size().height<<")"<<endl;
+       #endif
+       face.copyTo(out); 
        return true;
      }
      bool filterImage(Mat & src, Mat & out){
-       Mat resized;
+       Mat resized, filtered;
        #ifdef DEBUG
-       cout<<"DEBUG: FacePreProcessr is resizing and filtering image."<<endl;
+       cout<<"DEBUG: FacePreprocessor is resizing (h="<<this->imgsize.height<<",w="<<this->imgsize.width<<") and filtering image. ("<<this->gaborbank.size()<<" filters)"<<endl;
        #endif 
        resize(src, resized, this->imgsize, 0, 0, CV_INTER_AREA);
-       out=gaborbank_filterImage(resized, this->gaborbank);
+       filtered=gaborbank_filterImage(resized, this->gaborbank);
+       #ifdef DEBUG
+       cout<<"DEBUG: FacePreprocessor is filtered image h="<<filtered.size().height<<",w="<<filtered.size().width<<endl;
+       #endif 
+       filtered.copyTo(out);
        return true;
      }
      bool toFeaturesVector(Mat & src, Mat & out){
+        Mat feat;
         #ifdef DEBUG
-        cout<<"DEBUG: FacePreProcessr is transforming filtered image to feature vector."<<endl;
+        cout<<"DEBUG: FacePreprocessor is transforming filtered image to feature vector."<<endl;
         #endif 
-        out=src.reshape(1/*chan*/, 1/*rows*/);
+        feat=src.reshape(1/*chan*/, 1/*rows*/);
+        feat.copyTo(out);
         return true;
      }
      bool filterFeatures(Mat &src, Mat &out){
        #ifdef DEBUG
-       cout<<"DEBUG: features filtering not yet implemented. Just dont filter."<<endl;
+       cout<<"DEBUG: features filtering not yet implemented. Just copy."<<endl;
        #endif
        src.copyTo(out);
        return true; 

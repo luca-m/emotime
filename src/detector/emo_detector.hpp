@@ -52,7 +52,7 @@ namespace emotime {
      * @return the predicted value or class (depend on the binary predictor used)
      * */
     protected:
-    virtual float predict(D &detector, cv::Mat & frame){return 0.0f;}
+    virtual float predict(D *detector, cv::Mat & frame)=0;
     
     public:
     /**
@@ -162,7 +162,7 @@ namespace emotime {
         #ifdef DEBUG
         cerr<<"DEBUG: detector "<<ii->first<<" is predicting ";
         #endif
-        float prediction = predict(*(ii->second.second), frame);
+        float prediction = predict(ii->second.second, frame);
         #ifdef DEBUG
         cerr<<"("<<prediction<<")"<<endl;
         #endif
