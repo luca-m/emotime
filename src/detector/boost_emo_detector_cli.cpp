@@ -10,6 +10,7 @@
 #include <vector>
 #include <utility>
 #include <map>
+#include <iostream>
 
 using namespace std;
 using namespace cv;
@@ -17,7 +18,7 @@ using namespace emotime;
 
 void help() {
 	cout<<"Usage:"<<endl;
-	cout<<"   boost_emo_detector_cli <image> <FaceDetecXML> <width> <height> <nwidths> <nlambdas> <nthetas> [<boostXML> ..] "<<endl;
+	cout<<"   boost_emo_detector_cli <FaceDetecXML> <width> <height> <nwidths> <nlambdas> <nthetas> [<boostXML> ..] "<<endl;
 	cout<<"Parameters:"<<endl;
 	cout<<"   <image>       - The input image"<<endl;
 	cout<<"   <faceDetectConf>   - OpenCV cascade classifier configuration file (Haar or LBP) for face detection"<<endl;
@@ -36,27 +37,27 @@ void banner() {
 }
 
 int main( int argc, const char *argv[] ) {
-  if (argc < 2) {
+  if (argc < 7) {
 		banner();
 		help();
 		cerr<<"ERR: missing parameters"<<endl;
 		return -3;
 	} 
-	string infile = string(argv[1]);
-	const char *config = argv[2];
+	string infile; //= string(argv[1]);
+	const char *config = argv[1];
   cv::Size size(0,0);
   int nwidths, nlambdas, nthetas;
-  size.width = abs(atoi(argv[3]));
-	size.height = abs(atoi(argv[4]));
-  nwidths = abs(atoi(argv[5]));
-  nlambdas= abs(atoi(argv[6]));
-  nthetas = abs(atoi(argv[7]));
+  size.width = abs(atoi(argv[2]));
+	size.height = abs(atoi(argv[3]));
+  nwidths = abs(atoi(argv[4]));
+  nlambdas= abs(atoi(argv[5]));
+  nthetas = abs(atoi(argv[6]));
   vector<string> classifierPaths; 
   map<string, pair<Emotion, CvBoost *> > classifiers; 
   
-  if (argc>=9){
+  if (argc>=8){
     // Read boost XML paths
-    for (int i=8; i<argc;i++){
+    for (int i=7; i<argc;i++){
       classifierPaths.push_back(string(argv[i]));
     }  
   } else {
@@ -74,7 +75,7 @@ int main( int argc, const char *argv[] ) {
       cerr<<"DEBUG: Loading boosted tree "<<clpath;
       #endif 
       tree->load(clpath.c_str());
-      if( !tree->get_weak_predictors() ) {
+      if(!tree->get_weak_predictors()) {
         cerr<<"ERR: Could not read the classifier '"<<clpath<<"' (skip)"<<endl;
         continue;
       }
@@ -107,22 +108,27 @@ int main( int argc, const char *argv[] ) {
       classifiers.insert(entry);
     }
 
-		Mat img=matrix_io_load(infile);
-    Mat features;
-   
     FacePreProcessor preprocessor=FacePreProcessor(string(config), size.width, size.height, nwidths, nlambdas, nthetas);
-    bool canPreprocess=preprocessor.preprocess(img, features);
-    if (!canPreprocess){
-      cerr<<"ERR: Cannot preprocess this image '"<<infile<<"'"<<endl;
-      return -4;
-    } 
-    #ifdef DEBUG
-    cerr<<"DEBUG: BoostEmoDetector (features cols="<<features.cols<<",rows="<<features.rows<<",type="<<features.channels()<<")"<<endl;
-    #endif
     BoostEmoDetector emodetector=BoostEmoDetector(classifiers);
-    pair<Emotion,float> prediction=emodetector.predictMayorityOneVsAll(features);
-    cout<<"Emotion predicted: "<<emotionStrings(prediction.first)<<" with score "<<prediction.second<<endl;
-
+   
+    cout<<"Insert the image file path: "<<endl; 
+    while(std::getline(std::cin, infile)){
+      try {
+        cout<<"Processing '"<<infile<<"'"<<endl;
+		    Mat img=matrix_io_load(infile);
+        Mat features;
+        bool canPreprocess=preprocessor.preprocess(img, features);
+        if (!canPreprocess){
+          cerr<<"ERR: Cannot preprocess this image '"<<infile<<"'"<<endl;
+          continue;
+        } 
+        pair<Emotion,float> prediction=emodetector.predictMayorityOneVsAll(features);
+        cout<<"Emotion predicted: "<<emotionStrings(prediction.first)<<" with score "<<prediction.second<<endl;
+        cout<<"Insert the image file path: "<<endl; 
+      } catch (int ee){
+        cerr<<"ERR: Something wrong with '"<<infile<<"'"<<endl;
+      }
+    }
 	} catch (int e) {
 		cerr<<"ERR: Exception #"<<e<<endl;
 		return -e;

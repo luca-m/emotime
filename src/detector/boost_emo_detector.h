@@ -19,7 +19,7 @@ namespace emotime{
       }
       virtual float predict(CvBoost *detector, cv::Mat & frame){
         #ifdef DEBUG
-        cout<<"DEBUG: prediction with CvBoost at "<<detector<<", Frame r="<<frame.rows<<" c="<<frame.cols<<",t="<<frame.type()<<endl;
+        //cout<<"DEBUG: prediction with CvBoost at "<<detector<<", Frame r="<<frame.rows<<" c="<<frame.cols<<",t="<<frame.type()<<endl;
         #endif
         float pred=detector->predict(frame, Mat(), Range::all(), false, false);  
         return pred;
