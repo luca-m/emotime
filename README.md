@@ -91,3 +91,20 @@ The [Cohn-Kanade database](http://www.consortium.ri.cmu.edu/ckagree/) is one of 
 code labels (aka Action Units) and emotion labels (neutral, anger, contempt, disgust, fear, happy, sadness, surprise).
 
 
+## Training Results
+
+
+AdaBoost (opencv real_ada_boost) temporary results:
+
+``` 
+anger : 39/45   -  .8666666666
+contempt : 8/18   -  .4444444444
+disgust : 52/59   -  .8813559322
+fear : 18/25   -  .7200000000
+happy : 65/69   -  .9420289855
+neutral : 0/0   -  
+sadness : 23/28   -  .8214285714
+surprise : 81/83   -  .9759036144
+Train hit rate: 286/327   -  .8746177370
+```
+
