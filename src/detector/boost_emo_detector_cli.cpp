@@ -2,6 +2,7 @@
 #include "matrix_io.h"
 #include "gaborbank.h"
 #include "facecrop.h"
+#include "preprocessor.hpp"
 
 #include <opencv2/opencv.hpp>
 #include <iostream>
@@ -64,7 +65,6 @@ int main( int argc, const char *argv[] ) {
   }
 
 	try {
-
     // load classifiers and try to detect the emotion they have been trained to detect
     for (size_t i=0; i<classifierPaths.size();i++){
       string clpath= classifierPaths.at(i);
@@ -102,37 +102,20 @@ int main( int argc, const char *argv[] ) {
       classifiers.insert(entry);
     }
 
-		Mat img = matrix_io_load(infile);
-    Mat cropped;
-		Mat scaled;
+		Mat img=matrix_io_load(infile);
     Mat features;
-    
-    //#ifdef DEBUG
-    //cerr<<"DEBUG: extracting face"<<endl;
-    //#endif
-    FaceDetector facedetector=FaceDetector(config, true, true);
-    bool hasFace=facecrop_cropFace(facedetector, img, cropped, true);
-    if (!hasFace){
-      cerr<<"ERR: cannot detect any face in image "<<infile<<endl;
+   
+    FacePreProcessor preprocessor=FacePreProcessor(string(config), size.width, size.height, nwidths, nlambdas, nthetas);
+    bool canPreprocess=preprocessor.preprocess(img, features);
+    if (!canPreprocess){
+      cerr<<"ERR: Cannot preprocess this image."<<infile<<endl;
       return -4;
     } 
-		resize(cropped, scaled, size, 0, 0, CV_INTER_AREA);
-    
-    #ifdef DEBUG
-    cerr<<"DEBUG: creating feature vector"<<endl;
-    #endif
-    vector<struct GaborKern *> bank;
-    gaborbank_getCustomGaborBank(bank, (double) nwidths, (double) nlambdas, (double) nthetas);
-		features = gaborbank_filterImage(scaled, bank);
-    features.reshape(1, 1); // to feature vector
-    
     #ifdef DEBUG
     cerr<<"DEBUG: creating emo detector"<<endl;
     #endif
-    EmoDetector<CvBoost> emodetector=boost_EmoDetector_create_no_preprocess(classifiers);
-    //EmoDetector<CvBoost> emodetector=boost_EmoDetector_create(classifiers, size, nwidths, nlambdas, nthetas, NULL );
+    BoostEmoDetector emodetector=BoostEmoDetector(classifiers);
     pair<Emotion,float> prediction=emodetector.predictMayorityOneVsAll(features);
-
     cout<<"Emotion predicted: "<<emotionStrings(prediction.first)<<" with score "<<prediction.second<<endl;
 
 	} catch (int e) {

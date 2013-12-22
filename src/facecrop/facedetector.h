@@ -35,6 +35,7 @@ public:
 	 */
 	FaceDetector(string face_config_file, bool equalize, bool toGrayscale);
 	FaceDetector(string face_config_file);
+  FaceDetector();
 	virtual ~FaceDetector();
 	/**
 	 *

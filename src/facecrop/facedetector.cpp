@@ -11,11 +11,14 @@ using namespace std;
 
 namespace emotime{
 
+FaceDetector::FaceDetector(){
+
+}
 FaceDetector::FaceDetector(string face_config_file, bool equalize, bool toGrayscale) {
 	cascade_f.load(face_config_file);
 	autoEqualize=equalize;
 	autoGrayscale=toGrayscale;
-	assert(	!cascade_f.empty() );
+	assert(!cascade_f.empty() );
 }
 FaceDetector::FaceDetector(string face_config_file) {
 	cascade_f.load(face_config_file);
@@ -24,6 +27,7 @@ FaceDetector::FaceDetector(string face_config_file) {
 	assert(	!cascade_f.empty() );
 }
 FaceDetector::~FaceDetector() {
+  //TODO: release cascade_f
 }
 
 bool FaceDetector::detectFace(Mat & img, Rect & faceRegion) {

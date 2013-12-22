@@ -51,7 +51,8 @@ namespace emotime {
      * @param frame
      * @return the predicted value or class (depend on the binary predictor used)
      * */
-    float (*predict) (D & detector, cv::Mat & frame);
+    protected:
+    virtual float predict(D &detector, cv::Mat & frame){return 0.0f;}
     
     public:
     /**
@@ -59,21 +60,19 @@ namespace emotime {
      *
      * @param prediction_routine the prediction routine to use when predicting a value with a detector of the specified type <D>
      * */
-    EmoDetector( float (*prediction_routine) (D &, cv::Mat &) ){
+    EmoDetector(){
       detectors = map<string, pair<Emotion, D *> >();
-      predict = prediction_routine;
     }
     /**
      * Initialize an EmoDetector
      *
      * @param prediction_routine the prediction routine to use when predicting a value with a detector of the specified type <D>
      * */
-    EmoDetector( map<string, pair<Emotion, D *> > detmap, float (*prediction_routine) (D &, cv::Mat &) ){
+    EmoDetector( map<string, pair<Emotion, D *> > detmap ){
       #ifdef DEBUG
       cerr<<"DEBUG: adding "<<detmap.size()<<" detectors"<<endl;
       #endif
       detectors = detmap;
-      predict = prediction_routine;
     }
     /**
      * Release an EmoDetector

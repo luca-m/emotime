@@ -61,7 +61,7 @@ std::set<unsigned int> featselect_varImportance( CvBoost & boost ){
 }
 
 cv::Mat featselect_select(cv::Mat & feat_vec, std::set<unsigned int> & selected ){
-  Mat * feat_selected = new Mat( selected.size(), 1, CV_32FC1); 
+  Mat * feat_selected = new Mat(selected.size(), 1, CV_32FC1); 
   unsigned int i=0;
   for (set<unsigned int>::iterator it=selected.begin(); it!=selected.end(); ++it){
     unsigned int idx = *it;
