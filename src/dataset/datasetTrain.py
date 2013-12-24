@@ -73,7 +73,7 @@ def dataset_trainSVM(trainFolder, outFolder, config):
   print "INFO: starting svm training"
   for f in os.listdir(trainFolder):
     ext = os.path.splitext(f)[1]
-    of = f[:-len(ext)] + '.xml'
+    of = 'svm_' + f[:-len(ext)] + '.xml'
     bagoftask.append([config['TRAIN_SVM_TOOL'], '{0}'.format(join(trainFolder,
       f)), '{0}'.format(join(outFolder, of)) ])
 
