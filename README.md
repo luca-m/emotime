@@ -27,17 +27,22 @@ stuff that could be usefull to get in this topic:
 ## Project Structure
 
 	src
-		\-->dataset 		scripts for crating and using a dataset for classiefiers training
-		\-->facecrop 		utility for crop and register faces from images
-		\-->gaborbank		utility for applying a set of gabor filters to an image
-		\-->adaboost 		utility for train and use adaboost classifiers
-	doc
-							folder containing documentation
+		\-->dataset 		Scripts for dataset management
+		\-->facecrop 		utilities and modules for face cropping and registration
+		\-->gaborbank		utilities and modules for generating gabor filters and image filtering
+		\-->adaboost 		utilities and modules for adaboost train, prediction, and feature selection
+	  \-->svm         utilities and modules for svm training and prediction
+    \-->detector    Multiclass detector and preprocessor
+    \-->utils       Image/Matrix loading utilities, CSV supports, and so on..
+    
+  doc
+							Documentation (doxigen)
 	resources
-							folder containing third party resources (eg. OpenCV classifiers)
+							Containing third party resources (eg. OpenCV classifiers)
 	assets
-							output folder, where binaries and script will be installed
-
+							Binary folder
+  test
+              Some testing scripts here
 
 ## Build
 
