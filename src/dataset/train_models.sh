@@ -30,7 +30,7 @@ echo "1.2.b) Preparing CSV file containing training data"
 python2 ./datasetPrepTrain.py $DS_FOLDER 
 echo "------------------------"
 
-echo "1.3) Training with AdaBoost and selecting relevant features"
+echo "1.3) Training with $MODE and selecting relevant features"
 python2 ./datasetTrain.py $DS_FOLDER --mode $MODE
 echo "------------------------"
 
