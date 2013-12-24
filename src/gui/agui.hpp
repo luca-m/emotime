@@ -38,7 +38,7 @@ namespace emotime{
         capture=capt;
         preprocessor= fp;
         detector=detect;
-        mainWinTitle=string("AGui: Main");
+        mainWinTitle=string("AGui: Main Emotime Debug GUI");
         faceWinTitle=string("AGui: Face");
         featsWinTitle=string("AGui: Features");
         this->fps=fps;
@@ -46,12 +46,13 @@ namespace emotime{
       bool init(){
 	       namedWindow(mainWinTitle.c_str(), WINDOW_NORMAL);
 	       //namedWindow(faceWinTitle.c_str(), CV_WINDOW_AUTOSIZE);
-	       //namedWindow(featsWinTitle.c_str(), CV_WINDOW_AUTOSIZE);
+	       namedWindow(featsWinTitle.c_str(), CV_WINDOW_AUTOSIZE);
       }
       bool nextFrame(){
-        Mat frame;
+        Mat frame,copy;
         Mat featvector;
         if (capture->nextFrame(frame)){
+          frame.copyTo(copy);
           if (preprocessor->preprocess(frame,featvector)){
             pair<Emotion,float> prediction=detector->predict(featvector);
             stringstream ss;
@@ -61,6 +62,20 @@ namespace emotime{
             // QT only
             //displayOverlay(mainWinTitle.c_str(), osd.c_str(), 2000);
             imshow(mainWinTitle.c_str(), frame);
+            Mat face;
+            if(preprocessor->extractFace(copy,face)){
+              Mat gabor;
+              if (preprocessor->filterImage(face,gabor)){
+                double min;
+                double max;
+                cv::minMaxIdx(gabor, &min, &max);
+                cv::Mat adjMap;
+                cv::convertScaleAbs(gabor, adjMap, 255 / max);
+                imshow(featsWinTitle.c_str(), adjMap);
+              }
+            
+            }
+
           }
           return true;
        } else { 
