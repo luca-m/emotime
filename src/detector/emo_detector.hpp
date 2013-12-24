@@ -186,6 +186,14 @@ namespace emotime {
       #endif
       return max_pair;
     }
+    /**
+     * Default multiclass prediction method
+     * */
+    pair<Emotion, float> predict(cv::Mat & frame){
+      return predictMayorityOneVsAll(frame);
+    }
+
+
   }; // end of EmoDetector
 }
 

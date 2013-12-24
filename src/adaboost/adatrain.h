@@ -7,9 +7,11 @@
 #include <opencv2/opencv.hpp>
 
 #define ADATRAIN_TRAINING_PORTION 0.9f
+#define BOOST_ALGORITHM CvBoost::GENTLE 
 
 using namespace std;
 using namespace cv;
+
 
 /**
 * Train a AdaBoost detector using samples data from a CSV file (using CvMLData).

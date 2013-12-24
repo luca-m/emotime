@@ -44,14 +44,14 @@ namespace emotime{
         }
         return false;
       }  
-  }
+  };
   /**
    * Video Capture class. 
    * Enable capturing video frames from devices or video files. 
    * */
   class Video: public ACapture{
     private:
-      cv::Capture cap;
+      VideoCapture cap;
     protected: 
       bool extractFrame(Mat & frm){
         return cap.read(frm); 
@@ -70,7 +70,7 @@ namespace emotime{
         cap.open(infile.c_str());
       }
       ~Video(){
-       cap.release() 
+       cap.release(); 
       }
       bool isReady(){
         if (cap.isOpened()){
@@ -79,13 +79,13 @@ namespace emotime{
           return true;
         }
       }
-  }
+  };
   /**
    * Capture frames from a single image.
    * */
   class Image: public ACapture {
     private:
-      Mat image=NULL;
+      Mat image;
     protected:
       bool extractFrame(Mat & frm){
         if (isReady()){
@@ -102,9 +102,9 @@ namespace emotime{
         image=imread(infile.c_str(), CV_LOAD_IMAGE_COLOR);
       }
       bool isReady(){
-        return image!=NULL;
+        return image.cols>0 && image.rows>0;
       }
-  }
+  };
 }
 
 

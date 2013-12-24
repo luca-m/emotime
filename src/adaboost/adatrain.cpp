@@ -20,7 +20,7 @@ bool adatrain_trainCvMLData(CvBoost & boost, const char * csvFilePath, int nFeat
     #ifdef DEBUG
     cout<<"DEBUG: training adaboost (using CvMLData)"<<endl;
     #endif
-		boost.train(&cvml, CvBoostParams(CvBoost::REAL, nFeatures, 0, 1, false, 0), false);
+		boost.train(&cvml, CvBoostParams(BOOST_ALGORITHM, nFeatures, 0, 1, false, 0), false);
     if (validate){
 	  	std::vector<float> train_responses, test_responses;
 	  	float fl1 = boost.calc_error(&cvml, CV_TRAIN_ERROR, &train_responses);
@@ -39,12 +39,12 @@ bool adatrain_trainManual(CvBoost & boost, std::vector<std::string> & matrixFile
   
   // Load the first file in order to detect the number of samples attribute
   Mat sample = matrix_io_load(matrixFiles.at(0));
-  int nsamples = matrixFiles.size();
-  int nfeatures = sample.rows*sample.cols;
+  unsigned int nsamples = matrixFiles.size();
+  unsigned int nfeatures = sample.rows*sample.cols;
   Mat train_data = Mat(0, nfeatures, CV_32FC1); // rows are 0 because of Mat.push_back usage
   Mat train_labels = Mat(0, 1, CV_32FC1);
 
-  for (int i=0; i<matrixFiles.size();i++){
+  for (unsigned int i=0; i<nsamples;i++){
     string fpath=matrixFiles.at(i);
     int label=classes.at(i);
     sample = matrix_io_load(fpath);
@@ -58,9 +58,9 @@ bool adatrain_trainManual(CvBoost & boost, std::vector<std::string> & matrixFile
       sample_float=sample;
     }
     train_data.push_back(sample_float.reshape(1, 1)); // reshape(int channels, int rows)
-    train_labels.push_back(classes.at(i)); 
+    train_labels.push_back(label); 
   }
-  CvBoostParams params(CvBoost::REAL, train_data.cols, 0, 1, false, 0); 
+  CvBoostParams params(BOOST_ALGORITHM, train_data.cols, 0, 1, false, 0); 
   #ifdef DEBUG
   cout<<"DEBUG: training adaboost manually (nsamples="<<train_data.rows<<", nfeatures="<<train_data.cols<<")"<<endl;
   #endif

@@ -5,6 +5,7 @@ include_directories(${SRCDIR}/adaboost)
 include_directories(${SRCDIR}/utils)
 include_directories(${SRCDIR}/detector)
 include_directories(${SRCDIR}/svm)
+include_directories(${SRCDIR}/gui)
 
 add_subdirectory(facecrop)
 add_subdirectory(gaborbank)
@@ -13,4 +14,5 @@ add_subdirectory(dataset)
 add_subdirectory(utils)
 add_subdirectory(detector)
 add_subdirectory(svm)
+add_subdirectory(gui)
 
