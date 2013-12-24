@@ -81,9 +81,17 @@ Prepare training files and train classifiers
 	python2 datasetPrepTrain.py [-h] datasetFolder
 	python2 datasetTrain.py [-h] datasetFolder
 
-Use trained classifier
 
-	TBD
+#### Face Preprocessor
+
+In `src/detector/preprocessor.hpp` is present an attemp to wrap all the image preprocessing operation performed in training in order to provide a simple way to preprocess a face image to an higher level application. (feature filters not yet supported)
+
+#### Building a multiclass detector 
+
+Go to `src/detector/emo_detector.hpp`, here you can find a class you may specialize in order to hopefully support any binary classifier (eg. Boost, SVM ..).
+An example of how to extend can be found in `src/detector/boost_emo_detector.cpp`, nothing to complex, also a simple GUI here `src/detector/boost_emo_detector_cli.cpp`. The script used for calculating train error on adaboost trained models is in `test/adaboost_train_error.sh`.
+
+
 
 ## Dataset
 
