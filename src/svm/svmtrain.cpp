@@ -80,14 +80,15 @@ bool svmtrain_trainManual(CvSVM& svm, std::vector<std::string> &
   }
 
 #ifdef DEBUG
-  cout << "DEBUG: training svm manually (nsamples=" << train_data.rows << ", nfeatures=" << train_data.cols << ")" << endl;
+  cout << "DEBUG: training svm manually (nsamples = " << train_data.rows <<
+       ", nfeatures = " << train_data.cols << ")" << endl;
 #endif
 
   // Set up SVM's parameters
   CvSVMParams params;
   params.svm_type    = CvSVM::C_SVC;
   params.kernel_type = CvSVM::LINEAR;
-  params.term_crit   = cvTermCriteria(CV_TERMCRIT_ITER, 100, 1e-6);
+  params.term_crit   = cvTermCriteria(CV_TERMCRIT_ITER, SVM_MAX_ITERATIONS, SVM_ERROR_MARGIN);
 
   svm.train(train_data, train_labels, Mat(), Mat(), params);
   return true;
