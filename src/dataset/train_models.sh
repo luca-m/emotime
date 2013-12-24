@@ -3,7 +3,15 @@
 DS_FOLDER=../dataset
 DS_CONFIG=default.cfg
 
+MODE=adaboost
 
+if [[ $# -gt 0 ]] ; then
+  if [[ $1 == "svm" ]]; then
+    MODE=svm
+  elif [[ $1 == "adaboost" ]]; then
+    MODE=adaboost
+  fi
+fi
 
 #
 # PHASE 1
@@ -23,7 +31,7 @@ python2 ./datasetPrepTrain.py $DS_FOLDER
 echo "------------------------"
 
 echo "1.3) Training with AdaBoost and selecting relevant features"
-python2 ./datasetTrain.py $DS_FOLDER 
+python2 ./datasetTrain.py $DS_FOLDER --mode $MODE
 echo "------------------------"
 
 

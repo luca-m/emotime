@@ -54,7 +54,7 @@ bool svmtrain_trainManual(CvSVM& svm, std::vector<std::string> &
     return false;
   }
 
-  // Load the first file in order to detect the number of samples attribute
+  // Load the first file to detect the number of samples attribute
   Mat sample = matrix_io_load(matrixFiles.at(0));
   int nfeatures = sample.rows*sample.cols;
   Mat train_data = Mat(0, nfeatures, CV_32FC1); // rows are 0 because of Mat.push_back usage
