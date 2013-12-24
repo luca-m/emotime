@@ -82,9 +82,10 @@ def dataset_trainSVM(trainFolder, outFolder, config):
   nprocs = max(1, int(multiprocessing.cpu_count() * abs(float(config['TRAIN_SVM_CPU_USAGE']))))
   results = []
   pool = multiprocessing.Pool(processes= nprocs)
-  res = pool.map_async(_subproc_call, bagoftask, callback=
+  pool.map_async(_subproc_call, bagoftask, callback =
       results.append).get(2**32) # workaround for properly handling SIGINT
-  res.wait()
+  pool.close()
+  pool.join()
 
   print "INFO: SVM training finished."
   return results
