@@ -94,7 +94,7 @@ code labels (aka Action Units) and emotion labels (neutral, anger, contempt, dis
 ## Training Results
 
 
-AdaBoost (opencv real_ada_boost) temporary results:
+AdaBoost opencv real_ada_boost results (no neutral):
 
 ``` 
 anger : 39/45   -  .8666666666
@@ -107,4 +107,20 @@ sadness : 23/28   -  .8214285714
 surprise : 81/83   -  .9759036144
 Train hit rate: 286/327   -  .8746177370
 ```
+NOTE: decision tree.
 
+AdaBoost opencv gentle_ada_boost results (no neutral):
+
+```
+anger : 44/45   -  .9777777777
+contempt : 11/18   -  .6111111111
+disgust : 54/59   -  .9152542372
+fear : 19/25   -  .7600000000
+happy : 65/69   -  .9420289855
+neutral : 0/0   -  
+sadness : 20/28   -  .7142857142
+surprise : 82/83   -  .9879518072
+Train hit rate: 295/327   -  .9021406727
+
+```
+NOTE: regression tree.
