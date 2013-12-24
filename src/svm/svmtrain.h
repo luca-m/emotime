@@ -18,6 +18,8 @@
 #include <opencv2/opencv.hpp>
 #include <opencv2/ml/ml.hpp>
 
+#define SVM_MAX_ITERATIONS 10000
+#define SVM_ERROR_MARGIN 1e-6
 
 /**
 * @brief      Train a SVM classifieer using samples data from a CSV file (using CvMLData).

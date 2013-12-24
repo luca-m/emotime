@@ -50,7 +50,8 @@ bool svmtrain_trainManual(CvSVM& svm, std::vector<std::string> &
 {
 
   if (classes.size() != matrixFiles.size() && matrixFiles.size()==0){
-    cerr << "ERR: number of class not equals to matrix numbers or do not contain any element (size=" << matrixFiles.size() << ")" << endl; 
+    cerr << "ERR: number of class not equals to matrix numbers or do not "
+      "contain any element ( size = " << matrixFiles.size() << ")" << endl;
     return false;
   }
 
@@ -64,7 +65,9 @@ bool svmtrain_trainManual(CvSVM& svm, std::vector<std::string> &
     string fpath = matrixFiles.at(i);
     sample = matrix_io_load(fpath);
 #ifdef DEBUG
-    cout << "DEBUG: matrix '" << fpath << "' rows=" << sample.rows << ",cols=" << sample.cols << ",type=" << sample.type() << ",CV_32FC1=" << CV_32FC1 << endl;
+    cout << "DEBUG: matrix '" << fpath << "' rows =" << sample.rows << ", cols "
+      "= " << sample.cols << ", type = " << sample.type() << ", CV_32FC1 = " <<
+      CV_32FC1 << endl;
 #endif
     Mat sample_float;
     if (sample.type()!=CV_32FC1) {
@@ -77,14 +80,15 @@ bool svmtrain_trainManual(CvSVM& svm, std::vector<std::string> &
   }
 
 #ifdef DEBUG
-  cout << "DEBUG: training svm manually (nsamples=" << train_data.rows << ", nfeatures=" << train_data.cols << ")" << endl;
+  cout << "DEBUG: training svm manually (nsamples = " << train_data.rows <<
+       ", nfeatures = " << train_data.cols << ")" << endl;
 #endif
 
   // Set up SVM's parameters
   CvSVMParams params;
   params.svm_type    = CvSVM::C_SVC;
   params.kernel_type = CvSVM::LINEAR;
-  params.term_crit   = cvTermCriteria(CV_TERMCRIT_ITER, 100, 1e-6);
+  params.term_crit   = cvTermCriteria(CV_TERMCRIT_ITER, SVM_MAX_ITERATIONS, SVM_ERROR_MARGIN);
 
   svm.train(train_data, train_labels, Mat(), Mat(), params);
   return true;

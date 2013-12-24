@@ -50,22 +50,19 @@ def dataset_fillCohnKanade( dsFolder, ckFolder, ckEmoFolder, config):
         except:
           print "ERR: cannot parse emotional label for subject %s shot %s (skip:unknown_emo)" % (subj, s)
           continue
-      pic=pics[-1]
-      print "INFO: Picture '%s' has been marked as %s" % (pic, emo)
-      orig=join(ckFolder, join(subj, join(s, pic)))
-      dest=join(dsFolder, join(config['IMAGES_FOLDER'], join(emo, pic)))
-      # First Shot of every sequence is always neutral (as specified by database authors)
-      pic=pics[0]
-      emo=config['CLASSES'][0] #neutral
-      print "INFO: Picture '%s' has been marked as %s" % (pic, emo)
-      orig=join(ckFolder, join(subj, join(s, pic)))
-      dest=join(dsFolder, join(config['IMAGES_FOLDER'], join(emo, pic)))
 
-      try:
-        shutil.copy(orig, dest)
-      except:
-        print "ERR: cannot copy image '%s' to dataset '%s' "%(orig, dest)
-        continue
+      # Last picture is the final emotion, first picture is neutral
+      to_copy = [(pics[-1], emo), (pics[0], config['CLASSES'][0])]
+
+      for pic, emo in to_copy:
+        print "INFO: Picture '%s' has been marked as %s" % (pic, emo)
+        orig = join(ckFolder, join(subj, join(s, pic)))
+        dest = join(dsFolder, join(config['IMAGES_FOLDER'], join(emo, pic)))
+        try:
+          shutil.copy(orig, dest)
+        except:
+          print "ERR: cannot copy image '%s' to dataset '%s' "%(orig, dest)
+          continue
 
 if __name__ == "__main__":
   parser=argparse.ArgumentParser()

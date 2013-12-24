@@ -17,7 +17,10 @@
 #include <string>
 
 using namespace cv;
-using namespace std;
+
+using std::cout;
+using std::cerr;
+using std::endl;
 
 /**
  *  @brief          Prints the CLI banner
@@ -31,7 +34,8 @@ void banner();
  */
 void help();
 
-void help() {
+void help()
+{
   cout << "Usage:" << endl;
   cout << "   svmtrain_cli <trainFile> <outputFile> [<nfeatures>]" << endl;
   cout << "Parameters:" << endl;
@@ -43,7 +47,8 @@ void help() {
   cout << endl;
 }
 
-void banner() {
+void banner()
+{
   cout << "SVMTrain Utility:" << endl;
 	cout << "   Train an SVM classifier." << endl;
 	cout << "   Train a SVM classifier using data specified in a CSV file." << endl;
@@ -61,20 +66,20 @@ int main( int argc, const char* argv[] )
     cerr << "ERR: missing parameters" << endl;
     return -3;
   }
-  const char * infile=argv[1];
-  const char * outfile=argv[2];
-  bool samplesInCsv=false;
-  int nfeat=0;
+  const char * infile = argv[1];
+  const char * outfile = argv[2];
+  bool samplesInCsv = false;
+  int nfeat = 0;
   if (argc > 3) {
     nfeat = abs(atoi(argv[3]));
-    samplesInCsv=true;
+    samplesInCsv = true;
   }
 
 	try {
 		CvSVM svm;
-    if (samplesInCsv){
+    if (samplesInCsv) {
 		  svmtrain_trainCvMLData(svm, infile, nfeat, true);
-    } else{
+    } else {
       std::vector<string> files;
       std::vector<int> classes;
       csv_load_traindata(infile, files, classes);
