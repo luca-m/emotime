@@ -40,7 +40,8 @@ def _dataset_multiclass1to1(config):
 
 def _dataset_prepare(param):
   """ dataset_prepare wrapper """
-  return dataset_prepare( param[0], param[1], param[2] )
+  return dataset_prepare( param[0], param[1], param[2])
+
 def dataset_prepare( (goodClass,badClass), dsFolder, config):
   """ 
      Prepare train file with positive and negative samples.
@@ -90,7 +91,6 @@ def dataset_prepare( (goodClass,badClass), dsFolder, config):
               tf.write(",%f" % value)
         else:
           tf.write(",%s" % abspath(join(fold, f)))
-      
       tf.write("\n")
     #
     # NEGATIVE SAMPLES
@@ -113,24 +113,29 @@ def dataset_prepare( (goodClass,badClass), dsFolder, config):
               tf.write(",%f" % value)
         else:
           tf.write(",%s" % abspath(join(fold, f)))
-      
       tf.write("\n")
+  
   print "INFO: Done"
   return
 
-def dataset_prepTrainFiles(dsFolder, config):
+def dataset_prepTrainFiles(dsFolder, multiclassMode, config):
   """
       Prepare training files
   """
-  #print "INFO: preparing training files for 1 to 1 multiclass"
-  #for x in _dataset_multiclass1to1(config):
-  #  dataset_prepare(x, dsFolder, config)
-  
-  print "INFO: preparing training files for 1 to All multiclass"
   bagoftask=[]
-  for x in _dataset_multiclass1toAll(config):
-    #dataset_prepare(x, dsFolder, config)
-    bagoftask.append((x, dsFolder, config))
+  
+  if multiclassMode=='1vs1':
+    print "INFO: preparing training files for 1 to 1 multiclass"
+    for x in _dataset_multiclass1to1(config):
+      #dataset_prepare(x, dsFolder, config)
+      bagoftask.append((x, dsFolder, config))
+  
+  if multiclassMode=='1vsAll': 
+    print "INFO: preparing training files for 1 to All multiclass"
+    for x in _dataset_multiclass1toAll(config):
+      #dataset_prepare(x, dsFolder, config)
+      bagoftask.append((x, dsFolder, config))
+  
   nprocs=max( 1, int(multiprocessing.cpu_count()*abs(float(config['TRAIN_ADA_CPU_USAGE']))) )
   pool=multiprocessing.Pool(processes=nprocs)
   res=pool.map_async(_dataset_prepare, bagoftask).get(2**32) # Workaround for handling SIGINT properly
@@ -138,12 +143,13 @@ def dataset_prepTrainFiles(dsFolder, config):
 if __name__ == "__main__":
   parser = argparse.ArgumentParser()
   parser.add_argument("--cfg", default="dataset.cfg", help="Dataset config file name")
+  parser.add_argument("--mode", default="1vsAll", choices=['1vs1', '1vsAll'], help="Training mode for multiclass classification: 1vs1 or 1vsAll")
   parser.add_argument("dsFolder",help="Dataset base folder")
   args = parser.parse_args()
   try:
     config={}
     config=dcp.parse_ini_config(join(args.dsFolder, args.cfg))
-    dataset_prepTrainFiles(args.dsFolder, config)
+    dataset_prepTrainFiles(args.dsFolder, args.mode, config)
   except Exception as e:
     print "ERR: something wrong (%s)" % str(e)
   
