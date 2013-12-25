@@ -8,14 +8,14 @@ using namespace cv;
 using namespace emotime;
 
 float adapredict_predictNoPreprocess( CvBoost & boost, cv::Mat & img ){
-  vector<struct GaborKern*> bank;
+  vector<GaborKernel*> bank;
   Size s(0,0);
   gaborbank_getGaborBank(bank);
   return adapredict_predict( boost, bank, img, s, NULL );
 }
 
 float adapredict_predictPreprocess( CvBoost & boost, cv::Mat & img, cv::Size & scaleSize, const char * faceDetectConf ){
-  vector<struct GaborKern*> bank;
+  vector<emotime::GaborKernel*> bank;
   gaborbank_getGaborBank(bank);
   emotime::FaceDetector detector(faceDetectConf);
   return adapredict_predict(boost, bank, img, scaleSize, &detector);
@@ -36,7 +36,7 @@ cv::Mat adapredict_imageToFeatVec(cv::Mat & src){
   return src.reshape(1 /*chan*/, 1 /*rows*/);
 }
 
-float adapredict_predict( CvBoost & boost, std::vector<struct GaborKern*> & bank, cv::Mat & img, cv::Size & scaleSize, emotime::FaceDetector * facedetector ){
+float adapredict_predict( CvBoost & boost, std::vector<emotime::GaborKernel*> & bank, cv::Mat & img, cv::Size & scaleSize, emotime::FaceDetector * facedetector ){
   Size suggSize;
   Mat image;
   Mat scaled;
@@ -70,7 +70,7 @@ float adapredict_predict( CvBoost & boost, std::vector<struct GaborKern*> & bank
   #ifdef DEBUG
   cout<<"DEBUG: predicting";
   #endif
-  prediction = boost.predict( feat, Mat(), Range::all(), false, false);
+  prediction=boost.predict(feat, Mat(), Range::all(), false, false);
   #ifdef DEBUG
   cout<<" ("<<prediction<<")"<<endl;
   #endif

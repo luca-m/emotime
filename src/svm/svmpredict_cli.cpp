@@ -21,20 +21,7 @@ using std::cout;
 using std::cerr;
 using std::endl;
 
-/**
- *  @brief          Prints the CLI banner
- *
- */
-void banner();
-
-/**
- *  @brief          Prints the CLI help
- *
- */
-void help();
-
-void help()
-{
+void help(){
   cout << "Usage:" << endl;
   cout << "   svmpredict_cli <svmConfig> <image> [" << "<width> <height> " <<
     "<nwidths> <nlambdas> <nthetas> <faceDetectConf>]" << endl;
@@ -53,16 +40,14 @@ void help()
   cout << endl;
 }
 
-void banner()
-{
+void banner(){
   cout << "SVMPredict Utility:" << endl;
   cout << "     Predict the an SVM classifier " << endl;
 }
 
-int main( int argc, const char *argv[] )
-{
+int main( int argc, const char *argv[] ){
   bool preprocess = false;
-  if (argc < 2) {
+  if (argc<2) {
     banner();
     help();
     cerr << "ERR: missing parameters" << endl;
@@ -75,7 +60,7 @@ int main( int argc, const char *argv[] )
   int nwidths, nlambdas, nthetas;
   float prediction;
 
-  if (argc == 9) {
+  if (argc==9) {
     preprocess = true;
     s.width = abs(atoi(argv[3]));
     s.height = abs(atoi(argv[4]));
@@ -95,9 +80,8 @@ int main( int argc, const char *argv[] )
       cerr << "ERR: Could not read the classifier " << config << endl;
       return -1;
     }
-
     if (preprocess){
-      vector<struct GaborKern *> bank;
+      vector<emotime::GaborKernel *> bank;
       gaborbank_getCustomGaborBank(bank, (double) nwidths, (double) nlambdas, (double) nthetas);
       emotime::FaceDetector facedetector =  emotime::FaceDetector(detectorConf);
       prediction = svmpredict_predict(svm, bank, img, s, &facedetector);

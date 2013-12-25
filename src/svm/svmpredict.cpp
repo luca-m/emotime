@@ -17,7 +17,7 @@ using std::vector;
 
 float svmpredict_predictNoPreprocess(CvSVM& svm, cv::Mat& img)
 {
-  vector<struct GaborKern*> bank;
+  vector<emotime::GaborKernel*> bank;
   Size s(0, 0);
   gaborbank_getGaborBank(bank);
   return svmpredict_predict(svm, bank, img, s, NULL);
@@ -26,7 +26,7 @@ float svmpredict_predictNoPreprocess(CvSVM& svm, cv::Mat& img)
 float svmpredict_predictPreprocess(CvSVM& svm, cv::Mat& img, cv::Size&
     scaleSize, const char* faceDetectConf)
 {
-  vector<struct GaborKern*> bank;
+  vector<emotime::GaborKernel*> bank;
   gaborbank_getGaborBank(bank);
   emotime::FaceDetector detector(faceDetectConf);
   return svmpredict_predict(svm, bank, img, scaleSize, &detector);
@@ -40,7 +40,7 @@ cv::Mat svmpredict_imageToFeatVec(cv::Mat & src)
   return src.reshape(1 /*chan*/, 1 /*rows*/);
 }
 
-float svmpredict_predict(CvSVM& svm, std::vector<struct GaborKern*>& bank,
+float svmpredict_predict(CvSVM& svm, std::vector<emotime::GaborKernel*>& bank,
     cv::Mat& img, cv::Size & scaleSize, emotime::FaceDetector* facedetector)
 {
   Size suggSize;

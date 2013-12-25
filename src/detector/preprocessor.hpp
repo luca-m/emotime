@@ -34,7 +34,7 @@ namespace emotime{
   class FacePreProcessor{
     private:
 		  FaceDetector facedet;
-      vector<GaborKern*> gaborbank;
+      vector<GaborKernel*> gaborbank;
       Size imgsize;
       double nwidths;
       double nlambdas;
@@ -51,6 +51,10 @@ namespace emotime{
      }
      ~FacePreProcessor(){
        facedet.~FaceDetector();
+       for (unsigned int i=0; i<gaborbank.size();i++){
+        delete gaborbank.at(i);
+       }
+       gaborbank.clear();
        //delete gaborbank; // should usa a class not a structure..
      }
      bool extractFace(Mat & src, Mat & out){

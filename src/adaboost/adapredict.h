@@ -49,7 +49,7 @@ cv::Mat adapredict_imageToFeatVec(cv::Mat & src);
 * @param facedetector   face detector to use for face extraction. If NULL no face cropping will be made.
 * @return the prediction
 */
-float adapredict_predict( CvBoost & boost, std::vector<struct GaborKern*> & bank, cv::Mat & img, cv::Size & scaleSize, emotime::FaceDetector * facedetector );
+float adapredict_predict( CvBoost & boost, std::vector<emotime::GaborKernel*> & bank, cv::Mat & img, cv::Size & scaleSize, emotime::FaceDetector * facedetector );
 
 #endif // _H_ADAPREDICT
 

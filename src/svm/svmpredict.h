@@ -71,7 +71,7 @@ cv::Mat svmpredict_imageToFeatVec(cv::Mat& src);
  * @return the prediction
  *
  */
-float svmpredict_predict(CvSVM& svm, std::vector<struct GaborKern*>& bank,
+float svmpredict_predict(CvSVM& svm, std::vector<emotime::GaborKernel*>& bank,
     cv::Mat& img, cv::Size & scaleSize, emotime::FaceDetector* facedetector);
 
 #endif // _H_SVMPREDICT

@@ -75,7 +75,7 @@ Mat gaborbank_getGaborKernel(Size ksize, double sigma, double theta, double
   return kernel;
 }
 
-void gaborbank_getCustomGaborBank(std::vector<struct GaborKern *> & bank,
+void gaborbank_getCustomGaborBank(std::vector<emotime::GaborKernel *> & bank,
     double nwidths, double nlambdas, double nthetas) {
 #ifdef DEBUG
   cout<<"DEBUG: generating gabor bank with nwidths="<<nwidths<<",nlambdas="<<nlambdas<<",nthetas="<<nthetas<<endl; 
@@ -100,29 +100,19 @@ void gaborbank_getCustomGaborBank(std::vector<struct GaborKern *> & bank,
         _lambda+=(GABOR_LAMBDA_MAX-GABOR_LAMBDA_MIN)/((double)(nlambdas<=0?1:nlambdas)) ) {
       for ( _theta=GABOR_THETA_MIN; _theta<GABOR_THETA_MAX;
           _theta+=(GABOR_THETA_MAX-GABOR_THETA_MIN)/((double)(nthetas<=0?1:nthetas)) ) {
-        struct GaborKern * kern = new struct GaborKern;
-        kern->real = gaborbank_getGaborKernel(kernelSize, _sigma, _theta,
-            _lambda, _gamma, _psi, CV_32F, true).clone();
-        kern->imag = gaborbank_getGaborKernel(kernelSize, _sigma, _theta,
-            _lambda, _gamma, _psi, CV_32F, false).clone();
+        emotime::GaborKernel * kern = new emotime::GaborKernel(gaborbank_getGaborKernel(kernelSize, _sigma, _theta, _lambda, _gamma, _psi, CV_32F, true), gaborbank_getGaborKernel(kernelSize, _sigma, _theta, _lambda, _gamma, _psi, CV_32F, false) );
         bank.push_back(kern);
-#ifdef DEBUG
-        //cout<<"DEBUG: generated gabor kernels with width="<<fwidth<<",lambda="<<_lambda<<",tetha="<<_theta<<endl;
-        //imshow("real",kern->real);
-        //imshow("imag",kern->imag);
-        //waitKey(0);
-#endif
       }
     }
   }
 }
 
-void gaborbank_getGaborBank(std::vector<struct GaborKern *> & bank) {
+void gaborbank_getGaborBank(std::vector<emotime::GaborKernel *> & bank) {
   gaborbank_getCustomGaborBank(bank,GABOR_DEFAULT_NWIDTH,GABOR_DEFAULT_NLAMBDA,GABOR_DEFAULT_NTHETA);  
   return;
 }
 
-Size gaborbank_getFilteredImgSize( cv::Mat & src, std::vector<struct GaborKern *> & bank ){
+Size gaborbank_getFilteredImgSize(cv::Mat & src, std::vector<emotime::GaborKernel *> & bank ){
 #ifdef DEBUG
   cout<<"DEBUG: calculating correct size for filtered image."<<endl; 
 #endif
@@ -133,7 +123,7 @@ Size gaborbank_getFilteredImgSize( cv::Mat & src, std::vector<struct GaborKern *
   return s;
 }
 
-Mat gaborbank_filterImage( cv::Mat & src, std::vector<struct GaborKern *> & bank ){
+Mat gaborbank_filterImage( cv::Mat & src, std::vector<emotime::GaborKernel *> & bank ){
 #ifdef DEBUG
   cout<<"DEBUG: process the image with bank of "<<bank.size()<<" gabor filters"<<endl; 
 #endif
@@ -151,25 +141,23 @@ Mat gaborbank_filterImage( cv::Mat & src, std::vector<struct GaborKern *> & bank
   src.convertTo(image, CV_32F);
 
   for (k = 0; k < bank.size(); k++) {
-    GaborKern * gk = bank.at(k);
-    Mat real = gk->real;
-    Mat imag = gk->imag;
+    emotime::GaborKernel * gk = bank.at(k);
+    Mat real = gk->getReal();
+    Mat imag = gk->getImag();
     Mat freal = Mat(size,CV_32F);
     Mat fimag = Mat(size,CV_32F);
     Mat magn  = Mat(size,CV_32F);
     filter2D(src, freal, CV_32F, real);
     filter2D(src, fimag, CV_32F, imag);
-
     // Calculating Gabor magnitude
     pow(freal,2,freal);
     pow(fimag,2,fimag);
     add(fimag,freal,magn);
     sqrt(magn,magn);
-
     // Write all the filtered image vertically stacked.
     // TODO: use image1.copyTo ( Mat ( display, Rect(y,x,h,w) ) )
-    for (i = 0; i< size.height; i++) {
-      for (j = 0; j < size.width; j++) {
+    for (i = 0; i<(unsigned int)size.height; i++) {
+      for (j = 0; j<(unsigned int)size.width; j++) {
         dest->at<float>(i + (k * size.height), j) = magn.at<float>(i,j);
       }
     }

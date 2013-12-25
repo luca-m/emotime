@@ -19,18 +19,7 @@
 
 using namespace std;
 using namespace cv;
-
-/**
- *  @brief          Prints the CLI banner
- *
- */
-void banner();
-
-/**
- *  @brief          Prints the CLI help
- *
- */
-void help();
+using namespace emotime;
 
 void help() {
   cout << "Usage:" << endl;
@@ -46,23 +35,19 @@ void help() {
   cout << "   <filterFile>    - Text file containing the list of pixel to keep" << endl;
   cout << endl;
 }
-
 void banner() {
    cout << "GaborBank Utility:" << endl;
    cout << "     Filter with a bank of Gabor filters with different " <<  endl;
    cout << "     orientations and frequencies. (Gabor magnitude)" << endl;
 }
 
-int main( int argc, const char* argv[] )
-{
-
+int main( int argc, const char* argv[] ){
   if (argc < 5) {
     banner();
     help();
     cerr << "ERR: missing parameters" << endl;
     return -3;
   }
-
   try {
     unsigned int width = abs(atoi(argv[1]));
     unsigned int height = abs(atoi(argv[2]));
@@ -84,7 +69,7 @@ int main( int argc, const char* argv[] )
     Mat scaled;
     resize( img, scaled, Size(width,height), 0, 0, CV_INTER_AREA );
 
-    vector<GaborKern*> bank;
+    vector<GaborKernel*> bank;
     gaborbank_getCustomGaborBank(bank, (double) nwidths, (double) nlambdas, (double) nthetas);
     cout << "INFO: filtering with " << bank.size() << " filters" << endl;
     Mat dest = gaborbank_filterImage(scaled, bank);
@@ -93,12 +78,9 @@ int main( int argc, const char* argv[] )
       set<unsigned int> selected=featselect_load(filterfile); 
       dest = featselect_select(dest,selected);
     }
-
     cout << "INFO: saving to " << outfile << endl;
     matrix_io_save(dest, outfile);
-
     dest.release();
-
   } catch (int e) {
     cerr << "ERR: Exception #" << e << endl;
     return -e;

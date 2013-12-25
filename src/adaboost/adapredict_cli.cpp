@@ -66,7 +66,7 @@ int main( int argc, const char *argv[] ) {
       return -1;
     }
     if (preprocess){
-      vector<struct GaborKern *> bank;
+      vector<emotime::GaborKernel *> bank;
       gaborbank_getCustomGaborBank(bank, (double) nwidths, (double) nlambdas, (double) nthetas);
       emotime::FaceDetector facedetector=  emotime::FaceDetector(detectorConf);
 		  prediction = adapredict_predict(boost, bank, img, s, &facedetector);

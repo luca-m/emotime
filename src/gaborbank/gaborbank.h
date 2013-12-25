@@ -33,15 +33,35 @@
 
 #include <opencv2/opencv.hpp>
 
-/**
- * Data structure containing the both real and imaginary part of a Gabor kernel.
- */
-typedef struct GaborKern {
-  /// The imaginary part
-  cv::Mat real;
-  /// The imaginary part
-  cv::Mat imag;
-} GaborKern;
+///**
+// * Data structure containing the both real and imaginary part of a Gabor kernel.
+// */
+//typedef struct GaborKern {
+//  /// The imaginary part
+//  CV::mAT real;
+//  /// The imaginary part
+//  cv::Mat imag;
+//} GaborKern;
+
+namespace emotime{
+  class GaborKernel{
+    private:
+      cv::Mat real;
+      cv::Mat imag;
+    public:
+      GaborKernel(){}
+      GaborKernel(cv::Mat r, cv::Mat i){
+        r.copyTo(real);
+        i.copyTo(imag);
+      }
+      ~GaborKernel(){
+        real.release();
+        imag.release();
+      }
+      cv::Mat getReal(){return real;}
+      cv::Mat getImag(){return imag;} 
+  };
+}
 
 /**
  * @brief: Gabor Kernel generator.
@@ -87,7 +107,7 @@ cv::Mat gaborbank_getGaborKernel(cv::Size ksize, double sigma, double theta,
  * @see "Jesper Juul Henriksen Thesis" at page 22  (http://covil.sdu.dk/publications/jespermaster07.pdf)
  *
  */
-void gaborbank_getCustomGaborBank(std::vector<struct GaborKern *> & bank,
+void gaborbank_getCustomGaborBank(std::vector<emotime::GaborKernel *> & bank,
     double nwidths, double nlambdas, double nthetas);
 
 /**
@@ -100,7 +120,7 @@ void gaborbank_getCustomGaborBank(std::vector<struct GaborKern *> & bank,
  * GABOR_DEFAULT_NWIDTH, GABOR_DEFAULT_NLAMBDA, GABOR_DEFAULT_NTHETA)
  *
  */
-void gaborbank_getGaborBank(std::vector<struct GaborKern *> & bank);
+void gaborbank_getGaborBank(std::vector<emotime::GaborKernel *> & bank);
 
 /**
  * @brief Filter the input (greyscale) image with the given kernels returning
@@ -110,6 +130,6 @@ void gaborbank_getGaborBank(std::vector<struct GaborKern *> & bank);
  * @param [in]  bank  the GaborKern bank
  * 
  * */
-cv::Mat gaborbank_filterImage(cv::Mat & src, std::vector<struct GaborKern *> & bank);
+cv::Mat gaborbank_filterImage(cv::Mat & src, std::vector<emotime::GaborKernel *> & bank);
 
 #endif // _H_GABORBANK

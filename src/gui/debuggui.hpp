@@ -82,7 +82,7 @@ namespace emotime{
       GaborGui(ACapture * cap, string facedetconf){
         preprocessor=NULL;
         capture=cap;
-        size=Size(32,32);
+        size=Size(48,48);
         nwidths=1;
         nlambdas=5;
         nthetas=8;
@@ -92,10 +92,10 @@ namespace emotime{
       } 
       bool init(){
 	       namedWindow(mainWinTitle.c_str(), WINDOW_NORMAL);
-	       namedWindow(gaborWinTitle.c_str(), WINDOW_NORMAL);
+	       namedWindow(gaborWinTitle.c_str(), WINDOW_AUTOSIZE);
          createTrackbar("nwidths",mainWinTitle.c_str(), &nwidths, 4, GaborGui::on_trackbar, this);
-         createTrackbar("nlamdas",mainWinTitle.c_str(), &nlambdas, 20, GaborGui::on_trackbar, this);
-         createTrackbar("nthetas",mainWinTitle.c_str(), &nthetas, 20, GaborGui::on_trackbar, this);
+         createTrackbar("nlamdas",mainWinTitle.c_str(), &nlambdas, 12, GaborGui::on_trackbar, this);
+         createTrackbar("nthetas",mainWinTitle.c_str(), &nthetas, 12, GaborGui::on_trackbar, this);
       }
       bool nextFrame(){
         Mat frame;
@@ -103,7 +103,7 @@ namespace emotime{
         if (capture->nextFrame(frame)){
           currframe.release();
           frame.copyTo(currframe);
-          on_trackbar(0,NULL);
+          on_trackbar(1,this);
         }
       }
       bool run(){
