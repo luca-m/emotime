@@ -16,15 +16,16 @@ using namespace cv;
 namespace emotime {
   
   enum Emotion {
-    NEUTRAL = 0,
-    ANGER = 1,
-    CONTEMPT = 2,
-    DISGUST= 3,
-    FEAR= 4,
-    HAPPY= 5,
-    SADNESS= 6,
-    SURPRISE= 7,
-    UNKNOWN= 8
+    NEUTRAL=0,
+    ANGER=1,
+    CONTEMPT=2,
+    DISGUST=3,
+    FEAR=4,
+    HAPPY=5,
+    SADNESS=6,
+    SURPRISE=7,
+    OTHERS=8,
+    UNKNOWN=9
   };
 
   /** 
@@ -36,6 +37,8 @@ namespace emotime {
    * Generic class for performing multi-class classification using binary classifiers.
    * At the moment implements only the voting scheme: return the class which receive much more votes.
    *
+   * TODO: from map<string, pair<Emotion, D *> > 
+   *       to map<string, pair<pair<Emotion,Emotion>, D *> > to support 1vs1 multiclass method
    * */
   template <class D>
   class EmoDetector {

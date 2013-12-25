@@ -13,6 +13,7 @@ string emotime::emotionStrings(Emotion emo){
         case HAPPY: return string("happy");
         case SADNESS: return string("sadness");
         case SURPRISE: return string("surprise");
+        case OTHERS: return string("others");
         default: return string("unknown");
       }
 };
