@@ -22,7 +22,6 @@ void help() {
 	cout<<"Usage:"<<endl;
 	cout<<"   boost_emo_detector_cli <FaceDetecXML> <width> <height> <nwidths> <nlambdas> <nthetas> [<boostXML> ..] "<<endl;
 	cout<<"Parameters:"<<endl;
-	cout<<"   <image>       - The input image"<<endl;
 	cout<<"   <faceDetectConf>   - OpenCV cascade classifier configuration file (Haar or LBP) for face detection"<<endl;
 	cout<<"   <width>       - Width of the image, the input image will be scaled"<<endl;
 	cout<<"   <height>      - Height of the image, the input image will be scaled"<<endl;
@@ -34,8 +33,8 @@ void help() {
 	cout<<endl;
 }
 void banner() {
-	cout<<"BoostEmoDetector Utility:"<<endl;
-	cout<<"     Detect emotions using boosted trees"<<endl;
+	cout<<"BoostDebugGui Utility:"<<endl;
+	cout<<"     Read video in stdin"<<endl;
 }
 
 int main( int argc, const char *argv[] ) {

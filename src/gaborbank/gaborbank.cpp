@@ -94,12 +94,12 @@ void gaborbank_getCustomGaborBank(std::vector<struct GaborKern *> & bank,
   int minfwidth=GABOR_WIDTH_MIN;
   int maxfwidth=GABOR_WIDTH_MAX;
 
-  for ( fwidth=minfwidth; fwidth<maxfwidth; fwidth+=(int)((maxfwidth-minfwidth)/((double)nwidths))) {
+  for ( fwidth=minfwidth; fwidth<maxfwidth; fwidth+=(int)((maxfwidth-minfwidth)/((double)(nwidths<=0?1:nwidths)))) {
     cv::Size kernelSize(fwidth, fwidth);
     for ( _lambda=GABOR_LAMBDA_MIN; _lambda<GABOR_LAMBDA_MAX;
-        _lambda+=(GABOR_LAMBDA_MAX-GABOR_LAMBDA_MIN)/((double)nlambdas) ) {
+        _lambda+=(GABOR_LAMBDA_MAX-GABOR_LAMBDA_MIN)/((double)(nlambdas<=0?1:nlambdas)) ) {
       for ( _theta=GABOR_THETA_MIN; _theta<GABOR_THETA_MAX;
-          _theta+=(GABOR_THETA_MAX-GABOR_THETA_MIN)/((double)nthetas) ) {
+          _theta+=(GABOR_THETA_MAX-GABOR_THETA_MIN)/((double)(nthetas<=0?1:nthetas)) ) {
         struct GaborKern * kern = new struct GaborKern;
         kern->real = gaborbank_getGaborKernel(kernelSize, _sigma, _theta,
             _lambda, _gamma, _psi, CV_32F, true).clone();

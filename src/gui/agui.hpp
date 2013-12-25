@@ -71,7 +71,9 @@ namespace emotime{
                 cv::minMaxIdx(gabor, &min, &max);
                 cv::Mat adjMap;
                 cv::convertScaleAbs(gabor, adjMap, 255 / max);
-                imshow(featsWinTitle.c_str(), adjMap);
+                Mat bigger;
+                resize(adjMap,bigger,Size(adjMap.size().width*3,adjMap.size().height*3), 0, 0, CV_INTER_LINEAR);
+                imshow(featsWinTitle.c_str(), bigger);
               }
             
             }

@@ -99,7 +99,7 @@ namespace emotime{
        * Load an image from file.
        * */
       Image(string infile, bool grayScale): ACapture(grayScale) {
-        image=imread(infile.c_str(), CV_LOAD_IMAGE_COLOR);
+        image=imread(infile.c_str(), CV_LOAD_IMAGE_GRAYSCALE);
       }
       bool isReady(){
         return image.cols>0 && image.rows>0;
