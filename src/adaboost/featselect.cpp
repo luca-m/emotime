@@ -44,7 +44,7 @@ std::set<unsigned int> featselect_varImportance( CvBoost & boost ){
      #endif
      for (int i = 0; i < predictors->total; i++) {
        predictor = *CV_SEQ_ELEM(predictors, CvBoostTree*, i);
-       const CvDTreeNode * node = predictor->get_root();
+//       const CvDTreeNode * node = predictor->get_root();
        const CvMat * var_importance = predictor->get_var_importance();
        for (int j = 0; j < var_importance->cols * var_importance->rows; j++) {
          double val = var_importance->data.db[j];
@@ -55,6 +55,7 @@ std::set<unsigned int> featselect_varImportance( CvBoost & boost ){
            selected->insert(j);
          }
        }
+       predictor->clear();
      }
   }
 	return *selected;
