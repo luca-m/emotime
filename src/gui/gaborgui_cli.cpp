@@ -32,12 +32,12 @@ void banner() {
 }
 
 int main( int argc, const char *argv[] ) {
-  if (argc < 2) {
+  if (argc < 3) {
 		banner();
 		help();
 		cerr<<"ERR: missing parameters"<<endl;
 		return -3;
-	} 
+	}
 	const char *faceDetConfig = argv[1];
   const char *infile = argv[2];
 	try {
