@@ -34,6 +34,9 @@ echo "1.3) Training with $MODE and selecting relevant features"
 python2 ./datasetTrain.py $DS_FOLDER --mode $MODE
 echo "------------------------"
 
+echo "1.4) Verifying the prediction of $MODE"
+python2 ./datasetVerifyPrediction.py --mode $MODE $DS_FOLDER
+echo "------------------------"
 
 #
 # PHASE 2

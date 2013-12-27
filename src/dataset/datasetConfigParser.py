@@ -40,5 +40,8 @@ def parse_ini_config(configFile):
   for opt in parser.options('TRAIN'):
     config['TRAIN_{0}'.format(upper(opt))]=parser.get('TRAIN',opt)
 
+  for opt in parser.options('DETECTION'):
+    config['DETECTION_{0}'.format(upper(opt))]=parser.get('DETECTION',opt)
+
   return config
 
