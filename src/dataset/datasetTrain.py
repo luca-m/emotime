@@ -72,8 +72,7 @@ def dataset_trainSVM(trainFolder, outFolder, config):
 
   print "INFO: starting svm training"
   for f in os.listdir(trainFolder):
-    fcmp = os.path.splitext(f)[0].split("_")
-    of = fcmp[0].upper() + "_" + "_".join(fcmp[1:]) + '_svm.xml'
+    of = os.path.splitext(f)[0] + '.xml'
     bagoftask.append([config['TRAIN_SVM_TOOL'], '{0}'.format(join(trainFolder,
       f)), '{0}'.format(join(outFolder, of)) ])
 
@@ -94,10 +93,10 @@ def dataset_run_training(dsFolder, config, mode):
   """
       Start training
   """
-  classifFldr=join(dsFolder, config['CLASSIFIER_FOLDER']) 
   trainFldr=join(dsFolder, config['TRAIN_FOLDER']) 
 
   if mode == "adaboost":
+    classifFldr=join(dsFolder, config['CLASSIFIER_FOLDER'])
     print "INFO: training decision trees using AdaBoost"
     results=dataset_trainAdaboost(trainFldr, classifFldr, config)
     classif_file = config['TRAIN_ADA_FILTER_FNAME']
@@ -105,6 +104,7 @@ def dataset_run_training(dsFolder, config, mode):
     dataset_selectFeatures(classifFldr, join(classifFldr, classif_file), config)
 
   elif mode == "svm":
+    classifFldr=join(dsFolder, config['CLASSIFIER_SVM_FOLDER'])
     print "INFO: training decision trees using SVM"
     results = dataset_trainSVM(trainFldr, classifFldr, config)
 

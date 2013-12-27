@@ -28,6 +28,9 @@ def dataset_init(dsPath, config, cfgFile, dsCfgName):
   pth=join(dsPath, config['CLASSIFIER_FOLDER'])
   if not os.path.exists(pth):
     os.makedirs(pth)
+  pth=join(dsPath, config['CLASSIFIER_SVM_FOLDER'])
+  if not os.path.exists(pth):
+    os.makedirs(pth)
   # Copy configuration
   with open(cfgFile, "r") as conf:
     configuration = conf.read()
