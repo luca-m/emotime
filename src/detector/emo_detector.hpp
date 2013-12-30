@@ -142,6 +142,51 @@ namespace emotime {
       }
       return dects;
     }
+
+    /**
+     *  @brief          Predict the emotion using the best-wins approach
+     *
+     *  @param[in]      frame The image to predict
+     *
+     *  @return         The prediction and its result
+     *
+     *  @details
+     */
+    pair<Emotion, float> predictBestWinsOneVsAll(cv::Mat & frame) {
+
+      pair<Emotion, float> best(UNKNOWN, numeric_limits<float>::min());
+
+      if (detectors.size() == 0) {
+        #ifdef DEBUG
+        cerr << "WARN: no detectors found! Unable to predict anything" << endl;
+        #endif
+        return make_pair(UNKNOWN, 0.0f);
+      }
+
+      for(typename map<string, pair<Emotion, D *> >::iterator ii =
+          this->detectors.begin(); ii != this->detectors.end(); ++ii) {
+
+        Emotion emo = ii->second.first;
+
+        #ifdef DEBUG
+        cerr << "DEBUG: detector " << ii->first << " is predicting ";
+        #endif
+
+        float prediction = predict(ii->second.second, frame);
+
+        #ifdef DEBUG
+        cerr << "(" << prediction << ")" << endl;
+        #endif
+
+        if (best.second < prediction) {
+          best.first = emo;
+          best.second = prediction;
+        }
+      }
+
+      return best;
+    }
+
     /**
      * Predict the class of the sample frame using a majority voting strategy.
      *
