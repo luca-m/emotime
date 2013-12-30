@@ -48,7 +48,7 @@ def dataset_do_prediction(dsfolder, config, mode, do_prints=True):
   print "INFO: classifiers %s"%str(classificators)
 
   results = {}
-  args = [execut, config['FACECROP_DETECTOR_CFG'], config['SIZE']['width'],
+  args = [execut, config['FACECROP_EYE_DETECTOR_CFG'], config['FACECROP_FACE_DETECTOR_CFG'], config['SIZE']['width'],
       config['SIZE']['height'], config['GABOR_NWIDTHS'], config['GABOR_NLAMBDAS'],
       config['GABOR_NTHETAS']] + classificators
 
