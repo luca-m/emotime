@@ -14,7 +14,7 @@ using namespace emotime;
 
 void help(){
 	cout<<"Usage:"<<endl;
-	cout<<"   facecrop_cli <configFile> <inputImage> <outputImage>"<<endl;
+	cout<<"   facecrop_cli <FaceConfigFile> <EyeConfigFile> <inputImage> <outputImage>"<<endl;
 	cout<<"Parameters:"<<endl;
 	cout<<"   <FaceConfigFile>    - OpenCV cascade classifier configuration file (Haar or LBP)"<<endl;
 	cout<<"   <EyesConfigFile>    - OpenCV cascade classifier configuration file (Haar or LBP)"<<endl;

@@ -26,7 +26,7 @@ protected:
 	 * @param faceRegion
 	 * @return
 	 */
-	virtual bool detectFace(Mat & img, Rect & faceRegion);
+	virtual bool detectFace(Mat & img, Rect & face);
 	virtual bool detectEyes(Mat & img, Point & eye1, Point & eye2);
 
 public:

@@ -31,21 +31,24 @@ FaceDetector::~FaceDetector() {
   //TODO: release cascade_f
 }
 
-bool FaceDetector::detectFace(Mat & img, Rect & faceRegion) {
+bool FaceDetector::detectFace(Mat & img, Rect & face) {
 	vector<Rect> faces;
   #ifdef DEBUG
-  cout<<"DEBUG: detecting faces"<<endl;
+  cout<<"DEBUG: detecting faces";
   #endif
 	// detect faces
 	assert(!cascade_f.empty());
-	cascade_f.detectMultiScale(img, faces, 1.1, 2, 0|CV_HAAR_SCALE_IMAGE, cvSize(40, 60));
-	if (faces.size()<1){
+	cascade_f.detectMultiScale(img, faces, 1.1, 2, 0|CV_HAAR_SCALE_IMAGE, cvSize(30, 60));
+  #ifdef DEBUG
+  cout<<" (#"<<faces.size()<<")"<<endl;
+  #endif
+	if (faces.size()==0){
     return false;
   }
   // Pick the face with maximum area
   unsigned int maxI=-1;
-	unsigned int maxArea=-1;
-	unsigned int area=-1;
+	int maxArea=-1;
+	int area=-1;
 	for (unsigned int i=0;i<faces.size();i++){
 		area=faces.at(i).width*faces.at(i).height;
 		if (area>maxArea){
@@ -53,11 +56,15 @@ bool FaceDetector::detectFace(Mat & img, Rect & faceRegion) {
 			maxArea=area;
 		} 
 	}
-	faceRegion.x = faces.at(maxI).x;
-	faceRegion.y = faces.at(maxI).y;
-	faceRegion.width = faces.at(maxI).width;
-	faceRegion.height = faces.at(maxI).height;
-	return true;
+  #ifdef DEBUG
+  cout<<"maxI="<<maxI<<endl;
+  #endif
+	face.x = faces.at(maxI).x;
+	face.y = faces.at(maxI).y;
+	face.width = faces.at(maxI).width;
+	face.height = faces.at(maxI).height;
+	faces.clear();
+  return true;
 }
 bool FaceDetector::detectEyes(Mat & img, Point & eye1, Point & eye2){
 	vector<Rect> eyes;
@@ -68,6 +75,7 @@ bool FaceDetector::detectEyes(Mat & img, Point & eye1, Point & eye2){
 	assert(!cascade_e.empty());
 	cascade_e.detectMultiScale(img, eyes, 1.1, 2, 0|CV_HAAR_SCALE_IMAGE, cvSize(10, 40));
   if (eyes.size()<2){
+    eyes.clear();
     return false;
   }
   // Pick eyes with maximum area
@@ -115,6 +123,7 @@ bool FaceDetector::detectEyes(Mat & img, Point & eye1, Point & eye2){
       eye2.y=y+h/2;
     }
 	}
+  eyes.clear();
   return true;
 }
 bool FaceDetector::detect(Mat & img, Mat & face) {
@@ -138,7 +147,7 @@ bool FaceDetector::detect(Mat & img, Mat & face) {
   #ifdef DEBUG
   cout<<"DEBUG: equalization on grayscale copy"<<endl;
   #endif
-	equalizeHist(imgGray, imgGray);
+	//equalizeHist(imgGray, imgGray);
 	hasFace=detectFace(imgGray, faceRegion);
   if (!hasFace){
     return false;
