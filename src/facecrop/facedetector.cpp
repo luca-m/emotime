@@ -183,7 +183,7 @@ bool FaceDetector::detect(Mat & img, Mat & face) {
       //float c0=std::sqrt(std::pow(tribase.x-upper.x,2)+std::pow(tribase.y-upper.y,2));
       float c1=std::sqrt(std::pow(tribase.x-lower.x,2)+std::pow(tribase.y-lower.y,2));
       float ip=std::sqrt(std::pow(upper.x-lower.x,2)  +std::pow(upper.y-lower.y  ,2));
-      float angle=std::acos(c1/ip)*(180.0f/CV_PI);
+      float angle=-std::acos(c1/ip)*(180.0f/CV_PI);
       #ifdef DEBUG
       cout<<"DEBUG: preparing rotation matrix (c1="<<c1<<",ip="<<ip<<",angle="<<angle<<")"<<endl;
       #endif
