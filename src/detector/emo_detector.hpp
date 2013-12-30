@@ -47,6 +47,10 @@ namespace emotime {
      * Map containing all known detectors
      * */
     map<string, pair<Emotion, D *> > detectors;
+
+    /// Detectors for generic approaches (each detector matches one or more emotion)
+    map<string, pair<vector<Emotion>, D *> > detectors_ext;
+
     /**
      * Pointer to the prediction routine 
      * 
@@ -65,6 +69,7 @@ namespace emotime {
      * */
     EmoDetector(){
       detectors = map<string, pair<Emotion, D *> >();
+      detectors_ext = map<string, pair<vector<Emotion>, D *> >();
     }
     /**
      * Initialize an EmoDetector
@@ -76,12 +81,46 @@ namespace emotime {
       cerr<<"DEBUG: adding "<<detmap.size()<<" detectors"<<endl;
       #endif
       detectors = detmap;
+
+      for( typename map<string, std::pair<Emotion, D *> >::iterator
+          ii = detmap.begin(); ii != detmap.end(); ++ii) {
+        vector<Emotion> ev;
+        ev.push_back(ii->second.first);
+        this->detectors_ext.insert(make_pair(ii->first, make_pair(ev, ii->second.second)));
+      }
     }
+
+
+    /**
+     *  @brief          Initialize an emo detector using the extended version
+     *
+     *  @param[in]      detmap_ext  The extended map to use
+     *
+     *  @return
+     *
+     *  @details
+     */
+    EmoDetector(map<string, pair<vector<Emotion>, D *> > detmap_ext) {
+      #ifdef DEBUG
+      cerr << "DEBUG: adding " << detmap_ext.size() << " detectors" << endl;
+      #endif
+      this->detectors_ext = detmap_ext;
+
+      for(typename map<string, std::pair<vector<Emotion>, D *> >::iterator
+          ii = detmap_ext.begin(); ii != detmap_ext.end(); ++ii) {
+        vector<Emotion> emv = ii->second.first;
+        if(emv.size() == 1) {
+          this->detectors_ext.insert(make_pair(ii->first, make_pair(emv[0], ii->second.second)));
+        }
+      }
+    }
+
     /**
      * Release an EmoDetector
      * */
     ~EmoDetector(){
       detectors.clear();
+      detectors_ext.clear();
       //predict = NULL;
     }
     /**
@@ -100,7 +139,12 @@ namespace emotime {
      * */
     void putDetector(string & name, Emotion emo, D & detector){
       detectors.insert( pair<string, pair<Emotion,D *> >(name, make_pair(emo, &detector)) );
+
+      vector<Emotion> ev;
+      ev.push_back(emo);
+      this->detectors_ext.insert(make_pair(name, make_pair(ev, &detector)));
     }
+
     /**
      * Get a detector by name
      * 
@@ -113,8 +157,9 @@ namespace emotime {
         cerr<<"ERR: could not find detector with name '"<<name<<"'"<<endl;
       } else {
         return (detectors[name].second);
-      } 
+      }
     }
+
     /**
      * Obtain the list of detectors.
      * 
@@ -127,6 +172,7 @@ namespace emotime {
       }
       return dects;
     }
+
     /**
      * Obtain the list of detectors which can detect the specified emotion
      * 
@@ -192,7 +238,7 @@ namespace emotime {
      *
      * */
     pair<Emotion, float> predictMayorityOneVsAll(cv::Mat & frame){
-      map<Emotion,float> votes; 
+      map<Emotion,float> votes;
 
       if (detectors.size()==0){
         #ifdef DEBUG
