@@ -20,7 +20,7 @@ def dataset_cropFaces(dsFolder, config):
       iimPath=join(ipath, im)
       oimPath=join(opath, im)
       print "INFO: running facecropping on %s " % im
-      retcode=subprocess.call([ config['FACECROP_TOOL'], config['FACECROP_DETECTOR_CFG'], str(iimPath), str(oimPath), "--register"])
+      retcode=subprocess.call([ config['FACECROP_TOOL'], config['FACECROP_FACE_DETECTOR_CFG'], config['FACECROP_EYE_DETECTOR_CFG'], str(iimPath), str(oimPath)])
       if retcode < 0:
         print "WARN: execution has returned error %d" % retcode
 

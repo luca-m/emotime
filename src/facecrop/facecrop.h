@@ -1,4 +1,6 @@
-
+/**
+ * @Deprecated
+ * */
 #ifndef _H_FACECROP
 #define _H_FACECROP 
 

@@ -1,5 +1,5 @@
 /**
- *
+ * @Deprecated
  */
 #include "registration.h"
 

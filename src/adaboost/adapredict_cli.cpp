@@ -23,6 +23,7 @@ void help() {
 	cout<<"   <nlambdas>    - "<<endl;
 	cout<<"   <nthetas>     - "<<endl;
 	cout<<"   <faceDetectConf>   - OpenCV cascade classifier configuration file (Haar or LBP) for face detection"<<endl;
+	cout<<"   <eyesDetectConf>   - OpenCV cascade classifier configuration file (Haar or LBP) for face detection"<<endl;
 	cout<<endl;
 }
 void banner() {
@@ -41,11 +42,12 @@ int main( int argc, const char *argv[] ) {
 	const char *config = argv[1];
 	string infile = string(argv[2]);
   cv::Size s(0,0);
-  const char * detectorConf;
+  string detectorConf;
+  string detectorConf_e;
   int nwidths, nlambdas, nthetas;
   float prediction;
   
-  if (argc == 9){
+  if (argc==10){
     preprocess=true; 
   	s.width = abs(atoi(argv[3]));
 	  s.height = abs(atoi(argv[4]));
@@ -53,7 +55,8 @@ int main( int argc, const char *argv[] ) {
     nlambdas= abs(atoi(argv[6]));
     nthetas = abs(atoi(argv[7]));
     
-    detectorConf = argv[8];
+    detectorConf = string(argv[8]);
+    detectorConf_e = string(argv[9]);
   }
 
 	try {		
@@ -68,7 +71,7 @@ int main( int argc, const char *argv[] ) {
     if (preprocess){
       vector<emotime::GaborKernel *> bank;
       gaborbank_getCustomGaborBank(bank, (double) nwidths, (double) nlambdas, (double) nthetas);
-      emotime::FaceDetector facedetector=  emotime::FaceDetector(detectorConf);
+      emotime::FaceDetector facedetector=  emotime::FaceDetector(detectorConf,detectorConf_e);
 		  prediction = adapredict_predict(boost, bank, img, s, &facedetector);
     }
     else{

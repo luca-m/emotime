@@ -12,7 +12,6 @@
 #include "svm_emo_detector.h"
 #include "matrix_io.h"
 #include "gaborbank.h"
-#include "facecrop.h"
 #include "preprocessor.hpp"
 
 #include <opencv2/opencv.hpp>
@@ -32,22 +31,6 @@ using std::cerr;
 using std::string;
 using std::pair;
 
-/**
- *  @brief  Prints the help
- *
- *  @details
- */
-void help();
-
-
-/**
- *  @brief          Prints the CLI banner
- *
- *
- *  @details
- */
-void banner();
-
 void help()
 {
 	cout << "Usage:" << endl;
@@ -64,7 +47,6 @@ void help()
 	cout << "                   Name format: EMOTION_* where EMOTION is one of (neutral, contempt, disgust, fear, sadness, surprise)" << endl;
 	cout << endl;
 }
-
 void banner()
 {
 	cout << "SVMEmoDetector Utility:" << endl;
@@ -73,27 +55,28 @@ void banner()
 
 int main(int argc, const char *argv[])
 {
-  if (argc < 7) {
+  if (argc < 8) {
 		banner();
 		help();
 		cerr << "ERR: missing parameters" << endl;
 		return -3;
 	}
 	string infile; // = string(argv[1]);
-	const char *config = argv[1];
+	string config = string(argv[1]);
+	string config_e = string(argv[2]);
   cv::Size size(0,0);
   int nwidths, nlambdas, nthetas;
-  size.width = abs(atoi(argv[2]));
-	size.height = abs(atoi(argv[3]));
-  nwidths = abs(atoi(argv[4]));
-  nlambdas= abs(atoi(argv[5]));
-  nthetas = abs(atoi(argv[6]));
+  size.width = abs(atoi(argv[3]));
+	size.height = abs(atoi(argv[4]));
+  nwidths = abs(atoi(argv[5]));
+  nlambdas= abs(atoi(argv[6]));
+  nthetas = abs(atoi(argv[7]));
   vector<string> classifierPaths;
   map<string, pair<Emotion, CvSVM*> > classifiers;
 
-  if (argc >= 8) {
+  if (argc>=9) {
     // Read boost XML paths
-    for (int i = 7; i < argc;i++) {
+    for (int i=8; i < argc;i++) {
       classifierPaths.push_back(string(argv[i]));
     }
   } else {
@@ -147,7 +130,7 @@ int main(int argc, const char *argv[])
       classifiers.insert(entry);
     }
 
-    FacePreProcessor preprocessor = FacePreProcessor(string(config), size.width, size.height, nwidths, nlambdas, nthetas);
+    FacePreProcessor preprocessor = FacePreProcessor(config, config_e, size.width, size.height, nwidths, nlambdas, nthetas);
     SVMEmoDetector emodetector = SVMEmoDetector(classifiers);
 
     cout << "Insert the image file path: " << endl;

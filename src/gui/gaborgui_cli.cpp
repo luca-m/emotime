@@ -1,10 +1,11 @@
+/**
+ *
+ * */
+#include "debuggui.hpp"
+#include "capture.hpp"
 #include "boost_emo_detector.h"
 #include "matrix_io.h"
 #include "gaborbank.h"
-#include "facecrop.h"
-#include "preprocessor.hpp"
-#include "debuggui.hpp"
-#include "capture.hpp"
 
 #include <opencv2/opencv.hpp>
 #include <iostream>
@@ -20,9 +21,10 @@ using namespace emotime;
 
 void help() {
 	cout<<"Usage:"<<endl;
-	cout<<"   gaborgui_cli <FaceDetecXML> <video> "<<endl;
+	cout<<"   gaborgui_cli <faceDetecXML> <eyeDetectXML> <video> "<<endl;
 	cout<<"Parameters:"<<endl;
-	cout<<"   <faceDetectConf>   - OpenCV cascade classifier configuration file (Haar or LBP) for face detection"<<endl;
+	cout<<"   <faceDetectXML>    - OpenCV cascade classifier configuration file (Haar or LBP) for face detection"<<endl;
+	cout<<"   <eyeDetectXML>     - OpenCV cascade classifier configuration file (Haar or LBP) for eye detection"<<endl;
 	cout<<"   <video>            - Video file "<<endl;
 	cout<<endl;
 }
@@ -32,17 +34,18 @@ void banner() {
 }
 
 int main( int argc, const char *argv[] ) {
-  if (argc < 3) {
+  if (argc<4) {
 		banner();
 		help();
 		cerr<<"ERR: missing parameters"<<endl;
 		return -3;
 	}
-	const char *faceDetConfig = argv[1];
-  const char *infile = argv[2];
+	string faceDetConfig = string(argv[1]);
+	string eyeDetConfig = string(argv[2]);
+  string infile = string(argv[3]);
 	try {
-    Image capture=Image(string(infile), true/*grayscale*/);
-    GaborGui gui=GaborGui(&capture, string(faceDetConfig));
+    Image capture=Image(infile, true/*grayscale*/);
+    GaborGui gui=GaborGui(&capture, faceDetConfig, eyeDetConfig);
     gui.run();
 	} catch (int e) {
 		cerr<<"ERR: Exception #"<<e<<endl;

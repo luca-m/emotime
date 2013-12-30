@@ -37,11 +37,15 @@ def dataset_do_prediction(dsfolder, config, mode, do_prints=True):
     class_dir = os.path.join(dsfolder, config['CLASSIFIER_FOLDER'])
     execut = config['DETECTION_ADA_TOOL']
 
+  print "INFO: detector tool '%s'"%execut
+  
   classificators = []
   for f in os.listdir(class_dir):
     abs_f = os.path.join(class_dir, f)
     if os.path.isfile(abs_f):
       classificators.append(abs_f)
+
+  print "INFO: classifiers %s"%str(classificators)
 
   results = {}
   args = [execut, config['FACECROP_DETECTOR_CFG'], config['SIZE']['width'],

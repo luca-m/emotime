@@ -1,14 +1,11 @@
 /*
  * facecrop_cli.cpp
- *
- *  Created on: Aug 07, 2013
- *      Author: stk
  */
 
 #include <stdlib.h>
 #include <iostream>
 
-#include "facecrop.h"
+#include "facedetector.h"
 #include "matrix_io.h"
 
 using namespace std; 
@@ -17,12 +14,12 @@ using namespace emotime;
 
 void help(){
 	cout<<"Usage:"<<endl;
-	cout<<"   facecrop_cli <configFile> <inputImage> <outputImage> [--register]"<<endl;
+	cout<<"   facecrop_cli <configFile> <inputImage> <outputImage>"<<endl;
 	cout<<"Parameters:"<<endl;
-	cout<<"   <configFile>   - OpenCV cascade classifier configuration file (Haar or LBP)"<<endl;
-	cout<<"   <inputImage>   - Input image"<<endl;
-	cout<<"   <outputImage>  - Output image"<<endl;
-	cout<<"   --register     - Register the image (at the moment: equalization)"<<endl;
+	cout<<"   <FaceConfigFile>    - OpenCV cascade classifier configuration file (Haar or LBP)"<<endl;
+	cout<<"   <EyesConfigFile>    - OpenCV cascade classifier configuration file (Haar or LBP)"<<endl;
+	cout<<"   <inputImage>        - Input image"<<endl;
+	cout<<"   <outputImage>       - Output image"<<endl;
 	cout<<endl;
 }
 void banner(){
@@ -31,29 +28,25 @@ void banner(){
 }
 
 int main( int argc, const char* argv[] ){
-	if (argc < 4) {
+	if (argc<5) {
 		banner();
 		help();
 		cerr<<"ERR: missing parameters"<<endl;
 		return -3;
 	}  
-	string config = string(argv[1]);
-	string infile = string(argv[2]);
-	string outfile = string(argv[3]);
-	bool regist=false;
-	if (argc==5){
-		string par=string(argv[4]);
-		string reg=string("--register");
-		if (reg.compare(par)== 0){
-			regist=true;
-		}
-	}
+	string config_f = string(argv[1]);
+	string config_e = string(argv[2]);
+	string infile = string(argv[3]);
+	string outfile = string(argv[4]);
 	try {
-		FaceDetector detector(config);
+		FaceDetector detector(config_f, config_e);
 		Mat img = matrix_io_load(infile);
-		Mat cropped=img;
-		facecrop_cropFace( detector, img, cropped, regist );
-		matrix_io_save(cropped, outfile); 
+		Mat cropped;
+		if (detector.detect(img, cropped)){
+		  matrix_io_save(cropped, outfile); 
+    }else{
+		  cerr<<"ERR: no face found.."<<endl;
+    }
 	}
 	catch (int e) {
 		cerr<<"ERR: Exception #"<<e<<endl;

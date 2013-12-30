@@ -17,7 +17,6 @@
 
 #include <opencv2/opencv.hpp>
 
-#include "facecrop.h"
 #include "facedetector.h"
 #include "gaborbank.h"
 
@@ -40,15 +39,22 @@ namespace emotime{
       double nlambdas;
       double nthetas;
     public:
-      FacePreProcessor(string faceDetectorConfig, int width, int height, double nwidths, double nlambdas, double nthetas){
+      FacePreProcessor(string faceDetectorConfig, string eyesDetectorConfig, int width, int height, double nwidths, double nlambdas, double nthetas){
         imgsize.width=width;
         imgsize.height=height;
         this->nwidths=nwidths; 
         this->nlambdas=nlambdas; 
-        this->nthetas=nthetas; 
-        facedet=FaceDetector(faceDetectorConfig); //, true/*equalize*/, true/*toGray*/);
+        this->nthetas=nthetas;
+        if (eyesDetectorConfig.size()>0){ 
+          facedet=FaceDetector(faceDetectorConfig,eyesDetectorConfig); 
+        }else{
+          facedet=FaceDetector(faceDetectorConfig); 
+        }
         gaborbank_getCustomGaborBank(gaborbank, this->nwidths, this->nlambdas, this->nthetas);
-     }
+      }
+      FacePreProcessor(string faceDetectorConfig, int width, int height, double nwidths, double nlambdas, double nthetas){
+        FacePreProcessor(faceDetectorConfig,string(""), width, height, nwidths, nlambdas, nthetas);
+      }
      ~FacePreProcessor(){
        facedet.~FaceDetector();
        for (unsigned int i=0; i<gaborbank.size();i++){
@@ -59,7 +65,7 @@ namespace emotime{
      }
      bool extractFace(Mat & src, Mat & out){
        Mat face;
-	     bool faceFound=facecrop_cropFace(this->facedet, src, face, true/*register/equalize*/);
+	     bool faceFound=this->facedet.detect(src, face);
        if (!faceFound){
          #ifdef DEBUG
          cout<<"DEBUG: FacePreprocessor has found no face."<<endl;

@@ -18,32 +18,29 @@ class FaceDetector{
 
 protected:
 	CascadeClassifier cascade_f;
-	bool autoEqualize;
-	bool autoGrayscale;
-	/**
+	CascadeClassifier cascade_e;
+  bool doEyesRot;
+  /**
 	 * \brief Set face area of a face region with the coordinate of the first face found.
 	 * @param img
 	 * @param faceRegion
 	 * @return
 	 */
 	virtual bool detectFace(Mat & img, Rect & faceRegion);
+	virtual bool detectEyes(Mat & img, Point & eye1, Point & eye2);
 
 public:
-	/**
-	 *
-	 * @param face_config_file
-	 */
-	FaceDetector(string face_config_file, bool equalize, bool toGrayscale);
+	FaceDetector(string face_config_file, string eye_config_file);
 	FaceDetector(string face_config_file);
   FaceDetector();
 	virtual ~FaceDetector();
 	/**
 	 *
 	 * @param img
-	 * @param faceRegion
+	 * @param face
 	 * @return
 	 */
-	virtual bool detect(Mat & img , Rect & faceRegion);
+  virtual bool detect(Mat & img , Mat & face);
 };
 
 } /* namespace facecrop */

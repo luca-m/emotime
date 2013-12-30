@@ -15,7 +15,7 @@
 #include <opencv2/opencv.hpp>
 #include <opencv2/ml/ml.hpp>
 #include "gaborbank.h"
-#include "facecrop.h"
+#include "facedetector.h"
 
 /**
  * @brief Returns the prediction using the specified image, by calculating

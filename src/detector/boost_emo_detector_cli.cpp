@@ -1,7 +1,6 @@
 #include "boost_emo_detector.h"
 #include "matrix_io.h"
 #include "gaborbank.h"
-#include "facecrop.h"
 #include "preprocessor.hpp"
 
 #include <opencv2/opencv.hpp>
@@ -18,10 +17,10 @@ using namespace emotime;
 
 void help() {
 	cout<<"Usage:"<<endl;
-	cout<<"   boost_emo_detector_cli <FaceDetecXML> <width> <height> <nwidths> <nlambdas> <nthetas> [<boostXML> ..] "<<endl;
+	cout<<"   boost_emo_detector_cli <faceDetectConf> <eyesDetectConf> <width> <height> <nwidths> <nlambdas> <nthetas> [<boostXML> ..] "<<endl;
 	cout<<"Parameters:"<<endl;
-	cout<<"   <image>       - The input image"<<endl;
 	cout<<"   <faceDetectConf>   - OpenCV cascade classifier configuration file (Haar or LBP) for face detection"<<endl;
+	cout<<"   <eyesDetectConf>   - OpenCV cascade classifier configuration file (Haar or LBP) for eyes detection"<<endl;
 	cout<<"   <width>       - Width of the image, the input image will be scaled"<<endl;
 	cout<<"   <height>      - Height of the image, the input image will be scaled"<<endl;
 	cout<<"   <nwidths>     - "<<endl;
@@ -37,27 +36,28 @@ void banner() {
 }
 
 int main( int argc, const char *argv[] ) {
-  if (argc < 7) {
+  if (argc < 8) {
 		banner();
 		help();
 		cerr<<"ERR: missing parameters"<<endl;
 		return -3;
 	} 
 	string infile; //= string(argv[1]);
-	const char *config = argv[1];
+	string config = string(argv[1]);
+	string config_e = string(argv[2]);
   cv::Size size(0,0);
   int nwidths, nlambdas, nthetas;
-  size.width = abs(atoi(argv[2]));
-	size.height = abs(atoi(argv[3]));
-  nwidths = abs(atoi(argv[4]));
-  nlambdas= abs(atoi(argv[5]));
-  nthetas = abs(atoi(argv[6]));
+  size.width = abs(atoi(argv[3]));
+	size.height = abs(atoi(argv[4]));
+  nwidths = abs(atoi(argv[5]));
+  nlambdas= abs(atoi(argv[6]));
+  nthetas = abs(atoi(argv[7]));
   vector<string> classifierPaths; 
   map<string, pair<Emotion, CvBoost *> > classifiers; 
   
-  if (argc>=8){
+  if (argc>=9){
     // Read boost XML paths
-    for (int i=7; i<argc;i++){
+    for (int i=8; i<argc;i++){
       classifierPaths.push_back(string(argv[i]));
     }  
   } else {
@@ -108,7 +108,7 @@ int main( int argc, const char *argv[] ) {
       classifiers.insert(entry);
     }
 
-    FacePreProcessor preprocessor=FacePreProcessor(string(config), size.width, size.height, nwidths, nlambdas, nthetas);
+    FacePreProcessor preprocessor=FacePreProcessor(config, config_e, size.width, size.height, nwidths, nlambdas, nthetas);
     BoostEmoDetector emodetector=BoostEmoDetector(classifiers);
    
     cout<<"Insert the image file path: "<<endl; 

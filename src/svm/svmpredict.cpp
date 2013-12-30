@@ -53,7 +53,7 @@ float svmpredict_predict(CvSVM& svm, std::vector<emotime::GaborKernel*>& bank,
     std::cout << "DEBUG: exrtacting face from image" << std::endl;
 #endif
     // Face cropping
-    facecrop_cropFace(*facedetector, img, image, true);
+    facedetector->detect(img, image);
   } else {
     image = img;
   }

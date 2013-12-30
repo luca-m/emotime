@@ -1,5 +1,5 @@
 /**
- *
+ * @Deprecated
  */
 #ifndef REGISTR_H_
 #define REGISTR_H_

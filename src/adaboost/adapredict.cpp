@@ -47,11 +47,11 @@ float adapredict_predict( CvBoost & boost, std::vector<emotime::GaborKernel*> & 
     cout<<"DEBUG: exrtacting face from image"<<endl;
     #endif
     // Face cropping
-    facecrop_cropFace( *facedetector, img, image, true );
+    facedetector->detect(img, image);
   } else {
     image=img;
   }
-  if ( scaleSize.height!=0 && scaleSize.width!=0 ) {
+  if (scaleSize.height!=0 && scaleSize.width!=0 ) {
     #ifdef DEBUG
     cout<<"DEBUG: resizing image to w="<<scaleSize.width<<",h="<<scaleSize.height<<endl;
     #endif
@@ -65,7 +65,6 @@ float adapredict_predict( CvBoost & boost, std::vector<emotime::GaborKernel*> & 
   } else {
     dest=scaled;
   }
-  
   Mat feat = adapredict_imageToFeatVec(dest);
   #ifdef DEBUG
   cout<<"DEBUG: predicting";

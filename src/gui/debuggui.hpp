@@ -44,6 +44,7 @@ namespace emotime{
       int  nlambdas;
       int  nthetas;
       string facedetectorconf;
+      string eyedetectorconf;
       Mat currframe;
     protected:
       static void on_trackbar(int newVal, void *obj){
@@ -60,7 +61,7 @@ namespace emotime{
         Mat copy;
         ths->currframe.copyTo(copy);
         cout<<"DEBUG: recreating preprocessor"<<endl; 
-        ths->preprocessor=new FacePreProcessor(ths->facedetectorconf, ths->size.width, ths->size.height, ths->nwidths, ths->nlambdas, ths->nthetas);
+        ths->preprocessor=new FacePreProcessor(ths->facedetectorconf,ths->eyedetectorconf, ths->size.width, ths->size.height, ths->nwidths, ths->nlambdas, ths->nthetas);
         Mat face;
         if(ths->preprocessor->extractFace(copy, face)){
           Mat gabor;
@@ -79,7 +80,7 @@ namespace emotime{
        }
       }
     public:
-      GaborGui(ACapture * cap, string facedetconf){
+      GaborGui(ACapture * cap, string facedetconf, string eyedetconf){
         preprocessor=NULL;
         capture=cap;
         size=Size(48,48);
@@ -87,6 +88,7 @@ namespace emotime{
         nlambdas=5;
         nthetas=8;
         facedetectorconf=facedetconf;
+        eyedetectorconf=eyedetconf;
         mainWinTitle=string("GaborGui: Main Emotime Debug GUI");
         gaborWinTitle=string("GaborGui: Features");
       } 

@@ -4,7 +4,7 @@
 
 #include <opencv2/opencv.hpp>
 #include "gaborbank.h"
-#include "facecrop.h"
+#include "facedetector.h"
 
 using namespace cv;
 
