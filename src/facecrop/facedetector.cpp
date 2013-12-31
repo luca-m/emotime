@@ -31,6 +31,8 @@ FaceDetector::~FaceDetector() {
   //TODO: release cascade_f
 }
 
+
+
 bool FaceDetector::detectFace(Mat & img, Rect & face) {
 	vector<Rect> faces;
   #ifdef DEBUG
@@ -38,7 +40,7 @@ bool FaceDetector::detectFace(Mat & img, Rect & face) {
   #endif
 	// detect faces
 	assert(!cascade_f.empty());
-	cascade_f.detectMultiScale(img, faces, 1.1, 2, 0|CV_HAAR_SCALE_IMAGE, cvSize(30, 60));
+	cascade_f.detectMultiScale(img, faces, 1.1, 2, 0|CV_HAAR_SCALE_IMAGE, Size(30, 60));
   #ifdef DEBUG
   cout<<" (#"<<faces.size()<<")"<<endl;
   #endif
@@ -56,9 +58,6 @@ bool FaceDetector::detectFace(Mat & img, Rect & face) {
 			maxArea=area;
 		} 
 	}
-  #ifdef DEBUG
-  cout<<"maxI="<<maxI<<endl;
-  #endif
 	face.x = faces.at(maxI).x;
 	face.y = faces.at(maxI).y;
 	face.width = faces.at(maxI).width;
@@ -69,11 +68,15 @@ bool FaceDetector::detectFace(Mat & img, Rect & face) {
 bool FaceDetector::detectEyes(Mat & img, Point & eye1, Point & eye2){
 	vector<Rect> eyes;
   #ifdef DEBUG
-  cout<<"DEBUG: detecting eyes"<<endl;
+  cout<<"DEBUG: detecting eyes";
   #endif
 	// detect faces 
 	assert(!cascade_e.empty());
-	cascade_e.detectMultiScale(img, eyes, 1.1, 2, 0|CV_HAAR_SCALE_IMAGE, cvSize(10, 40));
+  // Min widths and max width are taken from eyes proportions
+	cascade_e.detectMultiScale(img, eyes, 1.1, 2, 0|CV_HAAR_SCALE_IMAGE, Size(img.size().width/5, img.size().width/(5*2))  ); //, Size(img.size().width/5.5, img.size().width/(5.5*2) ));
+  #ifdef DEBUG
+  cout<<" (#"<<eyes.size()<<")"<<endl;
+  #endif
   if (eyes.size()<2){
     eyes.clear();
     return false;
@@ -144,9 +147,6 @@ bool FaceDetector::detect(Mat & img, Mat & face) {
 	}else{
 		img.copyTo(imgGray);
 	}
-  #ifdef DEBUG
-  cout<<"DEBUG: equalization on grayscale copy"<<endl;
-  #endif
 	//equalizeHist(imgGray, imgGray);
 	hasFace=detectFace(imgGray, faceRegion);
   if (!hasFace){
@@ -180,15 +180,28 @@ bool FaceDetector::detect(Mat & img, Mat & face) {
       tribase=Point(upper.x, lower.y);
       eyecenter=Point(left.x+(right.x-left.x)/2, lower.y+(upper.y-lower.y)/2);
       // rotate image
-      //float c0=std::sqrt(std::pow(tribase.x-upper.x,2)+std::pow(tribase.y-upper.y,2));
+      float c0=std::sqrt(std::pow(tribase.x-upper.x,2)+std::pow(tribase.y-upper.y,2));
       float c1=std::sqrt(std::pow(tribase.x-lower.x,2)+std::pow(tribase.y-lower.y,2));
       float ip=std::sqrt(std::pow(upper.x-lower.x,2)  +std::pow(upper.y-lower.y  ,2));
-      float angle=-std::acos(c1/ip)*(180.0f/CV_PI);
+      float angle=(left.x==lower.x?1:-1)*std::acos(c1/ip)*(180.0f/CV_PI)/2.0;
       #ifdef DEBUG
-      cout<<"DEBUG: preparing rotation matrix (c1="<<c1<<",ip="<<ip<<",angle="<<angle<<")"<<endl;
+      cout<<"DEBUG: preparing rotation matrix (c0="<<c0<<",c1="<<c1<<",ip="<<ip<<",angle="<<angle<<")";
       #endif
-      Mat rotMat=getRotationMatrix2D(eyecenter, angle, 1.0);
-      warpAffine(imgGray, imgGray, rotMat, imgGray.size());
+      if (/*std::abs(angle)<20.0 && */std::abs(angle)<10.0){
+        #ifdef DEBUG
+        cout<<" rotating"<<endl;
+        #endif
+        Mat rotMat=getRotationMatrix2D(eyecenter, angle, 1.0);
+        warpAffine(imgGray, imgGray, rotMat, imgGray.size());
+        //hasFace=detectFace(imgGray, faceRegion);
+        //if (!hasFace){
+        //  return false;
+        //}
+      }else{
+      #ifdef DEBUG
+      cout<<" skip:angle_too_low_or_high"<<endl;
+      #endif
+      }
     }
   }
   // copy equalized and rotated face to out image 
