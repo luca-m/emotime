@@ -42,25 +42,69 @@ namespace emotime {
    * */
   template <class D>
   class EmoDetector {
+
     private:
-    /**
-     * Map containing all known detectors
-     * */
+
+    /// Map containing all known detectors
     map<string, pair<Emotion, D *> > detectors;
 
     /// Detectors for generic approaches (each detector matches one or more emotion)
     map<string, pair<vector<Emotion>, D *> > detectors_ext;
 
+
     /**
-     * Pointer to the prediction routine 
-     * 
+     *  @brief          Initialize the detectors in simple mode (one detector, one emotion)
+     *
+     *  @param[in]      detmap A map to name -> (emotion, detector)
+     *
+     */
+    void init(const map<string, pair<Emotion, D *> >& detmap) {
+      #ifdef DEBUG
+      cerr << "DEBUG: adding " << detmap.size() << " detectors" << endl;
+      #endif
+      detectors = detmap;
+
+      for(typename map<string, std::pair<Emotion, D *> >::const_iterator ii = detmap.begin();
+          ii != detmap.end(); ++ii) {
+        vector<Emotion> ev;
+        ev.push_back(ii->second.first);
+        this->detectors_ext.insert(make_pair(ii->first, make_pair(ev, ii->second.second)));
+      }
+    }
+
+    /**
+     *  @brief          Initialize the detectors in extended mode (one detector multiple emotion)
+     *
+     *  @param[in]      detmap_ext A map to name -> (vector<emotion>, detector)
+     *
+     */
+    void init(const map<string, pair<vector<Emotion>, D *> >& detmap_ext) {
+      #ifdef DEBUG
+      cerr << "DEBUG: adding " << detmap_ext.size() << " detectors" << endl;
+      #endif
+      this->detectors_ext = detmap_ext;
+
+      for(typename map<string, std::pair<vector<Emotion>, D *> >::const_iterator ii = detmap_ext.begin();
+          ii != detmap_ext.end(); ++ii) {
+        vector<Emotion> emv = ii->second.first;
+        if(emv.size() == 1) {
+          this->detectors_ext.insert(make_pair(ii->first, make_pair(emv[0], ii->second.second)));
+        }
+      }
+    }
+
+    protected:
+
+    /**
+     * Pointer to the prediction routine
+     *
      * @param detector
      * @param frame
      * @return the predicted value or class (depend on the binary predictor used)
-     * */
-    protected:
+     *
+     */
     virtual float predict(D *detector, cv::Mat & frame)=0;
-    
+
     public:
     /**
      * Initialize an EmoDetector
@@ -68,51 +112,29 @@ namespace emotime {
      * @param prediction_routine the prediction routine to use when predicting a value with a detector of the specified type <D>
      * */
     EmoDetector(){
-      detectors = map<string, pair<Emotion, D *> >();
-      detectors_ext = map<string, pair<vector<Emotion>, D *> >();
+      map<string, pair<Emotion, D *> > detmap;
+      init(detmap);
     }
+
     /**
-     * Initialize an EmoDetector
+     *  @brief          Initialize the detectors in simple mode (one detector, one emotion)
      *
-     * @param prediction_routine the prediction routine to use when predicting a value with a detector of the specified type <D>
-     * */
+     *  @param[in]      detmap A map to name -> (emotion, detector)
+     *
+     */
     EmoDetector( map<string, pair<Emotion, D *> > detmap ){
-      #ifdef DEBUG
-      cerr<<"DEBUG: adding "<<detmap.size()<<" detectors"<<endl;
-      #endif
-      detectors = detmap;
-
-      for( typename map<string, std::pair<Emotion, D *> >::iterator
-          ii = detmap.begin(); ii != detmap.end(); ++ii) {
-        vector<Emotion> ev;
-        ev.push_back(ii->second.first);
-        this->detectors_ext.insert(make_pair(ii->first, make_pair(ev, ii->second.second)));
-      }
+      init(detmap);
     }
 
 
     /**
-     *  @brief          Initialize an emo detector using the extended version
+     *  @brief          Initialize the detectors in extended mode (one detector multiple emotion)
      *
-     *  @param[in]      detmap_ext  The extended map to use
+     *  @param[in]      detmap_ext A map to name -> (vector<emotion>, detector)
      *
-     *  @return
-     *
-     *  @details
      */
     EmoDetector(map<string, pair<vector<Emotion>, D *> > detmap_ext) {
-      #ifdef DEBUG
-      cerr << "DEBUG: adding " << detmap_ext.size() << " detectors" << endl;
-      #endif
-      this->detectors_ext = detmap_ext;
-
-      for(typename map<string, std::pair<vector<Emotion>, D *> >::iterator
-          ii = detmap_ext.begin(); ii != detmap_ext.end(); ++ii) {
-        vector<Emotion> emv = ii->second.first;
-        if(emv.size() == 1) {
-          this->detectors_ext.insert(make_pair(ii->first, make_pair(emv[0], ii->second.second)));
-        }
-      }
+      init(detmap_ext);
     }
 
     /**
