@@ -7,6 +7,7 @@
 #include <iostream>
 #include <string>
 #include <opencv2/opencv.hpp>
+#include <opencv2/highgui/highgui.hpp>
 
 using namespace std;
 using namespace cv;
@@ -103,6 +104,53 @@ namespace emotime{
       bool isReady(){
         return image.cols>0 && image.rows>0;
       }
+  };
+
+
+
+  /**
+   * @class    Webcam
+   * @author   Daniele Bellavista (daniele.bellavista@studio.unibo.it)
+   * @date    12/31/2013 10:22:15 AM
+   *
+   * @brief   Capture implementation using a Webcam
+   *
+   * @details
+   *
+   */
+  class Webcam : public ACapture {
+
+    public:
+
+
+      /**
+       *  @brief          Webcam costructor
+       *
+       *  @param[in]      to_grey If true, each photogram will be converted to greyscale
+       *
+       */
+      Webcam(bool to_grey) : ACapture(to_grey) {
+        this->capture = cvCaptureFromCAM(CV_CAP_ANY);
+      }
+
+    protected:
+
+      bool extractFrame(Mat& frm) {
+        IplImage* frame = cvQueryFrame(capture);
+        if(frame == NULL) {
+          return false;
+        }
+        Mat(frame).copyTo(frm);
+        return true;
+      }
+
+      bool isReady() {
+        return true;
+      }
+
+    private:
+      /// The opencv webcam capture
+      CvCapture* capture;
   };
 }
 
