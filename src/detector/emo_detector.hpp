@@ -1,6 +1,9 @@
 #ifndef _H_EMO_DETECTOR
 #define _H_EMO_DETECTOR
 
+#include "matrix_io.h"
+#include "string_utils.h"
+
 #include <iostream>
 #include <string>
 #include <vector>
@@ -135,6 +138,71 @@ namespace emotime {
      */
     EmoDetector(map<string, pair<vector<Emotion>, D *> > detmap_ext) {
       init(detmap_ext);
+    }
+
+
+    /**
+     *  @brief          Creates an emodetector from a vector of classifiers path
+     *
+     *  @param[in]      classifier_paths  A vector containing the classifiers path
+     *  @param[in]      initialized_classifiers  A vector containing the initialized classifiers
+     *
+     *  @details        Path must be in the format: emop1_emop2_emopn_vs_emon1_emon2_emonm.xml
+     *                  Where emop* is the emotion recognized and emon* is the emotion not recognized.
+     */
+    EmoDetector(vector<string> classifier_paths, vector<D*> initialized_classifiers) {
+
+      map<string, pair<vector<Emotion>, D*> > classifiers;
+
+      for(size_t i = 0; i < classifier_paths.size(); i++) {
+
+        string clpath = classifier_paths.at(i);
+        D* cvD = initialized_classifiers.at(i);
+
+        string fname = matrix_io_fileBaseName(clpath);
+        Emotion emo = UNKNOWN;
+
+        vector<string> emotions_list = split_string(fname, "_");
+        vector<Emotion> fin_emo_list;
+        fin_emo_list.reserve(emotions_list.size());
+        string label = "";
+
+        for(vector<string>::iterator it = emotions_list.begin(); it !=
+            emotions_list.end(); ++it) {
+          emo = UNKNOWN;
+          if (*it == "vs") {
+            break;
+          } else if (*it == emotionStrings(NEUTRAL)) {
+            emo = NEUTRAL;
+          } else if (*it == emotionStrings(ANGER)) {
+            emo = ANGER;
+          } else if (*it == emotionStrings(CONTEMPT)) {
+            emo = CONTEMPT;
+          } else if (*it == emotionStrings(DISGUST)) {
+            emo = DISGUST;
+          } else if (*it == emotionStrings(FEAR)) {
+            emo = FEAR;
+          } else if (*it == emotionStrings(HAPPY)) {
+            emo = HAPPY;
+          } else if (*it == emotionStrings(SADNESS)) {
+            emo = SADNESS;
+          } else if (*it == emotionStrings(SURPRISE)) {
+            emo = SURPRISE;
+          }
+          if(emo != UNKNOWN) {
+            if(label.size() > 0) {
+              label.append("_");
+            }
+            label.append(emotionStrings(emo));
+            fin_emo_list.push_back(emo);
+          }
+        }
+        pair<vector<Emotion>, D*> value(fin_emo_list, cvD);
+        pair<string, pair<vector<Emotion>, D*> > entry(label, value);
+        classifiers.insert(entry);
+      }
+
+      init(classifiers);
     }
 
     /**

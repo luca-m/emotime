@@ -17,6 +17,9 @@ namespace emotime{
       }
       BoostEmoDetector(map<string,pair<Emotion,CvBoost*> > detmap ): EmoDetector<CvBoost>(detmap){
       }
+      BoostEmoDetector(vector<string> classifier_paths, vector<CvBoost*>
+          initialized_classifiers) : EmoDetector(classifier_paths, initialized_classifiers) {
+      }
       virtual float predict(CvBoost *detector, cv::Mat & frame){
         #ifdef DEBUG
         //cout<<"DEBUG: prediction with CvBoost at "<<detector<<", Frame r="<<frame.rows<<" c="<<frame.cols<<",t="<<frame.type()<<endl;
