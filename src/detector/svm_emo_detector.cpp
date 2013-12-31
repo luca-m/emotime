@@ -13,7 +13,11 @@
 
 using namespace emotime;
 
-float SVMEmoDetector::predict(CvSVM* detector, cv::Mat& frame)
-{
+float SVMEmoDetector::predict(CvSVM* detector, cv::Mat& frame) {
   return detector->predict(frame);
+}
+
+
+pair<Emotion, float> SVMEmoDetector::predict(cv::Mat& frame) {
+  return EmoDetector<CvSVM>::predictVotingOneVsAllExt(frame);
 }

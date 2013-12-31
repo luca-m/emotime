@@ -44,6 +44,8 @@ namespace emotime
 
       }
 
+      pair<Emotion, float> predict(cv::Mat& frame);
+
     protected:
       float predict(CvSVM* detector, cv::Mat& frame);
 

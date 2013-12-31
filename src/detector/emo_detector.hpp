@@ -442,7 +442,7 @@ namespace emotime {
     /**
      * Default multiclass prediction method
      * */
-    pair<Emotion, float> predict(cv::Mat & frame){
+    virtual pair<Emotion, float> predict(cv::Mat & frame){
       return predictMayorityOneVsAll(frame);
     }
 
