@@ -32,6 +32,11 @@ namespace emotime
       {
 
       }
+      SVMEmoDetector(std::map<std::string, std::pair<vector<Emotion>, CvSVM*> > detmap_ext)
+        : EmoDetector(detmap_ext)
+      {
+
+      }
 
     protected:
       float predict(CvSVM* detector, cv::Mat& frame);
