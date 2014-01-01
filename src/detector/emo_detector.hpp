@@ -1,6 +1,9 @@
 #ifndef _H_EMO_DETECTOR
 #define _H_EMO_DETECTOR
 
+#include "matrix_io.h"
+#include "string_utils.h"
+
 #include <iostream>
 #include <string>
 #include <vector>
@@ -42,25 +45,69 @@ namespace emotime {
    * */
   template <class D>
   class EmoDetector {
+
     private:
-    /**
-     * Map containing all known detectors
-     * */
+
+    /// Map containing all known detectors
     map<string, pair<Emotion, D *> > detectors;
 
     /// Detectors for generic approaches (each detector matches one or more emotion)
     map<string, pair<vector<Emotion>, D *> > detectors_ext;
 
+
     /**
-     * Pointer to the prediction routine 
-     * 
+     *  @brief          Initialize the detectors in simple mode (one detector, one emotion)
+     *
+     *  @param[in]      detmap A map to name -> (emotion, detector)
+     *
+     */
+    void init(const map<string, pair<Emotion, D *> >& detmap) {
+      #ifdef DEBUG
+      cerr << "DEBUG: adding " << detmap.size() << " detectors" << endl;
+      #endif
+      detectors = detmap;
+
+      for(typename map<string, std::pair<Emotion, D *> >::const_iterator ii = detmap.begin();
+          ii != detmap.end(); ++ii) {
+        vector<Emotion> ev;
+        ev.push_back(ii->second.first);
+        this->detectors_ext.insert(make_pair(ii->first, make_pair(ev, ii->second.second)));
+      }
+    }
+
+    /**
+     *  @brief          Initialize the detectors in extended mode (one detector multiple emotion)
+     *
+     *  @param[in]      detmap_ext A map to name -> (vector<emotion>, detector)
+     *
+     */
+    void init(const map<string, pair<vector<Emotion>, D *> >& detmap_ext) {
+      #ifdef DEBUG
+      cerr << "DEBUG: adding " << detmap_ext.size() << " detectors" << endl;
+      #endif
+      this->detectors_ext = detmap_ext;
+
+      for(typename map<string, std::pair<vector<Emotion>, D *> >::const_iterator ii = detmap_ext.begin();
+          ii != detmap_ext.end(); ++ii) {
+        vector<Emotion> emv = ii->second.first;
+        if(emv.size() == 1) {
+          this->detectors_ext.insert(make_pair(ii->first, make_pair(emv[0], ii->second.second)));
+        }
+      }
+    }
+
+    protected:
+
+    /**
+     * Pointer to the prediction routine
+     *
      * @param detector
      * @param frame
      * @return the predicted value or class (depend on the binary predictor used)
-     * */
-    protected:
+     *
+     */
     virtual float predict(D *detector, cv::Mat & frame)=0;
-    
+
     public:
     /**
      * Initialize an EmoDetector
@@ -68,51 +115,94 @@ namespace emotime {
      * @param prediction_routine the prediction routine to use when predicting a value with a detector of the specified type <D>
      * */
     EmoDetector(){
-      detectors = map<string, pair<Emotion, D *> >();
-      detectors_ext = map<string, pair<vector<Emotion>, D *> >();
+      map<string, pair<Emotion, D *> > detmap;
+      init(detmap);
     }
+
     /**
-     * Initialize an EmoDetector
+     *  @brief          Initialize the detectors in simple mode (one detector, one emotion)
      *
-     * @param prediction_routine the prediction routine to use when predicting a value with a detector of the specified type <D>
-     * */
+     *  @param[in]      detmap A map to name -> (emotion, detector)
+     *
+     */
     EmoDetector( map<string, pair<Emotion, D *> > detmap ){
-      #ifdef DEBUG
-      cerr<<"DEBUG: adding "<<detmap.size()<<" detectors"<<endl;
-      #endif
-      detectors = detmap;
-
-      for( typename map<string, std::pair<Emotion, D *> >::iterator
-          ii = detmap.begin(); ii != detmap.end(); ++ii) {
-        vector<Emotion> ev;
-        ev.push_back(ii->second.first);
-        this->detectors_ext.insert(make_pair(ii->first, make_pair(ev, ii->second.second)));
-      }
+      init(detmap);
     }
 
 
     /**
-     *  @brief          Initialize an emo detector using the extended version
+     *  @brief          Initialize the detectors in extended mode (one detector multiple emotion)
      *
-     *  @param[in]      detmap_ext  The extended map to use
+     *  @param[in]      detmap_ext A map to name -> (vector<emotion>, detector)
      *
-     *  @return
-     *
-     *  @details
      */
     EmoDetector(map<string, pair<vector<Emotion>, D *> > detmap_ext) {
-      #ifdef DEBUG
-      cerr << "DEBUG: adding " << detmap_ext.size() << " detectors" << endl;
-      #endif
-      this->detectors_ext = detmap_ext;
+      init(detmap_ext);
+    }
 
-      for(typename map<string, std::pair<vector<Emotion>, D *> >::iterator
-          ii = detmap_ext.begin(); ii != detmap_ext.end(); ++ii) {
-        vector<Emotion> emv = ii->second.first;
-        if(emv.size() == 1) {
-          this->detectors_ext.insert(make_pair(ii->first, make_pair(emv[0], ii->second.second)));
+
+    /**
+     *  @brief          Creates an emodetector from a vector of classifiers path
+     *
+     *  @param[in]      classifier_paths  A vector containing the classifiers path
+     *  @param[in]      initialized_classifiers  A vector containing the initialized classifiers
+     *
+     *  @details        Path must be in the format: emop1_emop2_emopn_vs_emon1_emon2_emonm.xml
+     *                  Where emop* is the emotion recognized and emon* is the emotion not recognized.
+     */
+    EmoDetector(vector<string> classifier_paths, vector<D*> initialized_classifiers) {
+
+      map<string, pair<vector<Emotion>, D*> > classifiers;
+
+      for(size_t i = 0; i < classifier_paths.size(); i++) {
+
+        string clpath = classifier_paths.at(i);
+        D* cvD = initialized_classifiers.at(i);
+
+        string fname = matrix_io_fileBaseName(clpath);
+        Emotion emo = UNKNOWN;
+
+        vector<string> emotions_list = split_string(fname, "_");
+        vector<Emotion> fin_emo_list;
+        fin_emo_list.reserve(emotions_list.size());
+        string label = "";
+
+        for(vector<string>::iterator it = emotions_list.begin(); it !=
+            emotions_list.end(); ++it) {
+          emo = UNKNOWN;
+          if (*it == "vs") {
+            break;
+          } else if (*it == emotionStrings(NEUTRAL)) {
+            emo = NEUTRAL;
+          } else if (*it == emotionStrings(ANGER)) {
+            emo = ANGER;
+          } else if (*it == emotionStrings(CONTEMPT)) {
+            emo = CONTEMPT;
+          } else if (*it == emotionStrings(DISGUST)) {
+            emo = DISGUST;
+          } else if (*it == emotionStrings(FEAR)) {
+            emo = FEAR;
+          } else if (*it == emotionStrings(HAPPY)) {
+            emo = HAPPY;
+          } else if (*it == emotionStrings(SADNESS)) {
+            emo = SADNESS;
+          } else if (*it == emotionStrings(SURPRISE)) {
+            emo = SURPRISE;
+          }
+          if(emo != UNKNOWN) {
+            if(label.size() > 0) {
+              label.append("_");
+            }
+            label.append(emotionStrings(emo));
+            fin_emo_list.push_back(emo);
+          }
         }
+        pair<vector<Emotion>, D*> value(fin_emo_list, cvD);
+        pair<string, pair<vector<Emotion>, D*> > entry(label, value);
+        classifiers.insert(entry);
       }
+
+      init(classifiers);
     }
 
     /**
@@ -352,7 +442,7 @@ namespace emotime {
     /**
      * Default multiclass prediction method
      * */
-    pair<Emotion, float> predict(cv::Mat & frame){
+    virtual pair<Emotion, float> predict(cv::Mat & frame){
       return predictMayorityOneVsAll(frame);
     }
 

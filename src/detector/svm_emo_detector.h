@@ -37,6 +37,14 @@ namespace emotime
       {
 
       }
+      SVMEmoDetector(vector<string> classifier_paths, vector<CvSVM*>
+          initialized_classifiers) : EmoDetector(classifier_paths,
+            initialized_classifiers)
+      {
+
+      }
+
+      pair<Emotion, float> predict(cv::Mat& frame);
 
     protected:
       float predict(CvSVM* detector, cv::Mat& frame);

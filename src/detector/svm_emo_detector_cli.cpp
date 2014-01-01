@@ -72,13 +72,22 @@ int main(int argc, const char *argv[])
   nwidths = abs(atoi(argv[5]));
   nlambdas= abs(atoi(argv[6]));
   nthetas = abs(atoi(argv[7]));
-  vector<string> classifierPaths;
-  map<string, pair<vector<Emotion>, CvSVM*> > classifiers;
+  vector<string> classifier_paths;
+  vector<CvSVM*> classifiers;
 
-  if (argc>=9) {
+  if (argc >= 9) {
     // Read boost XML paths
-    for (int i=8; i < argc;i++) {
-      classifierPaths.push_back(string(argv[i]));
+    CvSVM* cvsvm;
+    for (int i = 8; i < argc; i++) {
+      string clpath(argv[i]);
+      cvsvm = new CvSVM();
+      cvsvm->load(argv[i]);
+      if(!cvsvm->get_var_count()) {
+        cerr << "ERR: Could not read the classifier '" << clpath << "' (skip)" << endl;
+        continue;
+      }
+      classifier_paths.push_back(string(argv[i]));
+      classifiers.push_back(cvsvm);
     }
   } else {
     cerr << "ERR: you must specify some svm" << endl;
@@ -86,77 +95,11 @@ int main(int argc, const char *argv[])
   }
 
 	try {
-    // load classifiers and try to detect the emotion they have been trained to detect
-    CvSVM* trsvm;
-    for (size_t i = 0; i < classifierPaths.size(); i++) {
-      string clpath = classifierPaths.at(i);
-      trsvm = new CvSVM();
-      #ifdef DEBUG
-      cerr << "DEBUG: Loading svm " << clpath;
-      #endif
-      trsvm->load(clpath.c_str());
 
-      if(!trsvm->get_var_count()) {
-        cerr << "ERR: Could not read the classifier '" << clpath << "' (skip)" << endl;
-        continue;
-      }
+    FacePreProcessor preprocessor = FacePreProcessor(config, config_e,
+        size.width, size.height, nwidths, nlambdas, nthetas);
 
-      string fname = matrix_io_fileBaseName(clpath);
-      Emotion emo = UNKNOWN;
-
-      vector<string> emotions_list = split_string(fname, "_");
-      vector<Emotion> fin_emo_list;
-      fin_emo_list.reserve(emotions_list.size());
-      string label = "";
-
-      #ifdef DEBUG
-      cerr << " (";
-      #endif
-      for(vector<string>::iterator it = emotions_list.begin(); it !=
-          emotions_list.end(); it++) {
-        emo = UNKNOWN;
-        if (*it == "vs") {
-          break;
-        } else if (*it == emotionStrings(NEUTRAL)) {
-          emo = NEUTRAL;
-        } else if (*it == emotionStrings(ANGER)) {
-          emo = ANGER;
-        } else if (*it == emotionStrings(CONTEMPT)) {
-          emo = CONTEMPT;
-        } else if (*it == emotionStrings(DISGUST)) {
-          emo = DISGUST;
-        } else if (*it == emotionStrings(FEAR)) {
-          emo = FEAR;
-        } else if (*it == emotionStrings(HAPPY)) {
-          emo = HAPPY;
-        } else if (*it == emotionStrings(SADNESS)) {
-          emo = SADNESS;
-        } else if (*it == emotionStrings(SURPRISE)) {
-          emo = SURPRISE;
-        }
-        if(emo != UNKNOWN) {
-          if(label.size() > 0) {
-            label.append("_");
-          }
-          label.append(emotionStrings(emo));
-          fin_emo_list.push_back(emo);
-          #ifdef DEBUG
-          cerr << emotionStrings(emo) << ", ";
-          #endif
-        }
-      }
-
-      #ifdef DEBUG
-      cerr << ")" << endl;
-      #endif
-
-      pair<vector<Emotion>, CvSVM*> value(fin_emo_list, trsvm);
-      pair<string, pair<vector<Emotion>, CvSVM*> > entry(label, value);
-      classifiers.insert(entry);
-    }
-
-    FacePreProcessor preprocessor = FacePreProcessor(config, config_e, size.width, size.height, nwidths, nlambdas, nthetas);
-    SVMEmoDetector emodetector = SVMEmoDetector(classifiers);
+    SVMEmoDetector emodetector = SVMEmoDetector(classifier_paths, classifiers);
 
     cout << "Insert the image file path: " << endl;
     while(std::getline(std::cin, infile)) {
@@ -180,5 +123,11 @@ int main(int argc, const char *argv[])
 		cerr << "ERR: Exception #" << e << endl;
 		return -e;
 	}
+
+  for(vector<CvSVM*>::iterator it = classifiers.begin(); it !=
+      classifiers.end(); ++it) {
+    delete *it;
+  }
+
   return 0;
 }

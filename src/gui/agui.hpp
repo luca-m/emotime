@@ -16,88 +16,206 @@
 #include "emo_detector.hpp"
 #include "preprocessor.hpp"
 
-using namespace std;
-using namespace cv;
+using std::stringstream;
+using std::string;
+using std::pair;
+
 using namespace emotime;
 
-namespace emotime{
+namespace emotime {
 
-  template <class D>
-  class ADebugGui{
-  
-    protected:
-      FacePreProcessor * preprocessor;
-      EmoDetector<D> * detector;
-      ACapture * capture;
-      string mainWinTitle;
-      string faceWinTitle;
-      string featsWinTitle;
-      int fps;
+
+  /**
+  * @class    AGui
+  * @author   Daniele Bellavista (daniele.bellavista@studio.unibo.it)
+  * @date    12/31/2013 10:53:55 AM
+  *
+  * @brief   Generic GUI
+  *
+  * @tparam D CvBoost or CvSVM
+  *
+  * @details
+  *
+  */
+  template <class D> class AGui {
+
     public:
-      ADebugGui(ACapture * capt, FacePreProcessor * fp, EmoDetector<D> * detect, int fps){
-        capture=capt;
-        preprocessor= fp;
-        detector=detect;
-        mainWinTitle=string("AGui: Main Emotime Debug GUI");
-        faceWinTitle=string("AGui: Face");
-        featsWinTitle=string("AGui: Features");
-        this->fps=fps;
-      }
-      bool init(){
-	       namedWindow(mainWinTitle.c_str(), WINDOW_NORMAL);
-	       //namedWindow(faceWinTitle.c_str(), CV_WINDOW_AUTOSIZE);
-	       namedWindow(featsWinTitle.c_str(), CV_WINDOW_AUTOSIZE);
-      }
-      bool nextFrame(){
-        Mat frame,copy;
-        Mat featvector;
-        if (capture->nextFrame(frame)){
-          frame.copyTo(copy);
-          if (preprocessor->preprocess(frame,featvector)){
-            pair<Emotion,float> prediction=detector->predict(featvector);
-            stringstream ss;
-            ss<<"Emotion="<<emotionStrings(prediction.first)<<", Score="<<prediction.second;
-            string osd = ss.str();
-            putText(frame, osd.c_str(), Point(80,60), FONT_HERSHEY_SIMPLEX, 0.7, Scalar::all(0));
-            // QT only
-            //displayOverlay(mainWinTitle.c_str(), osd.c_str(), 2000);
-            imshow(mainWinTitle.c_str(), frame);
-            Mat face;
-            if(preprocessor->extractFace(copy,face)){
-              Mat gabor;
-              if (preprocessor->filterImage(face,gabor)){
-                double min;
-                double max;
-                cv::minMaxIdx(gabor, &min, &max);
-                cv::Mat adjMap;
-                cv::convertScaleAbs(gabor, adjMap, 255 / max);
-                Mat bigger;
-                resize(adjMap,bigger,Size(adjMap.size().width*3,adjMap.size().height*3), 0, 0, CV_INTER_LINEAR);
-                imshow(featsWinTitle.c_str(), bigger);
-              }
-            
-            }
 
-          }
-          return true;
-       } else { 
-         return false;
-       }
-
+      /**
+       *  @brief          Creates an AGui
+       *
+       *  @param[in]      capt  A capture instance
+       *  @param[in]      fp    The face preprocessor to use
+       *  @param[in]      detect  An emodetector instance
+       *  @param[in]      fps  Desired frame per second
+       *
+       */
+      AGui(ACapture * capt, FacePreProcessor * fp, EmoDetector<D> * detect, int fps) {
+        capture = capt;
+        preprocessor = fp;
+        detector = detect;
+        mainWinTitle = string("AGui: Main Emotime GUI");
+        this->fps = fps;
       }
-      bool run(){
-        init();
-        while (nextFrame()){
-          if (fps<=0){
-            waitKey(0);
+
+      /**
+       *  @brief    Start the gui
+       *
+       *  @return   False if something wrong.
+       *
+       */
+      bool run() {
+        if(!init()) {
+          return false;
+        }
+        while (nextFrame()) {
+          int key;
+          if (fps <= 0) {
+            key = waitKey(0);
           } else {
-            waitKey((int) (1.0/fps));
+            key = waitKey((int) 1000.0 / fps);
+          }
+          if((key & 0xFF) == 27) {
+            break;
           }
         }
-      } 
+        return true;
+      }
+
+    protected:
+
+      /// Face preprocessor
+      FacePreProcessor * preprocessor;
+      /// Emotion detector
+      EmoDetector<D> * detector;
+      /// Capture instance
+      ACapture * capture;
+      /// Title for the main window
+      string mainWinTitle;
+      /// Desired frames per second
+      int fps;
+
+      /**
+       *  @brief          Initialize the windows
+       *
+       *  @return         Returns true if the initialization succeded
+       *
+       */
+      virtual bool init() {
+        namedWindow(mainWinTitle.c_str(), WINDOW_NORMAL);
+        return true;
+      }
+
+      /**
+       *  @brief          Produce the next frame
+       *
+       *  @return         False if there is no next frame
+       *
+       */
+      virtual bool nextFrame() {
+        Mat frame;
+        Mat featvector;
+        if (capture->nextFrame(frame)) {
+          if (preprocessor->preprocess(frame, featvector)) {
+            pair<Emotion, float> prediction = detector->predict(featvector);
+            if (!newFrame(frame, prediction)) {
+              return false;
+            }
+            imshow(mainWinTitle.c_str(), frame);
+          }
+          return true;
+        } else {
+          return false;
+        }
+      }
+
+
+      /**
+       *  @brief          A new frame is available
+       *
+       *  @param[in]      frame The new frame that will be drawn after returing
+       *  @param[in]      prediction The predicted emotion
+       *
+       *  @return         False if something wrong
+       *
+       */
+      virtual bool newFrame(Mat& frame, pair<Emotion, float> prediction) = 0;
+
+  };
+
+  /**
+  * @class    ADebugGui
+  * @author
+  * @date
+  *
+  * @brief   GUI for debugging purpose
+  *
+  * @tparam D CvBoost or CvSVM
+  *
+  */
+  template <class D> class ADebugGui : public AGui<D> {
+
+    public:
+
+      /**
+       *  @brief          Creates an ADebugGUI
+       *
+       *  @param[in]      capt  A capture instance
+       *  @param[in]      fp    The face preprocessor to use
+       *  @param[in]      detect  An emodetector instance
+       *  @param[in]      fps  Desired frame per second
+       *
+       */
+      ADebugGui(ACapture * capt, FacePreProcessor * fp, EmoDetector<D> *
+          detect, int fps) : AGui<D>(capt, fp, detect, fps) {
+        faceWinTitle = string("AGui: Face");
+        featsWinTitle = string("AGui: Features");
+      }
+
+    protected:
+      /// Title for face window
+      string faceWinTitle;
+      /// Title for features window
+      string featsWinTitle;
+
+      bool init() {
+        if (!AGui<D>::init()) {
+          return false;
+        }
+        //namedWindow(faceWinTitle.c_str(), CV_WINDOW_AUTOSIZE);
+        namedWindow(featsWinTitle.c_str(), CV_WINDOW_AUTOSIZE);
+        return true;
+      }
+
+      bool newFrame(Mat& frame, pair<Emotion, float> prediction) {
+        Mat copy;
+        frame.copyTo(copy);
+        stringstream ss;
+        ss << "Emotion=" << emotionStrings(prediction.first) << ", Score=" << prediction.second;
+        string osd = ss.str();
+
+        cv::putText(frame, osd.c_str(), Point(80,60), FONT_HERSHEY_SIMPLEX, 0.7, Scalar::all(0));
+        // QT only
+        //displayOverlay(mainWinTitle.c_str(), osd.c_str(), 2000);
+
+        Mat face;
+        if (AGui<D>::preprocessor->extractFace(copy, face)) {
+          Mat gabor;
+          if (AGui<D>::preprocessor->filterImage(face,gabor)){
+            double min;
+            double max;
+            cv::minMaxIdx(gabor, &min, &max);
+            cv::Mat adjMap;
+            cv::convertScaleAbs(gabor, adjMap, 255 / max);
+            Mat bigger;
+            resize(adjMap,bigger,Size(adjMap.size().width*3,adjMap.size().height*3), 0, 0, CV_INTER_LINEAR);
+            imshow(featsWinTitle.c_str(), bigger);
+          }
+        }
+        return true;
+      }
   };
 }
 
 
 #endif /* !AGUI_HPP */
-
