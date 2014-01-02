@@ -147,7 +147,7 @@ bool FaceDetector::detect(Mat & img, Mat & face) {
 	}else{
 		img.copyTo(imgGray);
 	}
-	//equalizeHist(imgGray, imgGray);
+	equalizeHist(imgGray, imgGray);
 	hasFace=detectFace(imgGray, faceRegion);
   if (!hasFace){
     return false;
