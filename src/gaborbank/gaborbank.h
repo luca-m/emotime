@@ -12,13 +12,17 @@
 #define _H_GABORBANK
 
 /// Minimum width for a gabor filter
-#define GABOR_WIDTH_MIN        7
+#define GABOR_WIDTH_MIN        7 /*7*/
 /// Maximum width for a gabor filter
-#define GABOR_WIDTH_MAX        15
+#define GABOR_WIDTH_MAX        17 /*17*/
 /// Minimum lambda for a gabor filter
-#define GABOR_LAMBDA_MIN       (CV_PI/32.0)
+#define GABOR_LAMBDA_MIN      33  /*(CV_PI/32.0)*/
 /// Maximum lambda for a gabor filter
-#define GABOR_LAMBDA_MAX       (CV_PI/2.0)
+#define GABOR_LAMBDA_MAX       16 /*(CV_PI/2.0)*/
+/// Lambda values from paper "Dynamics of facial expression extracted automatically from video"
+#define GABOR_PAPER_LAMBDAS    {/*3,*/4,6,8,12/*,16,24*/}
+#define GABOR_PAPER_LAMBDAS_LEN 4
+
 /// Minimum tetha for a gabor filter
 #define GABOR_THETA_MIN        0.001
 /// Maximum tetha for a gabor filter

@@ -94,10 +94,15 @@ void gaborbank_getCustomGaborBank(std::vector<emotime::GaborKernel *> & bank,
   int minfwidth=GABOR_WIDTH_MIN;
   int maxfwidth=GABOR_WIDTH_MAX;
 
+  int lambda_values [] = GABOR_PAPER_LAMBDAS;
+  int lambda_values_len = GABOR_PAPER_LAMBDAS_LEN;
+
   for ( fwidth=minfwidth; fwidth<maxfwidth; fwidth+=(int)((maxfwidth-minfwidth)/((double)(nwidths<=0?1:nwidths)))) {
     cv::Size kernelSize(fwidth, fwidth);
-    for ( _lambda=GABOR_LAMBDA_MIN; _lambda<GABOR_LAMBDA_MAX;
-        _lambda+=(GABOR_LAMBDA_MAX-GABOR_LAMBDA_MIN)/((double)(nlambdas<=0?1:nlambdas)) ) {
+    //for ( _lambda=GABOR_LAMBDA_MIN; _lambda<GABOR_LAMBDA_MAX;
+    //    _lambda+=(GABOR_LAMBDA_MAX-GABOR_LAMBDA_MIN)/((double)(nlambdas<=0?1:nlambdas)) ) {
+    for (int j=0; j< lambda_values_len;j++) {
+      _lambda=lambda_values[j];
       for ( _theta=GABOR_THETA_MIN; _theta<GABOR_THETA_MAX;
           _theta+=(GABOR_THETA_MAX-GABOR_THETA_MIN)/((double)(nthetas<=0?1:nthetas)) ) {
         emotime::GaborKernel * kern = new emotime::GaborKernel(gaborbank_getGaborKernel(kernelSize, _sigma, _theta, _lambda, _gamma, _psi, CV_32F, true), gaborbank_getGaborKernel(kernelSize, _sigma, _theta, _lambda, _gamma, _psi, CV_32F, false) );
