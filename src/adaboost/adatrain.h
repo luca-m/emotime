@@ -8,6 +8,8 @@
 
 #define ADATRAIN_TRAINING_PORTION 0.9f
 #define BOOST_ALGORITHM CvBoost::GENTLE 
+#define BOOST_TRIM_WEIGHT 0 
+#define BOOST_TREE_DEPTH 1
 
 using namespace std;
 using namespace cv;

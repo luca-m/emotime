@@ -61,7 +61,8 @@ bool adatrain_trainManual(CvBoost & boost, std::vector<std::string> & matrixFile
     train_labels.push_back(label); 
   }
   CvBoostParams params(BOOST_ALGORITHM, train_data.cols, 
-                        0/*no weight trim rate*/, 1/*depth of the trained tree*/, 
+                        BOOST_TRIM_WEIGHT,
+                        BOOST_TREE_DEPTH, 
                         false, 0); 
   #ifdef DEBUG
   cout<<"DEBUG: training adaboost manually (nsamples="<<train_data.rows<<", nfeatures="<<train_data.cols<<")"<<endl;
