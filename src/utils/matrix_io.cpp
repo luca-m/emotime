@@ -63,7 +63,16 @@ bool matrix_io_save( cv::Mat & mat, std::string & filePath){
        fs.release();
     } else {
       // Otherwise threat it as image
-		  imwrite( file, mat );
+		  if (mat.type()==CV_32FC1){
+        double min;
+        double max;
+        cv::minMaxIdx(mat, &min, &max);
+        cv::Mat adjMap;
+        cv::convertScaleAbs(mat, adjMap, 255/max);
+        imwrite(file, adjMap);
+      } else {
+        imwrite(file, mat);
+      }
     }
     return true;
   }
