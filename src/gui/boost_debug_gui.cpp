@@ -45,8 +45,8 @@ int main( int argc, const char *argv[] ) {
 		return -3;
 	} 
 	string infile; //= string(argv[1]);
-	string config = argv[1];
-	string config_e = argv[2];
+	string config = string(argv[1]);
+	string config_e = string(argv[2]);
   cv::Size size(0,0);
   int nwidths, nlambdas, nthetas;
   size.width = abs(atoi(argv[3]));
@@ -117,7 +117,7 @@ int main( int argc, const char *argv[] ) {
     while(std::getline(std::cin, infile)){
       try {
           Video capture=Video(infile, true/*grayscale*/);
-          DebugGuiBoost gui=DebugGuiBoost(&capture, &preprocessor, &emodetector, 0);
+          DebugGuiBoost gui=DebugGuiBoost(&capture, &preprocessor, &emodetector, 30);
           gui.run();
         } catch (int ee){
         cerr<<"ERR: Something wrong with '"<<infile<<"'"<<endl;
