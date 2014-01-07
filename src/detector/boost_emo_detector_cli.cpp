@@ -52,65 +52,33 @@ int main( int argc, const char *argv[] ) {
   nwidths = abs(atoi(argv[5]));
   nlambdas= abs(atoi(argv[6]));
   nthetas = abs(atoi(argv[7]));
-  vector<string> classifierPaths; 
-  map<string, pair<Emotion, CvBoost *> > classifiers; 
   
-  if (argc>=9){
-    // Read boost XML paths
-    for (int i=8; i<argc;i++){
-      classifierPaths.push_back(string(argv[i]));
-    }  
-  } else {
-    cerr<<"ERR: you must specify some boosted trees"<<endl;
-    return -2; 
-  }
+	try { 
+    vector<string> classifier_paths;
+    vector<CvBoost*> classifiers;
 
-	try {
-    // load classifiers and try to detect the emotion they have been trained to detect
-    CvBoost * tree;
-    for (size_t i=0; i<classifierPaths.size();i++){
-      string clpath= classifierPaths.at(i);
-      tree = new CvBoost();
-      #ifdef DEBUG
-      cerr<<"DEBUG: Loading boosted tree "<<clpath;
-      #endif 
-      tree->load(clpath.c_str());
-      if(!tree->get_weak_predictors()) {
-        cerr<<"ERR: Could not read the classifier '"<<clpath<<"' (skip)"<<endl;
-        continue;
+    if (argc >= 9) {
+      // Read boost XML paths
+      CvBoost* cvboost;
+      for (int i = 8; i < argc; i++) {
+        string clpath(argv[i]);
+        cvboost = new CvBoost();
+        cvboost->load(argv[i]);
+        if(!cvboost->get_weak_predictors()) {
+          cerr << "ERR: Could not read the classifier '" << clpath << "' (skip)" << endl;
+          continue;
+        }
+        classifier_paths.push_back(string(argv[i]));
+        classifiers.push_back(cvboost);
       }
-      
-      string fname = matrix_io_fileBaseName(clpath);
-      Emotion emo=UNKNOWN;
-
-      if (fname.find(emotionStrings(NEUTRAL))==0){
-        emo=NEUTRAL;
-      } else if (fname.find(emotionStrings(ANGER))==0){
-        emo=ANGER;
-      } else if (fname.find(emotionStrings(CONTEMPT))==0){
-        emo=CONTEMPT;
-      } else if (fname.find(emotionStrings(DISGUST))==0){
-        emo=DISGUST;
-      } else if (fname.find(emotionStrings(FEAR))==0){
-        emo=FEAR;
-      } else if (fname.find(emotionStrings(HAPPY))==0){
-        emo=HAPPY;
-      } else if (fname.find(emotionStrings(SADNESS))==0){
-        emo=SADNESS;
-      } else if (fname.find(emotionStrings(SURPRISE))==0){
-        emo=SURPRISE;
-      }
-      #ifdef DEBUG
-      cerr<<" ("<<emotionStrings(emo)<<")"<<endl;
-      #endif 
-      pair<Emotion,CvBoost *> value = make_pair(emo, tree);
-      pair<string, pair<Emotion,CvBoost*> > entry(emotionStrings(emo), value);
-      classifiers.insert(entry);
+    } else {
+      cerr << "ERR: you must specify some svm" << endl;
+      return -2;
     }
 
+
     FacePreProcessor preprocessor=FacePreProcessor(config, config_e, size.width, size.height, nwidths, nlambdas, nthetas);
-    BoostEmoDetector emodetector=BoostEmoDetector(classifiers);
-   
+    BoostEmoDetector emodetector=BoostEmoDetector(classifier_paths, classifiers);
     cout<<"Insert the image file path: "<<endl; 
     while(std::getline(std::cin, infile)){
       try {
@@ -122,7 +90,7 @@ int main( int argc, const char *argv[] ) {
           cerr<<"ERR: Cannot preprocess this image '"<<infile<<"'"<<endl;
           continue;
         } 
-        pair<Emotion,float> prediction=emodetector.predictMayorityOneVsAll(features);
+        pair<Emotion,float> prediction=emodetector.predictVotingOneVsAllExt(features);
         cout<<"Emotion predicted: "<<emotionStrings(prediction.first)<<" with score "<<prediction.second<<endl;
         cout<<"Insert the image file path: "<<endl; 
       } catch (int ee){

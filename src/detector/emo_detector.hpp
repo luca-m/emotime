@@ -299,38 +299,50 @@ namespace emotime {
         return make_pair(UNKNOWN, 0.0f);
       }
 
+      votes.insert(make_pair(NEUTRAL, 0.f));
+      votes.insert(make_pair(CONTEMPT , 0.f));
+      votes.insert(make_pair(DISGUST, 0.f));
+      votes.insert(make_pair(SADNESS, 0.f));
+      votes.insert(make_pair(ANGER, 0.f));
+      votes.insert(make_pair(HAPPY, 0.f));
+      votes.insert(make_pair(FEAR, 0.f));
+      votes.insert(make_pair(UNKNOWN, 0.f));
+
       for(typename map<string, pair<vector<Emotion>, D *> >::iterator ii =
           this->detectors_ext.begin(); ii != this->detectors_ext.end(); ++ii) {
 
-        vector<Emotion> emo = ii->second.first;
+        vector<Emotion> emo = ii->second.first; // detected emotions
 
         #ifdef DEBUG
         cerr << "DEBUG: detector " << ii->first << " is predicting ";
         #endif
-
         float prediction = predict(ii->second.second, frame);
-
         #ifdef DEBUG
         cerr << "(" << prediction << ")" << endl;
         #endif
 
-        for(vector<Emotion>::iterator emo_it = emo.begin(); emo_it != emo.end();
-            ++emo_it) {
+        for(vector<Emotion>::iterator emo_it = emo.begin(); emo_it != emo.end(); ++emo_it) {
           map<Emotion, float>::iterator it = votes.find(*emo_it);
           if (it == votes.end()) {
             votes.insert(make_pair(*emo_it, prediction));
           } else{
             if (prediction > 0.5) {
-              it->second += 1.0;
+              it->second += 0.5; //1.0;
             } else {
-              it->second -= 0.0;
+              for(map<Emotion,float>::iterator votes_it = votes.begin(); votes_it != votes.end(); ++votes_it) {
+                vector<Emotion>::iterator e_it = find(emo.begin(), emo.end(), votes_it->first);
+                if (e_it == emo.end()) {
+                  // if I dont find emotion in detected emotion
+                  votes_it->second+=1.0;
+                }
+              }
+              //it->second -= 0.0;
             }
           }
         }
       }
 
-      pair<Emotion,float> max_pair = make_pair(UNKNOWN,
-          numeric_limits<float>::min());
+      pair<Emotion,float> max_pair = make_pair(UNKNOWN, numeric_limits<float>::min());
 
       for( map<Emotion, float>::iterator ii = votes.begin(); ii != votes.end();
           ++ii) {
