@@ -206,6 +206,7 @@ bool FaceDetector::detect(Mat & img, Mat & face) {
   }
   // copy equalized and rotated face to out image 
   plainFace.copyTo(face);
+	equalizeHist(face, face);
   imgGray.release(); 
   return true;
 }
