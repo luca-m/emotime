@@ -7,7 +7,7 @@ find_package(OpenCV REQUIRED)
 set(ASSETDIR "${emotime_SOURCE_DIR}/assets" )
 set(SRCDIR "${emotime_SOURCE_DIR}/src" )
 
-SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DDEBUG" )
+SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}" )
 
 add_subdirectory(src)
 

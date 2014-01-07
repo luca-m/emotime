@@ -9,7 +9,6 @@ import argparse
 import multiprocessing
 import datasetConfigParser as dcp
 import numpy as np
-import string
 
 from string import lower
 from os.path import join
@@ -27,6 +26,15 @@ def _dataset_load_matrix(filepath):
     return np.asarray(cvmat)
   else:
     return cv2.imread(filepath, cv2.CV_LOAD_IMAGE_GRAYSCALE)
+
+def _dataset_multiclass1toAllExt(config, ngroups=3):
+  """ """
+  for z in _dataset_multiclass1toAll(config):
+    yield z
+  for i in xrange(1, ngroups + 1):
+    for z in [ (x, [y for y in config['CLASSES'] if y not in x]) for x in
+        itertools.combinations(config['CLASSES'], i)]:
+      yield z
 
 def _dataset_multiclass1toAll(config):
   """ """
@@ -130,9 +138,15 @@ def dataset_prepTrainFiles(dsFolder, multiclassMode, config):
       #dataset_prepare(x, dsFolder, config)
       bagoftask.append((x, dsFolder, config))
   
-  if multiclassMode=='1vsAll': 
+  if multiclassMode=='1vsAll':
     print "INFO: preparing training files for 1 to All multiclass"
     for x in _dataset_multiclass1toAll(config):
+      #dataset_prepare(x, dsFolder, config)
+      bagoftask.append((x, dsFolder, config))
+
+  if multiclassMode == '1vsAllExt':
+    print "INFO: preparing training files for 1 to All Extended multiclass"
+    for x in _dataset_multiclass1toAllExt(config):
       #dataset_prepare(x, dsFolder, config)
       bagoftask.append((x, dsFolder, config))
   
@@ -143,7 +157,7 @@ def dataset_prepTrainFiles(dsFolder, multiclassMode, config):
 if __name__ == "__main__":
   parser = argparse.ArgumentParser()
   parser.add_argument("--cfg", default="dataset.cfg", help="Dataset config file name")
-  parser.add_argument("--mode", default="1vsAll", choices=['1vs1', '1vsAll'], help="Training mode for multiclass classification: 1vs1 or 1vsAll")
+  parser.add_argument("--mode", default="1vsAll", choices=['1vs1', '1vsAll', '1vsAllExt'], help="Training mode for multiclass classification")
   parser.add_argument("dsFolder",help="Dataset base folder")
   args = parser.parse_args()
   try:

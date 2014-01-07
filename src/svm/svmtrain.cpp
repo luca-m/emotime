@@ -88,6 +88,7 @@ bool svmtrain_trainManual(CvSVM& svm, std::vector<std::string> &
   CvSVMParams params;
   params.svm_type    = CvSVM::C_SVC;
   params.kernel_type = CvSVM::LINEAR;
+  params.C       = 0.5;
   params.term_crit   = cvTermCriteria(CV_TERMCRIT_ITER, SVM_MAX_ITERATIONS, SVM_ERROR_MARGIN);
 
   svm.train(train_data, train_labels, Mat(), Mat(), params);

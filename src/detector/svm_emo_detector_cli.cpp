@@ -12,8 +12,8 @@
 #include "svm_emo_detector.h"
 #include "matrix_io.h"
 #include "gaborbank.h"
-#include "facecrop.h"
 #include "preprocessor.hpp"
+#include "string_utils.h"
 
 #include <opencv2/opencv.hpp>
 #include <iostream>
@@ -32,22 +32,6 @@ using std::cerr;
 using std::string;
 using std::pair;
 
-/**
- *  @brief  Prints the help
- *
- *  @details
- */
-void help();
-
-
-/**
- *  @brief          Prints the CLI banner
- *
- *
- *  @details
- */
-void banner();
-
 void help()
 {
 	cout << "Usage:" << endl;
@@ -64,7 +48,6 @@ void help()
 	cout << "                   Name format: EMOTION_* where EMOTION is one of (neutral, contempt, disgust, fear, sadness, surprise)" << endl;
 	cout << endl;
 }
-
 void banner()
 {
 	cout << "SVMEmoDetector Utility:" << endl;
@@ -73,14 +56,14 @@ void banner()
 
 int main(int argc, const char *argv[])
 {
-  if (argc < 7) {
+  if (argc < 8) {
 		banner();
 		help();
 		cerr << "ERR: missing parameters" << endl;
 		return -3;
 	}
 	string infile; // = string(argv[1]);
-	const char *config = argv[1];
+	string config = string(argv[1]);
   cv::Size size(0,0);
   int nwidths, nlambdas, nthetas;
   size.width = abs(atoi(argv[2]));
@@ -89,11 +72,11 @@ int main(int argc, const char *argv[])
   nlambdas= abs(atoi(argv[5]));
   nthetas = abs(atoi(argv[6]));
   vector<string> classifierPaths;
-  map<string, pair<Emotion, CvSVM*> > classifiers;
+  map<string, pair<vector<Emotion>, CvSVM*> > classifiers;
 
-  if (argc >= 8) {
+  if (argc>=8) {
     // Read boost XML paths
-    for (int i = 7; i < argc;i++) {
+    for (int i=7; i < argc;i++) {
       classifierPaths.push_back(string(argv[i]));
     }
   } else {
@@ -120,34 +103,58 @@ int main(int argc, const char *argv[])
       string fname = matrix_io_fileBaseName(clpath);
       Emotion emo = UNKNOWN;
 
-      if (fname.find(emotionStrings(NEUTRAL)) == 0) {
-        emo = NEUTRAL;
-      } else if (fname.find(emotionStrings(ANGER)) == 0) {
-        emo = ANGER;
-      } else if (fname.find(emotionStrings(CONTEMPT)) == 0) {
-        emo = CONTEMPT;
-      } else if (fname.find(emotionStrings(DISGUST)) == 0) {
-        emo = DISGUST;
-      } else if (fname.find(emotionStrings(FEAR)) == 0) {
-        emo = FEAR;
-      } else if (fname.find(emotionStrings(HAPPY)) == 0) {
-        emo = HAPPY;
-      } else if (fname.find(emotionStrings(SADNESS)) == 0) {
-        emo = SADNESS;
-      } else if (fname.find(emotionStrings(SURPRISE)) == 0) {
-        emo = SURPRISE;
+      vector<string> emotions_list = split_string(fname, "_");
+      vector<Emotion> fin_emo_list;
+      fin_emo_list.reserve(emotions_list.size());
+      string label = "";
+
+      #ifdef DEBUG
+      cerr << " (";
+      #endif
+      for(vector<string>::iterator it = emotions_list.begin(); it !=
+          emotions_list.end(); it++) {
+        emo = UNKNOWN;
+        if (*it == "vs") {
+          break;
+        } else if (*it == emotionStrings(NEUTRAL)) {
+          emo = NEUTRAL;
+        } else if (*it == emotionStrings(ANGER)) {
+          emo = ANGER;
+        } else if (*it == emotionStrings(CONTEMPT)) {
+          emo = CONTEMPT;
+        } else if (*it == emotionStrings(DISGUST)) {
+          emo = DISGUST;
+        } else if (*it == emotionStrings(FEAR)) {
+          emo = FEAR;
+        } else if (*it == emotionStrings(HAPPY)) {
+          emo = HAPPY;
+        } else if (*it == emotionStrings(SADNESS)) {
+          emo = SADNESS;
+        } else if (*it == emotionStrings(SURPRISE)) {
+          emo = SURPRISE;
+        }
+        if(emo != UNKNOWN) {
+          if(label.size() > 0) {
+            label.append("_");
+          }
+          label.append(emotionStrings(emo));
+          fin_emo_list.push_back(emo);
+          #ifdef DEBUG
+          cerr << emotionStrings(emo) << ", ";
+          #endif
+        }
       }
 
       #ifdef DEBUG
-      cerr << " (" << emotionStrings(emo) << ")" << endl;
+      cerr << ")" << endl;
       #endif
 
-      pair<Emotion, CvSVM*> value = make_pair(emo, trsvm);
-      pair<string, pair<Emotion, CvSVM*> > entry(emotionStrings(emo), value);
+      pair<vector<Emotion>, CvSVM*> value(fin_emo_list, trsvm);
+      pair<string, pair<vector<Emotion>, CvSVM*> > entry(label, value);
       classifiers.insert(entry);
     }
 
-    FacePreProcessor preprocessor = FacePreProcessor(string(config), size.width, size.height, nwidths, nlambdas, nthetas);
+    FacePreProcessor preprocessor = FacePreProcessor(config, size.width, size.height, nwidths, nlambdas, nthetas);
     SVMEmoDetector emodetector = SVMEmoDetector(classifiers);
 
     cout << "Insert the image file path: " << endl;
@@ -161,7 +168,7 @@ int main(int argc, const char *argv[])
           cerr << "ERR: Cannot preprocess this image '" << infile << "'" << endl;
           continue;
         }
-        pair<Emotion,float> prediction = emodetector.predictMayorityOneVsAll(features);
+        pair<Emotion,float> prediction = emodetector.predictVotingOneVsAllExt(features);
         cout << "Emotion predicted: " << emotionStrings(prediction.first) << " with score " << prediction.second << endl;
         cout << "Insert the image file path: " << endl;
       } catch (int ee) {
