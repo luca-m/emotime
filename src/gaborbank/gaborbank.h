@@ -20,9 +20,9 @@ const int kGaborWidthMin = 7;
 /// Maximum width for a gabor filter
 const int kGaborWidthMax = 17;
 /// Minimum lambda for a gabor filter
-const double kGaborLambdaMin = 33; // (CV_PI/32.0);
+const double kGaborLambdaMin = (CV_PI/32.0);
 /// Maximum lambda for a gabor filter
-const double kGaborLambdaMax = 16; // (CV_PI/2.0);
+const double kGaborLambdaMax = (CV_PI/2.0);
 
 const int kGaborPaperLambdas[] = {/*3,*/4,6,8,12/*,16,24*/};
 
