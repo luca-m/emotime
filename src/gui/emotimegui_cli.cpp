@@ -34,11 +34,11 @@ const int kWidth = 32;
 /// Height of the faces used during training
 const int kHeight = 32;
 /// N-Widths used during training
-const double kNWidths = 2;
+const double kNWidths = 1;
 /// N-Lambdas used during training
 const double kNLambdas = 5;
 /// N-Thetas used during training
-const double kNThetas = 4;
+const double kNThetas = 8;
 
 /**
  *  @brief          Prints the help
@@ -59,6 +59,11 @@ void help()
 	cout << "Parameters:" << endl;
 	cout << "   <faceDetectXML>    - OpenCV cascade classifier configuration file (Haar or LBP) for face detection" << endl;
 	cout << "   <eyeDetectXML>     - OpenCV cascade classifier configuration file (Haar or LBP) for eye detection" << endl;
+	cout << "   <width>            - Width of the image, the input image will be scaled"<<endl;
+	cout << "   <height>           - Height of the image, the input image will be scaled"<<endl;
+	cout << "   <nwidths>          - "<<endl;
+	cout << "   <nlambdas>         - "<<endl;
+	cout << "   <nthetas>          - "<<endl;
 	cout << "   <mode>             - ada or svm (default ada)" << endl;
 	cout << "   <classifier>       - classificators list" << endl;
 	cout << endl;
@@ -82,18 +87,23 @@ int main(int argc, const char* argv[])
   // Intializing the face detector
 	string faceDetConfig = string(argv[1]);
 	string eyeDetConfig = string(argv[2]);
-  FacePreProcessor facepreproc(faceDetConfig, eyeDetConfig, kWidth, kHeight, kNWidths, kNLambdas, kNThetas);
+  int width = std::atoi(argv[3]);
+  int height = std::atoi(argv[4]);
+  int nwidths = std::atoi(argv[5]);
+  int nlambdas = std::atoi(argv[6]);
+  int nthetas = std::atoi(argv[7]);
+  FacePreProcessor facepreproc(faceDetConfig, eyeDetConfig, width, height, nwidths, nlambdas, nthetas);
 
   // Setting the mode
   int i;
 	string mode;
-  mode = string(argv[3]);
+  mode = string(argv[8]);
 
 	if (mode != "svm" && mode != "ada") {
     mode = "ada";
-    i = 3;
+    i = 8;
   } else {
-    i = 4;
+    i = 9;
   }
 
   // Setting the classifiers
