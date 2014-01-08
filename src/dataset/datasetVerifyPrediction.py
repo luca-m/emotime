@@ -28,7 +28,7 @@ def dataset_process_results(results):
 
 
 def dataset_do_prediction(dsfolder, config, mode, eye_detection, do_prints=True):
-  faces_dir = os.path.join(dsfolder, config['FACES_FOLDER'])
+  faces_dir = os.path.join(dsfolder, config['IMAGES_FOLDER'])
 
   if mode == 'svm':
     class_dir = os.path.join(dsfolder, config['CLASSIFIER_SVM_FOLDER'])
