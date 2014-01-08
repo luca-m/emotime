@@ -62,7 +62,9 @@ int main( int argc, const char* argv[] ){
     if (argc >= 9){
       filter = true;
       filterfile = argv[8];
+#ifdef DEBUG
       cout << "INFO: filtering with filter at " << filterfile << endl;
+#endif
     }
 
     Mat img = matrix_io_load( infile );
@@ -71,14 +73,18 @@ int main( int argc, const char* argv[] ){
 
     vector<GaborKernel*> bank;
     gaborbank_getCustomGaborBank(bank, (double) nwidths, (double) nlambdas, (double) nthetas);
+#ifdef DEBUG
     cout << "INFO: filtering with " << bank.size() << " filters" << endl;
+#endif
     Mat dest = gaborbank_filterImage(scaled, bank);
 
     if (filter){
       set<unsigned int> selected=featselect_load(filterfile); 
       dest = featselect_select(dest,selected);
     }
+#ifdef DEBUG
     cout << "INFO: saving to " << outfile << endl;
+#endif
     matrix_io_save(dest, outfile);
     dest.release();
   } catch (int e) {

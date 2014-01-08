@@ -15,12 +15,13 @@ from os.path import isdir
 from os.path import basename
 from os.path import splitext
 
-def _subproc_call( param ):
+def _subproc_call(args):
     """ Wrap a subprocess.call """
+    param, comstr = args
     retcode=subprocess.call( param, shell=False )
-    comstr=' '.join(param)
+    #comstr=' '.join(param)
     if retcode==0:
-      print "INFO: '%s' has completed successfully " % comstr
+      print "INFO: done %s"%comstr
       return (comstr,True)
     else:
       print "ERR: '%s' has encountered problems" % comstr 
@@ -53,9 +54,9 @@ def dataset_trainAdaboost(trainFolder, outFolder, config):
     #with open(join(trainFolder,f),'r') as r:
     #  fields=len(r.readline().split(','))
 
-    bagoftask.append( [config['TRAIN_ADA_TOOL'], '{0}'.format(join(trainFolder, f)), '{0}'.format(join(outFolder, of)) ])#, str(fields)] ) 
+    bagoftask.append(([config['TRAIN_ADA_TOOL'], '{0}'.format(join(trainFolder, f)), '{0}'.format(join(outFolder, of)) ], os.path.splitext(f)[0]))#, str(fields)] ) 
   
-  print "INFO: tasks prepared, starting training procedure"
+  #print "INFO: tasks prepared, starting training procedure"
   nprocs=max( 1, int(multiprocessing.cpu_count()*abs(float(config['TRAIN_ADA_CPU_USAGE']))) )
   results=[]
   pool=multiprocessing.Pool(processes=nprocs)
@@ -73,10 +74,10 @@ def dataset_trainSVM(trainFolder, outFolder, config):
   print "INFO: starting svm training"
   for f in os.listdir(trainFolder):
     of = os.path.splitext(f)[0] + '.xml'
-    bagoftask.append([config['TRAIN_SVM_TOOL'], '{0}'.format(join(trainFolder,
-      f)), '{0}'.format(join(outFolder, of)) ])
+    bagoftask.append(([config['TRAIN_SVM_TOOL'], '{0}'.format(join(trainFolder,
+      f)), '{0}'.format(join(outFolder, of))], os.path.splitext(f)[0]))
 
-  print "INFO: tasks prepared, starting training procedure"
+  #print "INFO: tasks prepared, starting training procedure"
 
   nprocs = max(1, int(multiprocessing.cpu_count() * abs(float(config['TRAIN_SVM_CPU_USAGE']))))
   results = []
@@ -106,7 +107,7 @@ def dataset_run_training(dsFolder, config, mode):
   elif mode == "svm":
     classifFldr=join(dsFolder, config['CLASSIFIER_SVM_FOLDER'])
     print "INFO: training decision trees using SVM"
-    results = dataset_trainSVM(trainFldr, classifFldr, config)
+    dataset_trainSVM(trainFldr, classifFldr, config)
 
 if __name__ == "__main__":
   parser = argparse.ArgumentParser()

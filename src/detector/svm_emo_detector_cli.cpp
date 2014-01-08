@@ -35,10 +35,11 @@ using std::pair;
 void help()
 {
 	cout << "Usage:" << endl;
-	cout << "   svm_emo_detector_cli <FaceDetecXML> <width> <height> <nwidths> <nlambdas> <nthetas> <svmXML> {<svmXML>}" << endl;
+	cout << "   svm_emo_detector_cli <FaceDetecXML> (<EyeDetecXML>|none) <width> <height> <nwidths> <nlambdas> <nthetas> <svmXML> {<svmXML>}" << endl;
 	cout << "Parameters:" << endl;
 	cout << "   <image>       - The input image" << endl;
-	cout << "   <faceDetectConf>   - OpenCV cascade classifier configuration file (Haar or LBP) for face detection" << endl;
+	cout << "   <FaceDetectXML>   - OpenCV cascade classifier configuration file (Haar or LBP) for face detection" << endl;
+	cout << "   <EyeDetectXML>   - OpenCV cascade classifier configuration file (Haar or LBP) for eye detection. If the file is 'none', no eye correction is performed." << endl;
 	cout << "   <width>       - Width of the image, the input image will be scaled" << endl;
 	cout << "   <height>      - Height of the image, the input image will be scaled" << endl;
 	cout << "   <nwidths>     - " << endl;
@@ -94,10 +95,16 @@ int main(int argc, const char *argv[])
     return -2;
   }
 
+  FacePreProcessor* preprocessor;
 	try {
 
-    FacePreProcessor preprocessor = FacePreProcessor(config, config_e,
-        size.width, size.height, nwidths, nlambdas, nthetas);
+    if (config_e == "none") {
+      preprocessor = new FacePreProcessor(config, size.width, size.height,
+          nwidths, nlambdas, nthetas);
+    } else {
+      preprocessor = new FacePreProcessor(config, config_e, size.width,
+          size.height, nwidths, nlambdas, nthetas);
+    }
 
     SVMEmoDetector emodetector = SVMEmoDetector(classifier_paths, classifiers);
 
@@ -107,7 +114,7 @@ int main(int argc, const char *argv[])
         cout << "Processing '" << infile << "'" << endl;
 		    Mat img = matrix_io_load(infile);
         Mat features;
-        bool canPreprocess = preprocessor.preprocess(img, features);
+        bool canPreprocess = preprocessor->preprocess(img, features);
         if (!canPreprocess) {
           cerr << "ERR: Cannot preprocess this image '" << infile << "'" << endl;
           continue;
@@ -128,6 +135,7 @@ int main(int argc, const char *argv[])
       classifiers.end(); ++it) {
     delete *it;
   }
+  delete preprocessor;
 
   return 0;
 }

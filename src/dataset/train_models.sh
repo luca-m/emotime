@@ -4,12 +4,38 @@ DS_FOLDER=../dataset
 DS_CONFIG=default.cfg
 
 MODE=adaboost
+PREPTRAINMODE=1vsAll
+EYE="--eye-correction"
 
 if [[ $# -gt 0 ]] ; then
   if [[ $1 == "svm" ]]; then
     MODE=svm
+    PREPTRAINMODE=1vsAllExt
+    EYE=""
   elif [[ $1 == "adaboost" ]]; then
     MODE=adaboost
+  fi
+  if [[ $# -gt 1 ]] ; then
+    case ${2,,} in
+      "1vsall")
+        PREPTRAINMODE=1vsAll
+        ;;
+      "1vsallext")
+        PREPTRAINMODE=1vsAllExt
+        ;;
+      "1vs1")
+        PREPTRAINMODE=1vs1
+        ;;
+      *)
+        ;;
+    esac
+    if [[ $# -gt 2 ]] ; then
+      if [[ ${3} == "eye" ]]; then
+        EYE="--eye-correction"
+      else
+        EYE=""
+      fi
+    fi
   fi
 fi
 
@@ -19,7 +45,7 @@ fi
 #
 
 echo "1.1) Cropping faces"
-python2 ./datasetCropFaces.py $DS_FOLDER 
+python2 ./datasetCropFaces.py $DS_FOLDER $EYE
 echo "------------------------"
 
 echo "1.2.a) Calculating features using bank of Gabor magnitude filters"
@@ -27,7 +53,7 @@ python2 ./datasetFeatures.py $DS_FOLDER
 echo "------------------------"
 
 echo "1.2.b) Preparing CSV file containing training data"
-python2 ./datasetPrepTrain.py $DS_FOLDER 
+python2 ./datasetPrepTrain.py $DS_FOLDER --mode $PREPTRAINMODE
 echo "------------------------"
 
 echo "1.3) Training with $MODE and selecting relevant features"
@@ -35,7 +61,7 @@ python2 ./datasetTrain.py $DS_FOLDER --mode $MODE
 echo "------------------------"
 
 echo "1.4) Verifying the prediction of $MODE"
-python2 ./datasetVerifyPrediction.py --mode $MODE $DS_FOLDER
+python2 ./datasetVerifyPrediction.py --mode $MODE $DS_FOLDER $EYE
 echo "------------------------"
 
 #

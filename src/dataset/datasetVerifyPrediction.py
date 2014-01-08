@@ -8,8 +8,8 @@ import re
 
 from subprocess import PIPE
 
-def dataset_verify_prediction(dsfolder, config, mode):
-  results = dataset_do_prediction(dsfolder, config, mode)
+def dataset_verify_prediction(dsfolder, config, mode, eye_detection):
+  results = dataset_do_prediction(dsfolder, config, mode, eye_detection)
   dataset_process_results(results)
 
 def dataset_process_results(results):
@@ -27,8 +27,8 @@ def dataset_process_results(results):
       print "\t", k, '->', "%.2f%%"%v
 
 
-def dataset_do_prediction(dsfolder, config, mode, do_prints=True):
-  faces_dir = os.path.join(dsfolder, config['FACES_FOLDER'])
+def dataset_do_prediction(dsfolder, config, mode, eye_detection, do_prints=True):
+  faces_dir = os.path.join(dsfolder, config['IMAGES_FOLDER'])
 
   if mode == 'svm':
     class_dir = os.path.join(dsfolder, config['CLASSIFIER_SVM_FOLDER'])
@@ -37,19 +37,24 @@ def dataset_do_prediction(dsfolder, config, mode, do_prints=True):
     class_dir = os.path.join(dsfolder, config['CLASSIFIER_FOLDER'])
     execut = config['DETECTION_ADA_TOOL']
 
-  print "INFO: detector tool '%s'"%execut
-  
+  print "INFO: detector tool '%s', eye detection: %r"%(execut, eye_detection)
+
   classificators = []
   for f in os.listdir(class_dir):
     abs_f = os.path.join(class_dir, f)
     if os.path.isfile(abs_f):
       classificators.append(abs_f)
 
-  print "INFO: classifiers %s"%str(classificators)
+  #print "INFO: classifiers %s"%str(classificators)
 
   results = {}
-  args = [execut, config['FACECROP_EYE_DETECTOR_CFG'], config['FACECROP_FACE_DETECTOR_CFG'], config['SIZE']['width'],
-      config['SIZE']['height'], config['GABOR_NWIDTHS'], config['GABOR_NLAMBDAS'],
+  args = [execut, config['FACECROP_FACE_DETECTOR_CFG']]
+  if eye_detection:
+    args.append(config['FACECROP_EYE_DETECTOR_CFG'])
+  else:
+    args.append('none')
+  args += [config['SIZE']['width'], config['SIZE']['height'],
+      config['GABOR_NWIDTHS'], config['GABOR_NLAMBDAS'],
       config['GABOR_NTHETAS']] + classificators
 
   res_reg =  re.compile("predicted: (\w*) with score (.*)")
@@ -75,11 +80,12 @@ if __name__ == "__main__":
   parser.add_argument("dsFolder", help="Dataset base folder")
   parser.add_argument("-v", "--verbose", action='store_true', help="verbosity")
   parser.add_argument("--mode", default="adaboost", choices=['adaboost', 'svm'], help="training mode: adaboost or svm")
+  parser.add_argument("--eye-correction", action="store_true", help="Perform eye correction on images")
   args = parser.parse_args()
 
   try:
     config = {}
     config = dcp.parse_ini_config(os.path.join(args.dsFolder, args.cfg))
-    dataset_verify_prediction(args.dsFolder, config, args.mode)
+    dataset_verify_prediction(args.dsFolder, config, args.mode, args.eye_correction)
   except Exception as e:
     print "ERR: something wrong (%s)" % str(e)
