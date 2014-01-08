@@ -18,6 +18,7 @@ class FaceDetector{
 
 protected:
 	CascadeClassifier cascade_f;
+	CascadeClassifier cascade_fcoarse;
 	CascadeClassifier cascade_e;
   bool doEyesRot;
   /**
@@ -26,6 +27,7 @@ protected:
 	 * @param faceRegion
 	 * @return
 	 */
+	virtual bool detectFaceCoarse(Mat & img, Rect & face);
 	virtual bool detectFace(Mat & img, Rect & face);
 	virtual bool detectEyes(Mat & img, Point & eye1, Point & eye2);
 

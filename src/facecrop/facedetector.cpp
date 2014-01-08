@@ -15,6 +15,7 @@ namespace emotime{
 
 FaceDetector::FaceDetector(string face_config_file, string eye_config_file){
 	cascade_f.load(face_config_file);
+	cascade_fcoarse.load(string("../resources/haarcascade_frontalface_default.xml"));
 	cascade_e.load(eye_config_file);
   this->doEyesRot=true;
 	assert(!cascade_f.empty());
@@ -22,6 +23,7 @@ FaceDetector::FaceDetector(string face_config_file, string eye_config_file){
 }
 FaceDetector::FaceDetector(string face_config_file) {
 	cascade_f.load(face_config_file);
+	cascade_fcoarse.load(string("../resources/haarcascade_frontalface_default.xml"));
   this->doEyesRot=false;
 	assert(!cascade_f.empty());
 }
@@ -31,7 +33,38 @@ FaceDetector::~FaceDetector() {
   //TODO: release cascade_f
 }
 
-
+bool FaceDetector::detectFaceCoarse(Mat & img, Rect & face) {
+	vector<Rect> faces;
+  #ifdef DEBUG
+  cout<<"DEBUG: detecting faces coarse";
+  #endif
+	// detect faces
+	assert(!cascade_fcoarse.empty());
+	cascade_fcoarse.detectMultiScale(img, faces, 1.1, 2, 0|CV_HAAR_SCALE_IMAGE, Size(30, 60));
+  #ifdef DEBUG
+  cout<<" (#"<<faces.size()<<")"<<endl;
+  #endif
+	if (faces.size()==0){
+    return false;
+  }
+  // Pick the face with maximum area
+  unsigned int maxI=-1;
+	int maxArea=-1;
+	int area=-1;
+	for (unsigned int i=0;i<faces.size();i++){
+		area=faces.at(i).width*faces.at(i).height;
+		if (area>maxArea){
+			maxI=i;
+			maxArea=area;
+		} 
+	}
+	face.x = faces.at(maxI).x;
+	face.y = faces.at(maxI).y;
+	face.width = faces.at(maxI).width;
+	face.height = faces.at(maxI).height;
+	faces.clear();
+  return true;
+}
 
 bool FaceDetector::detectFace(Mat & img, Rect & face) {
 	vector<Rect> faces;
@@ -148,7 +181,7 @@ bool FaceDetector::detect(Mat & img, Mat & face) {
 		img.copyTo(imgGray);
 	}
 	equalizeHist(imgGray, imgGray);
-	hasFace=detectFace(imgGray, faceRegion);
+	hasFace=detectFaceCoarse(imgGray, faceRegion);
   if (!hasFace){
     return false;
   }
@@ -183,7 +216,7 @@ bool FaceDetector::detect(Mat & img, Mat & face) {
       float c0=std::sqrt(std::pow(tribase.x-upper.x,2)+std::pow(tribase.y-upper.y,2));
       float c1=std::sqrt(std::pow(tribase.x-lower.x,2)+std::pow(tribase.y-lower.y,2));
       float ip=std::sqrt(std::pow(upper.x-lower.x,2)  +std::pow(upper.y-lower.y  ,2));
-      float angle=(left.x==lower.x?1:-1)*std::acos(c1/ip)*(180.0f/CV_PI)/2.0;
+      float angle=(left.x==lower.x?1:-1)*std::acos(c1/ip)*(180.0f/CV_PI);
       #ifdef DEBUG
       cout<<"DEBUG: preparing rotation matrix (c0="<<c0<<",c1="<<c1<<",ip="<<ip<<",angle="<<angle<<")";
       #endif
@@ -193,10 +226,15 @@ bool FaceDetector::detect(Mat & img, Mat & face) {
         #endif
         Mat rotMat=getRotationMatrix2D(eyecenter, angle, 1.0);
         warpAffine(imgGray, imgGray, rotMat, imgGray.size());
-        //hasFace=detectFace(imgGray, faceRegion);
-        //if (!hasFace){
-        //  return false;
-        //}
+        hasFace=detectFace(imgGray, faceRegion);
+        if (hasFace){
+          plainFace=imgGray(faceRegion);
+          // copy equalized and rotated face to out image 
+          plainFace.copyTo(face);
+          //equalizeHist(face, face);
+          imgGray.release(); 
+          return true;
+        }
       }else{
       #ifdef DEBUG
       cout<<" skip:angle_too_low_or_high"<<endl;
@@ -204,11 +242,13 @@ bool FaceDetector::detect(Mat & img, Mat & face) {
       }
     }
   }
-  // copy equalized and rotated face to out image 
-  plainFace.copyTo(face);
-	equalizeHist(face, face);
   imgGray.release(); 
-  return true;
+  return false;
+  // copy equalized and rotated face to out image 
+  // plainFace.copyTo(face);
+	//equalizeHist(face, face);
+  //imgGray.release(); 
+  //return true;
 }
 
 }/* namespace facecrop */
