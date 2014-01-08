@@ -329,14 +329,14 @@ namespace emotime {
             if (prediction > 0.5) {
               it->second += 0.5; //1.0;
             } else {
-              for(map<Emotion,float>::iterator votes_it = votes.begin(); votes_it != votes.end(); ++votes_it) {
-                vector<Emotion>::iterator e_it = find(emo.begin(), emo.end(), votes_it->first);
-                if (e_it == emo.end()) {
-                  // if I dont find emotion in detected emotion
-                  votes_it->second+=1.0;
-                }
-              }
-              //it->second -= 0.0;
+              //for(map<Emotion,float>::iterator votes_it = votes.begin(); votes_it != votes.end(); ++votes_it) {
+              //  vector<Emotion>::iterator e_it = find(emo.begin(), emo.end(), votes_it->first);
+              //  if (e_it == emo.end()) {
+              //    // if I dont find emotion in detected emotion
+              //    votes_it->second+=1.0;
+              //  }
+              //}
+              it->second -= 0.0;
             }
           }
         }
