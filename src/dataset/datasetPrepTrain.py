@@ -56,7 +56,7 @@ def dataset_prepare( (goodClass,badClass), dsFolder, config):
   """
   badClass = sorted(badClass)
   goodClass = sorted(goodClass)
-  print "INFO: Preparing training file for '%s' vs. '%s' " % (','.join(goodClass), ','.join(badClass))
+  #print "INFO: Preparing training file for '%s' vs. '%s' " % (','.join(goodClass), ','.join(badClass))
   
   goodPath=[join(dsFolder, join(config['FEATURES_FOLDER'], x)) for x in goodClass]
   badPath= [join(dsFolder, join(config['FEATURES_FOLDER'], x)) for x in badClass]
@@ -85,7 +85,7 @@ def dataset_prepare( (goodClass,badClass), dsFolder, config):
       goodImgs=[ f for f in os.listdir(fold) if isfile(join(fold, f))]
       goodImgs.sort()
       for f in goodImgs:
-        print "INFO: Processing (P) '%s'" % join(fold, f)
+        #print "INFO: Processing (P) '%s'" % join(fold, f)
         tf.write("P")     # POSITIVE
 
         if lower(config['TRAIN_EMBED_IN_CSV'])=='true':
@@ -107,7 +107,7 @@ def dataset_prepare( (goodClass,badClass), dsFolder, config):
       badImgs=[f for f in os.listdir(fold) if isfile(join(fold, f))]
       badImgs.sort()
       for f in badImgs:
-        print "INFO: Processing (N) '%s'" % join(fold, f)
+        #print "INFO: Processing (N) '%s'" % join(fold, f)
         tf.write("N")     # NEGATIVE
        
         if lower(config['TRAIN_EMBED_IN_CSV'])=='true':
@@ -123,7 +123,7 @@ def dataset_prepare( (goodClass,badClass), dsFolder, config):
           tf.write(",%s" % abspath(join(fold, f)))
       tf.write("\n")
   
-  print "INFO: Done"
+  #print "INFO: Done"
   return
 
 def dataset_prepTrainFiles(dsFolder, multiclassMode, config):
