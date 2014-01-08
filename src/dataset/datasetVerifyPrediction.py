@@ -80,12 +80,12 @@ if __name__ == "__main__":
   parser.add_argument("dsFolder", help="Dataset base folder")
   parser.add_argument("-v", "--verbose", action='store_true', help="verbosity")
   parser.add_argument("--mode", default="adaboost", choices=['adaboost', 'svm'], help="training mode: adaboost or svm")
-  parser.add_argument("--eye-detection", action="store_true", help="Perform eye correction on images")
+  parser.add_argument("--eye-correction", action="store_true", help="Perform eye correction on images")
   args = parser.parse_args()
 
   try:
     config = {}
     config = dcp.parse_ini_config(os.path.join(args.dsFolder, args.cfg))
-    dataset_verify_prediction(args.dsFolder, config, args.mode, args.eye_detection)
+    dataset_verify_prediction(args.dsFolder, config, args.mode, args.eye_correction)
   except Exception as e:
     print "ERR: something wrong (%s)" % str(e)
