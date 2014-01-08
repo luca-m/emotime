@@ -8,6 +8,7 @@
 #include <iostream>
 #include <string>
 #include <opencv2/opencv.hpp>
+#include <opencv2/ml/ml.hpp>
 
 #include "agui.hpp"
 #include "preprocessor.hpp"
@@ -25,13 +26,11 @@ namespace emotime{
       DebugGuiBoost(ACapture * capt, FacePreProcessor * fp, EmoDetector<CvBoost> * detect, int fps): ADebugGui<CvBoost>(capt, fp, detect, fps){
       }
   };
-  /*
-  class SvmGuiBoost: public ADebugGui<CvSvm>{
+  class DebugGuiSVM: public ADebugGui<CvSVM>{
     public:
-      SvmGuiBoost(ACapture * capt, FacePreProcessor * fp, EmoDetector<CvBoost> * detect, int fps): ADebugGui<SvSvm>(capt, fp, detect, fps){
+      DebugGuiSVM(ACapture * capt, FacePreProcessor * fp, EmoDetector<CvSVM> * detect, int fps): ADebugGui<CvSVM>(capt, fp, detect, fps){
       }
   };
- */
 
   class GaborGui{
     protected:

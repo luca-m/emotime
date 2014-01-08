@@ -209,6 +209,7 @@ namespace emotime {
             cv::convertScaleAbs(gabor, adjMap, 255 / max);
             Mat bigger;
             resize(adjMap,bigger,Size(adjMap.size().width*3,adjMap.size().height*3), 0, 0, CV_INTER_LINEAR);
+            equalizeHist(bigger,bigger);
             imshow(featsWinTitle.c_str(), bigger);
           }
         }
