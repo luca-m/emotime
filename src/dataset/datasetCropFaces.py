@@ -29,7 +29,7 @@ def dataset_cropFaces(dsFolder, config, eye_correction):
       iimPath = join(ipath, im)
       oimPath = join(opath, im)
 
-      sys.stdout.write("INFO: running facecropping %s on %s (%d of %d)\r"%(info_str, c, i, len(imgs)))
+      sys.stdout.write("INFO: running facecropping %s on %s (%d of %d)\r"%(info_str, c, (i + 1), len(imgs)))
       sys.stdout.flush()
 
       args = [config['FACECROP_TOOL'], config['FACECROP_FACE_DETECTOR_CFG']]
