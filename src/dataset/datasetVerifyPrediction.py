@@ -45,7 +45,7 @@ def dataset_do_prediction(dsfolder, config, mode, do_prints=True):
     if os.path.isfile(abs_f):
       classificators.append(abs_f)
 
-  print "INFO: classifiers %s"%str(classificators)
+  #print "INFO: classifiers %s"%str(classificators)
 
   results = {}
   args = [execut, config['FACECROP_EYE_DETECTOR_CFG'], config['FACECROP_FACE_DETECTOR_CFG'], config['SIZE']['width'],
