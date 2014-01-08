@@ -37,7 +37,7 @@ def dataset_do_prediction(dsfolder, config, mode, eye_detection, do_prints=True)
     class_dir = os.path.join(dsfolder, config['CLASSIFIER_FOLDER'])
     execut = config['DETECTION_ADA_TOOL']
 
-  print "INFO: detector tool '%s', eye detection: %b"%(execut, eye_detection)
+  print "INFO: detector tool '%s', eye detection: %r"%(execut, eye_detection)
 
   classificators = []
   for f in os.listdir(class_dir):
