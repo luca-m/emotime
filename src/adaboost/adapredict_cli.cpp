@@ -12,7 +12,7 @@ using namespace cv;
 
 void help() {
 	cout<<"Usage:"<<endl;
-	cout<<"   adapredict_cli <adaConfig> <image> [<width> <height> <nwidths> <nlambdas> <nthetas> <faceDetectConf>]"<<endl;
+	cout<<"   adapredict_cli <adaConfig> <image> [<width> <height> <nwidths> <nlambdas> <nthetas> <faceDetectConf> [<eyeDetectConf>]]"<<endl;
 	cout<<"Parameters:"<<endl;
 	cout<<"   <adaConfig>   - OpenCV XML configuration file containig "<<endl;
 	cout<<"                   the trained boosted decision trees."<<endl;
@@ -23,7 +23,7 @@ void help() {
 	cout<<"   <nlambdas>    - "<<endl;
 	cout<<"   <nthetas>     - "<<endl;
 	cout<<"   <faceDetectConf>   - OpenCV cascade classifier configuration file (Haar or LBP) for face detection"<<endl;
-	cout<<"   <eyesDetectConf>   - OpenCV cascade classifier configuration file (Haar or LBP) for face detection"<<endl;
+	cout<<"   [<eyesDetectConf>]   - OpenCV cascade classifier configuration file (Haar or LBP) for face detection"<<endl;
 	cout<<endl;
 }
 void banner() {
@@ -38,25 +38,27 @@ int main( int argc, const char *argv[] ) {
 		help();
 		cerr<<"ERR: missing parameters"<<endl;
 		return -3;
-	} 
+	}
 	const char *config = argv[1];
 	string infile = string(argv[2]);
   cv::Size s(0,0);
   string detectorConf;
-  string detectorConf_e;
+  string *detectorConf_e = NULL;
   int nwidths, nlambdas, nthetas;
   float prediction;
-  
-  if (argc==10){
-    preprocess=true; 
+
+  if (argc >= 9) {
+    preprocess=true;
   	s.width = abs(atoi(argv[3]));
 	  s.height = abs(atoi(argv[4]));
     nwidths = abs(atoi(argv[5]));
     nlambdas= abs(atoi(argv[6]));
     nthetas = abs(atoi(argv[7]));
-    
+
     detectorConf = string(argv[8]);
-    detectorConf_e = string(argv[9]);
+    if (argc == 10) {
+      detectorConf_e = new string(argv[9]);
+    }
   }
 
 	try {		
@@ -71,8 +73,15 @@ int main( int argc, const char *argv[] ) {
     if (preprocess){
       vector<emotime::GaborKernel *> bank;
       gaborbank_getCustomGaborBank(bank, (double) nwidths, (double) nlambdas, (double) nthetas);
-      emotime::FaceDetector facedetector=  emotime::FaceDetector(detectorConf,detectorConf_e);
-		  prediction = adapredict_predict(boost, bank, img, s, &facedetector);
+      emotime::FaceDetector *facedetector;
+      if (detectorConf_e == NULL) {
+        facedetector = new emotime::FaceDetector(detectorConf);
+      } else {
+        facedetector = new emotime::FaceDetector(detectorConf, *detectorConf_e);
+      }
+
+		  prediction = adapredict_predict(boost, bank, img, s, facedetector);
+      delete facedetector;
     }
     else{
       // with default parameters

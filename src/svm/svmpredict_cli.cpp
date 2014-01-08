@@ -24,7 +24,7 @@ using std::endl;
 void help(){
   cout << "Usage:" << endl;
   cout << "   svmpredict_cli <svmConfig> <image> [" << "<width> <height> " <<
-    "<nwidths> <nlambdas> <nthetas> <faceDetectConf>]" << endl;
+    "<nwidths> <nlambdas> <nthetas> <faceDetectConf> [<eyeDetectConf>]]" << endl;
 
   cout << "Parameters:" << endl;
   cout << "   <svmConfig>   - OpenCV XML configuration file containig " << endl;
@@ -37,7 +37,7 @@ void help(){
   cout << "   <nthetas>     - " << endl;
   cout << "   <faceDetectConf>   - OpenCV cascade classifier configuration " <<
     "file (Haar or LBP) for face detection" << endl;
-  cout << "   <eyesDetectConf>   - OpenCV cascade classifier configuration " <<
+  cout << "   [<eyesDetectConf>]   - OpenCV cascade classifier configuration " <<
     "file (Haar or LBP) for face detection" << endl;
   cout << endl;
 }
@@ -59,11 +59,11 @@ int main( int argc, const char *argv[] ){
   string infile = string(argv[2]);
   cv::Size s(0, 0);
   string detectorConf;
-  string detectorConf_e;
+  string* detectorConf_e = NULL;
   int nwidths, nlambdas, nthetas;
   float prediction;
 
-  if (argc==10) {
+  if (argc >= 9) {
     preprocess = true;
     s.width = abs(atoi(argv[3]));
     s.height = abs(atoi(argv[4]));
@@ -72,7 +72,9 @@ int main( int argc, const char *argv[] ){
     nthetas = abs(atoi(argv[7]));
 
     detectorConf = string(argv[8]);
-    detectorConf_e = string(argv[9]);
+    if (argc == 10) {
+      detectorConf_e = new string(argv[9]);
+    }
   }
 
   try {
@@ -85,10 +87,19 @@ int main( int argc, const char *argv[] ){
       return -1;
     }
     if (preprocess){
-      vector<emotime::GaborKernel *> bank;
+      vector<emotime::GaborKernel*> bank;
       gaborbank_getCustomGaborBank(bank, (double) nwidths, (double) nlambdas, (double) nthetas);
-      emotime::FaceDetector facedetector =  emotime::FaceDetector(detectorConf,detectorConf_e);
-      prediction = svmpredict_predict(svm, bank, img, s, &facedetector);
+      emotime::FaceDetector* facedetector;
+
+      if (detectorConf_e == NULL) {
+        facedetector = new emotime::FaceDetector(detectorConf);
+      } else {
+        facedetector = new emotime::FaceDetector(detectorConf, *detectorConf_e);
+      }
+
+      prediction = svmpredict_predict(svm, bank, img, s, facedetector);
+
+      delete facedetector;
     } else {
       // with default parameters
       prediction = svmpredict_predictNoPreprocess(svm, img);

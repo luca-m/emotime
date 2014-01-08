@@ -17,10 +17,10 @@ using namespace emotime;
 
 void help() {
 	cout<<"Usage:"<<endl;
-	cout<<"   boost_emo_detector_cli <faceDetectConf> <eyesDetectConf> <width> <height> <nwidths> <nlambdas> <nthetas> [<boostXML> ..] "<<endl;
+	cout<<"   boost_emo_detector_cli <faceDetectConf> (<eyesDetectConf>|none) <width> <height> <nwidths> <nlambdas> <nthetas> [<boostXML> ..] "<<endl;
 	cout<<"Parameters:"<<endl;
 	cout<<"   <faceDetectConf>   - OpenCV cascade classifier configuration file (Haar or LBP) for face detection"<<endl;
-	cout<<"   <eyesDetectConf>   - OpenCV cascade classifier configuration file (Haar or LBP) for eyes detection"<<endl;
+	cout<<"   <eyesDetectConf>   - OpenCV cascade classifier configuration file (Haar or LBP) for eyes detection. If the file is 'none', no eye correction is performed."<<endl;
 	cout<<"   <width>       - Width of the image, the input image will be scaled"<<endl;
 	cout<<"   <height>      - Height of the image, the input image will be scaled"<<endl;
 	cout<<"   <nwidths>     - "<<endl;
@@ -52,7 +52,8 @@ int main( int argc, const char *argv[] ) {
   nwidths = abs(atoi(argv[5]));
   nlambdas= abs(atoi(argv[6]));
   nthetas = abs(atoi(argv[7]));
-  
+
+  FacePreProcessor* preprocessor;
 	try { 
     vector<string> classifier_paths;
     vector<CvBoost*> classifiers;
@@ -77,7 +78,14 @@ int main( int argc, const char *argv[] ) {
     }
 
 
-    FacePreProcessor preprocessor=FacePreProcessor(config, config_e, size.width, size.height, nwidths, nlambdas, nthetas);
+    if (config_e == "none") {
+      preprocessor = new FacePreProcessor(config, size.width, size.height,
+          nwidths, nlambdas, nthetas);
+    } else {
+      preprocessor = new FacePreProcessor(config, config_e, size.width, size.height,
+          nwidths, nlambdas, nthetas);
+    }
+
     BoostEmoDetector emodetector=BoostEmoDetector(classifier_paths, classifiers);
     cout<<"Insert the image file path: "<<endl; 
     while(std::getline(std::cin, infile)){
@@ -85,7 +93,7 @@ int main( int argc, const char *argv[] ) {
         cout<<"Processing '"<<infile<<"'"<<endl;
 		    Mat img=matrix_io_load(infile);
         Mat features;
-        bool canPreprocess=preprocessor.preprocess(img, features);
+        bool canPreprocess=preprocessor->preprocess(img, features);
         if (!canPreprocess){
           cerr<<"ERR: Cannot preprocess this image '"<<infile<<"'"<<endl;
           continue;
@@ -101,5 +109,8 @@ int main( int argc, const char *argv[] ) {
 		cerr<<"ERR: Exception #"<<e<<endl;
 		return -e;
 	}
+
+	delete preprocessor;
+
   return 0;
 }
