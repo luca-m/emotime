@@ -6,6 +6,7 @@ import os
 import argparse
 import subprocess
 import datasetConfigParser as dcp
+import sys
 
 from os.path import join
 from os.path import isfile
@@ -19,14 +20,19 @@ def dataset_calcGaborBank(dsFolder, config):
     facesFolder=join(dsFolder, join(config['FACES_FOLDER'], c))
     featsFolder=join(dsFolder, join(config['FEATURES_FOLDER'], c))
     faces=[ f for f in os.listdir(facesFolder) if isfile(join(facesFolder, f))]
-    for face in faces:
+    for i in xrange(0, len(faces)):
+      face = faces[i]
       faceFile=join(facesFolder, face)
-      print "INFO: calculating features on %s" % faceFile
+
+      sys.stdout.write("INFO: calculating features for %s (%d of %d)\r" % (c,
+        (i+1), len(faces)))
+      sys.stdout.flush()
+
       featFolder=join(featsFolder, os.path.splitext(face)[0]) + config['FILTERED_FOLDER_SUFFIX']
       try:
         os.mkdir(featFolder)
-      except Exception as e:
-        print "WARN: creation of directory failed (%s)" % str(e)
+      except Exception: # as e:
+        #print "WARN: creation of directory failed (%s)" % str(e)
         pass
       featFile=join(featFolder, config['GABOR_FEAT_FNAME'])
       cmd=[config['GABOR_TOOL'], str(config['SIZE']['width']), str(config['SIZE']['height']), 
@@ -38,6 +44,7 @@ def dataset_calcGaborBank(dsFolder, config):
       retcode=subprocess.call(cmd)
       if retcode<0:
         print "WARN: execution has returned error %d" % retcode
+    print ""
 
 def dataset_calcFeatures(dsFolder, config):
   """ Calculate features on dataset"""
