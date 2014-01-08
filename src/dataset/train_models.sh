@@ -4,12 +4,29 @@ DS_FOLDER=../dataset
 DS_CONFIG=default.cfg
 
 MODE=adaboost
+PREPTRAINMODE=1vsAll
 
 if [[ $# -gt 0 ]] ; then
   if [[ $1 == "svm" ]]; then
     MODE=svm
+    PREPTRAINMODE=1vsAllExt
   elif [[ $1 == "adaboost" ]]; then
     MODE=adaboost
+  fi
+  if [[ $# -gt 1 ]] ; then
+    case ${2,,} in
+      "1vsall")
+        PREPTRAINMODE=1vsAll
+        ;;
+      "1vsallext")
+        PREPTRAINMODE=1vsAllExt
+        ;;
+      "1vs1")
+        PREPTRAINMODE=1vs1
+        ;;
+      *)
+        ;;
+    esac
   fi
 fi
 
@@ -27,7 +44,7 @@ python2 ./datasetFeatures.py $DS_FOLDER
 echo "------------------------"
 
 echo "1.2.b) Preparing CSV file containing training data"
-python2 ./datasetPrepTrain.py $DS_FOLDER 
+python2 ./datasetPrepTrain.py $DS_FOLDER --mode $PREPTRAINMODE
 echo "------------------------"
 
 echo "1.3) Training with $MODE and selecting relevant features"
