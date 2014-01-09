@@ -98,7 +98,7 @@ Training with _native_ tool:
 
 #### Boosting
 
-_WARNING: AdaBoost models training and features selection has been SUSPENDED due to the HUGE amount of training time. Man, we have laptops.._
+_WARNING: AdaBoost models training and features selection has been SUSPENDED due to the HUGE amount of time needed for training. Man, we have laptops.._
 
 _WARNING: AdaBoost models were trained in early development stages, they are not meaningful. Go to SVM._
 
@@ -147,9 +147,6 @@ Training parameters:
 * Gabor kernels: `nwidths=2`, `nlambdas=5`, `nthetas=4`
 * Multiclass mode: 1vsAllExt
 
-<<<<<<< HEAD
-=======
-
 Training parameters:
 
 * Face detector: `haarcascade_frontalface_cbcl1.xml`, `rotation correction`
@@ -157,7 +154,6 @@ Training parameters:
 * Gabor kernels: `nwidths=2`, `nlambdas=5`, `nthetas=4`
 * Multiclass mode: 1vsAllExt
 
->>>>>>> 55091fa068135181986acd4d07d5393fb577f370
 ```
 Sadness
 	sadness -> 1.00%
@@ -217,11 +213,7 @@ Considerations:
 
 ## Validation
 
-<<<<<<< HEAD
 Due to the lack of availability of other dataset with respect to the time available for the project, we did __not__ performed formal _validation test_, so we cannot provide a validation error confusion matrix. __Try it yourself__. 
-=======
-Due to the lack of availability of other dataset with respect to the time available for the project, we did __not__ performed formal _validation test_, so we cannot provide a validation error confusion matrix. Try it yourself. 
->>>>>>> 55091fa068135181986acd4d07d5393fb577f370
 
 ## Detection and Prediction
 
@@ -230,20 +222,11 @@ Due to the lack of availability of other dataset with respect to the time availa
 
 Video gui:
 
-<<<<<<< HEAD
-    echo "<VIDEOPATH>" |./emotimevideo_cli FACEDETECTORXML (EXEDETECTORXML|none) WIDTH HEIGHT NWIDTHS NLAMBDAS NTHETAS (svm|ada) (TRAINEDCLASSIFIERSXML)+
+    echo "<VIDEOPATH>"|./emotimevideo_cli FACEDETECTORXML (EXEDETECTORXML|none) WIDTH HEIGHT NWIDTHS NLAMBDAS NTHETAS (svm|ada) (TRAINEDCLASSIFIERSXML)+
   
 Cam gui:
 
     ./emotimegui_cli FACEDETECTORXML (EXEDETECTORXML|none) WIDTH HEIGHT NWIDTHS NLAMBDAS NTHETAS (svm|ada) (TRAINEDCLASSIFIERSXML)+
-=======
-  echo <VIDEOPATH> |./emotimevideo_cli FACEDETECTORXML (EXEDETECTORXML|none) WIDTH HEIGHT NWIDTHS NLAMBDAS NTHETAS (svm|ada) (TRAINEDCLASSIFIERSXML)+
-  
-Cam gui:
-
-  ./emotimegui_cli FACEDETECTORXML (EXEDETECTORXML|none) WIDTH HEIGHT NWIDTHS NLAMBDAS NTHETAS (svm|ada) (TRAINEDCLASSIFIERSXML)+
->>>>>>> 55091fa068135181986acd4d07d5393fb577f370
-
 
 ## Further Development
 
