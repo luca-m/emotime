@@ -26,75 +26,69 @@ stuff that could be usefull to get in this topic:
 
 ## Project Structure
 
-	src
-		\-->dataset 		Scripts for dataset management
-		\-->facecrop 		utilities and modules for face cropping and registration
-		\-->gaborbank		utilities and modules for generating gabor filters and image filtering
-		\-->adaboost 		utilities and modules for adaboost train, prediction, and feature selection
-	  \-->svm         utilities and modules for svm training and prediction
-    \-->detector    Multiclass detector and preprocessor
-    \-->utils       Image/Matrix loading utilities, CSV supports, and so on..
-    
-  doc
-							Documentation (doxigen)
-	resources
-							Containing third party resources (eg. OpenCV classifiers)
-	assets
-							Binary folder
-  test
-              Some testing scripts here
+```
+src
+	\-->dataset 		Scripts for dataset management
+	\-->facecrop 		utilities and modules for face cropping and registration
+	\-->gaborbank		utilities and modules for generating gabor filters and image filtering
+	\-->adaboost 		utilities and modules for adaboost train, prediction, and feature selection
+  \-->svm         utilities and modules for svm training and prediction
+  \-->detector    Multiclass detector and preprocessor
+  \-->utils       string and IO utilities, CSV supports, and so on..
+doc         Documentation (doxigen)
+resources   Containing third party resources (eg. OpenCV haar classifiers)
+assets      Binary folder
+test        Some testing scripts here
+```
 
 ## Build
 
-Dependencies
+Dependencies:
 
-	* cmake
-	* Python 2.7 
-	* OpenCV 2.4.5
+	* CMake > 2.8
+	* Python > 2.7, < 3.0 
+	* OpenCV > 2.4.5
 
-_NOTE: OpenCV CvMLData is used for loading training files, but if you try to run the ML-Training procedure as is you could encounter some problem related to OpenCV default values and size of training data.
-For the sake of simplicity you MAY NEEED to make CvMLData.read_csv capable of reading bigger data. In order to do it you should RECOMPILE and REINSTALL OpenCV after a very quick modification.
-In detail you should go to `opencv-2.x.x` folder, then edit `modules/ml/src/data.cpp`, find the `read_csv` method, find the `storage = cvCreateMemStorage();` line and specify a bigger value than the default one (eg.`storage = cvCreateMemStorage(256*2048)` instead of 64K)  _
+~~_NOTE: OpenCV CvMLData is used for loading training files, but if you try to run the ML-Training procedure as is you could encounter some problem related to OpenCV default values and size of training data.
+For the sake of simplicity you MAY NEEED to make CvMLData.read_csv capable of reading bigger data. In order to do it you should RECOMPILE and REINSTALL OpenCV after a very quick modification. In detail you should go to `opencv-2.x.x` folder, then edit `modules/ml/src/data.cpp`, find the `read_csv` method, find the `storage = cvCreateMemStorage();` line and specify a bigger value than the default one (eg.`storage = cvCreateMemStorage(256*2048)` instead of 64K)_~~
 
-Compiling on linux
+Compiling on linux:
 
 * mkdir build; cd build
 * cmake .. ; make ; make install
 
-Cross-compiling for windows
+Cross-compiling for windows:
 
-* mkdir build; cd build
-* TBD
+* TODO: CMake Toolchain for MinGW
 
+Compiling on linux:
 
+* TODO: CMakeGui
 
-## Usage
+## Training
 
-Initialize and fill a dataset
+Initialize and fill a dataset:
 
-	python2 datasetInit.py [-h] dsPath config
-	python2 datasetFillCK.py [-h] datasetFolder cohnKanadeFolder cohnKanadeEmotionsFolder
+    python2 datasetInit.py [-h] dsPath config
+    python2 datasetFillCK.py [-h] datasetFolder cohnKanadeFolder cohnKanadeEmotionsFolder
 
-Crop faces from dataset and calculation gabor filters features
+Train some models:
 
-	python2 datasetCropFaces.py [-h] datasetFolder faceDetectorCfg
-	python2 datasetFeatures.py [-h] datasetFolder
+    ./train_models.sh svm 1vsallext ./dataset
 
+Or also :
 
-Prepare training files and train classifiers
+    python datasetCropFaces.py [-h] [--eye-correction] dsFolder
+    python datasetFeatures.py [-h] dsFolder 
+    python datasetPrepTrain.py [-h] [--mode {1vs1,1vsAll,1vsAllExt}] dsFolder
+    python datasetTrain.py [-h] [--mode {adaboost,svm}] dsFolder 
+    python datasetVerifyPrediction.py [-h] [--mode {adaboost,svm}] [--eye-correction] dsFolder
 
-	python2 datasetPrepTrain.py [-h] datasetFolder
-	python2 datasetTrain.py [-h] datasetFolder
+Training with _native_ tool:
 
+    TBD
 
-#### Face Preprocessor
-
-In `src/detector/preprocessor.hpp` is present an attemp to wrap all the image preprocessing operation performed in training in order to provide a simple way to preprocess a face image to an higher level application. (feature filters not yet supported)
-
-#### Building a multiclass detector 
-
-Go to `src/detector/emo_detector.hpp`, here you can find a class you may specialize in order to hopefully support any binary classifier (eg. Boost, SVM ..).
-An example of how to extend can be found in `src/detector/boost_emo_detector.cpp`, nothing to complex, also a simple GUI here `src/detector/boost_emo_detector_cli.cpp`. The script used for calculating train error on adaboost trained models is in `test/adaboost_train_error.sh`.
+## Detection and Prediction
 
 
 
@@ -103,11 +97,20 @@ An example of how to extend can be found in `src/detector/boost_emo_detector.cpp
 The [Cohn-Kanade database](http://www.consortium.ri.cmu.edu/ckagree/) is one of the most used face database. In it's extended version (CK+) it contains also [FACS](http://en.wikipedia.org/wiki/Facial_Action_Coding_System) 
 code labels (aka Action Units) and emotion labels (neutral, anger, contempt, disgust, fear, happy, sadness, surprise).
 
-
 ## Training Results
 
+#### Boosting
 
-AdaBoost opencv real_ada_boost results (no neutral):
+_WARNING: AdaBoost models training and features selection has been SUSPENDED due to the HUGE amount of training time. Man we have laptops.._
+
+Training parameters:
+
+* Face detector: `haarcascade_frontalface_alt.xml`, `no rotation correction`
+* Size: `32x32`
+* Gabor kernels: `nwidths=1`, `nlambdas=5`, `nthetas=8`
+* Multiclass mode: 1vsAll
+
+AdaBoost opencv _realboost_ results (no neutral, only true positive):
 
 ``` 
 anger : 39/45   -  .8666666666
@@ -120,9 +123,7 @@ sadness : 23/28   -  .8214285714
 surprise : 81/83   -  .9759036144
 Train hit rate: 286/327   -  .8746177370
 ```
-NOTE: decision tree.
-
-AdaBoost opencv gentle_ada_boost results (no neutral):
+AdaBoost opencv _gentleboost_ results (no neutral, only true positive):
 
 ```
 anger : 44/45   -  .9777777777
@@ -136,4 +137,85 @@ surprise : 82/83   -  .9879518072
 Train hit rate: 295/327   -  .9021406727
 
 ```
-NOTE: regression tree.
+
+#### SVM (linear kernel)
+
+Training parameters:
+
+* Face detector: `haarcascade_frontalface_alt.xml`, `rotation correction`
+* Size: `48x48`
+* Gabor kernels: `nwidths=2`, `nlambdas=5`, `nthetas=4`
+* Multiclass mode: 1vsAllExt
+
+
+Training parameters:
+
+* Face detector: `haarcascade_frontalface_cbcl1.xml`, `rotation correction`
+* Size: `48x48`
+* Gabor kernels: `nwidths=2`, `nlambdas=5`, `nthetas=4`
+* Multiclass mode: 1vsAllExt
+
+Sadness
+	sadness -> 1.00%
+Neutral
+	neutral -> 1.00%
+Disgust
+	disgust -> 1.00%
+Anger
+	anger -> 1.00%
+Surprise
+	surprise -> 1.00%
+Fear
+	fear -> 1.00%
+Contempt
+	contempt -> 1.00%
+Happy
+	happy -> 1.00%
+
+Considerations:
+
+* Better face detection
+* Lower signal/noise ration in cropped face, so more generalization error
+
+Training parameters:
+
+* Face detector: `haarcascade_frontalface_cbcl1.xml`, `rotation correction`
+* Size: `48x48`
+* Gabor kernels: `nwidths=2`, `nlambdas=5`, `nthetas=4`
+* Multiclass mode: 1vsAllExt
+
+
+Sadness
+	sadness -> 1.00%
+Neutral
+	neutral -> 1.00%
+Disgust
+	disgust -> 1.00%
+Anger
+	anger -> 1.00%
+Surprise
+	surprise -> 1.00%
+Fear
+	fear -> 1.00%
+Contempt
+	contempt -> 1.00%
+Happy
+	happy -> 1.00%
+
+Considerations:
+
+* More unstable face detection
+* Higher signal/noise ration in cropped face, so less generalization error
+
+## Validation
+
+Due to the lack of availability of other dataset with respect of the project available time we have __not__ performed formal validation test, so we cannot provide validation error. 
+
+
+## Further Development
+
+* Validation dataset 
+* Much more training samples, some emotions in Cohn-Kanade are under-sampled.
+* Better GUI
+* Better CLI tools
+
