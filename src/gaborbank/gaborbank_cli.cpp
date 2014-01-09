@@ -13,17 +13,33 @@
 #include <sstream>
 #include <string>
 
-#include "gaborbank.h"
-#include "featselect.h"
+#include "GaborBank.h"
 #include "matrix_io.h"
 
-using namespace std;
-using namespace cv;
 using namespace emotime;
+
+using std::cout;
+using std::cerr;
+using std::endl;
+using std::string;
+
+using cv::Mat;
+
+/**
+ *  @brief          Prints the CLI banner
+ *
+ */
+void banner();
+
+/**
+ *  @brief          Prints the CLI help
+ *
+ */
+void help();
 
 void help() {
   cout << "Usage:" << endl;
-  cout << "   gaborbank_cli <imageWidth> <imageHeight> <nwidths> <nlambdas> <nthetas> <inputImage> <outputFile> [<filterFile>]" << endl;
+  cout << "   gaborbank_cli <imageWidth> <imageHeight> <nwidths> <nlambdas> <nthetas> <inputImage> <outputFile>" << endl;
   cout << "Parameters:" << endl;
   cout << "   <imageWidth>    - Width of the image, the input image will be scaled" << endl;
   cout << "   <imageHeight>   - Height of the image, the input image will be scaled" << endl;
@@ -32,9 +48,9 @@ void help() {
   cout << "   <nthetas>       - " << endl;
   cout << "   <inputImage>    - Input image" << endl;
   cout << "   <outputFile>    - Output file  where to store filtered images" << endl;
-  cout << "   <filterFile>    - Text file containing the list of pixel to keep" << endl;
   cout << endl;
 }
+
 void banner() {
    cout << "GaborBank Utility:" << endl;
    cout << "     Filter with a bank of Gabor filters with different " <<  endl;
@@ -48,47 +64,24 @@ int main( int argc, const char* argv[] ){
     cerr << "ERR: missing parameters" << endl;
     return -3;
   }
-  try {
     unsigned int width = abs(atoi(argv[1]));
     unsigned int height = abs(atoi(argv[2]));
     double nwidths = (atof(argv[3]));
     double nlambdas = (atof(argv[4]));
     double nthetas = (atof(argv[5]));
-    string infile = string(argv[6]);
-    string outfile = string(argv[7]);
-    bool filter = false;
-    const char * filterfile;
+    string infile(argv[6]);
+    string outfile(argv[7]);
 
-    if (argc >= 9){
-      filter = true;
-      filterfile = argv[8];
-#ifdef DEBUG
-      cout << "INFO: filtering with filter at " << filterfile << endl;
-#endif
-    }
-
-    Mat img = matrix_io_load( infile );
+    Mat img = matrix_io_load(infile);
     Mat scaled;
-    resize( img, scaled, Size(width,height), 0, 0, CV_INTER_AREA );
+    resize(img, scaled, cv::Size(width,height), 0, 0, CV_INTER_AREA);
+    img.release();
 
-    vector<GaborKernel*> bank;
-    gaborbank_getCustomGaborBank(bank, (double) nwidths, (double) nlambdas, (double) nthetas);
-#ifdef DEBUG
-    cout << "INFO: filtering with " << bank.size() << " filters" << endl;
-#endif
-    Mat dest = gaborbank_filterImage(scaled, bank);
-
-    if (filter){
-      set<unsigned int> selected=featselect_load(filterfile); 
-      dest = featselect_select(dest,selected);
-    }
-#ifdef DEBUG
-    cout << "INFO: saving to " << outfile << endl;
-#endif
+    GaborBank bank;
+    bank.fill_gabor_bank((double) nwidths, (double) nlambdas, (double) nthetas);
+    Mat dest = bank.filter_image(scaled);
     matrix_io_save(dest, outfile);
+
+    scaled.release();
     dest.release();
-  } catch (int e) {
-    cerr << "ERR: Exception #" << e << endl;
-    return -e;
-  }
 }
