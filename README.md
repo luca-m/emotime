@@ -215,11 +215,11 @@ Due to the lack of availability of other dataset with respect to the time availa
 
 Video gui:
 
-  echo <VIDEOPATH> |./emotimevideo_cli FACEDETECTORXML (EXEDETECTORXML|none) WIDTH HEIGHT NWIDTHS NLAMBDAS NTHETAS (svm|ada) (TRAINEDCLASSIFIERSXML)+
+    echo "<VIDEOPATH>" |./emotimevideo_cli FACEDETECTORXML (EXEDETECTORXML|none) WIDTH HEIGHT NWIDTHS NLAMBDAS NTHETAS (svm|ada) (TRAINEDCLASSIFIERSXML)+
   
 Cam gui:
 
-  ./emotimegui_cli FACEDETECTORXML (EXEDETECTORXML|none) WIDTH HEIGHT NWIDTHS NLAMBDAS NTHETAS (svm|ada) (TRAINEDCLASSIFIERSXML)+
+    ./emotimegui_cli FACEDETECTORXML (EXEDETECTORXML|none) WIDTH HEIGHT NWIDTHS NLAMBDAS NTHETAS (svm|ada) (TRAINEDCLASSIFIERSXML)+
 
 
 ## Further Development
