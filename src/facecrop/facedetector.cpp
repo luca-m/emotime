@@ -15,10 +15,14 @@ namespace emotime{
 
 FaceDetector::FaceDetector(string face_config_file, string eye_config_file){
 	cascade_f.load(face_config_file);
-	cascade_e.load(eye_config_file);
-  this->doEyesRot=true;
+  if (eye_config_file != string("none")){
+	  cascade_e.load(eye_config_file);
+	  assert(!cascade_e.empty());
+    this->doEyesRot=true;
+  }else{
+    this->doEyesRot=false;
+  }
 	assert(!cascade_f.empty());
-	assert(!cascade_e.empty());
 }
 FaceDetector::FaceDetector(string face_config_file) {
 	cascade_f.load(face_config_file);
