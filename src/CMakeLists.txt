@@ -9,7 +9,7 @@ include_directories(${SRCDIR}/svm)
 include_directories(${SRCDIR}/gui)
 
 add_subdirectory(training)
-add_subdirectory(facecrop)
+add_subdirectory(facedetector)
 add_subdirectory(gaborbank)
 add_subdirectory(adaboost)
 add_subdirectory(dataset)
