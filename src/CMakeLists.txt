@@ -1,4 +1,5 @@
 
+include_directories(${SRCDIR}/training)
 include_directories(${SRCDIR}/facecrop)
 include_directories(${SRCDIR}/gaborbank)
 include_directories(${SRCDIR}/adaboost)
@@ -7,6 +8,7 @@ include_directories(${SRCDIR}/detector)
 include_directories(${SRCDIR}/svm)
 include_directories(${SRCDIR}/gui)
 
+add_subdirectory(training)
 add_subdirectory(facecrop)
 add_subdirectory(gaborbank)
 add_subdirectory(adaboost)
