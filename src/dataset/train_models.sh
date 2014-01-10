@@ -9,18 +9,20 @@
 ##    train_models.sh OPTIONS MODE PREPTRAINMODE DATASET
 ##
 ## Parameters:
-##    
+##
 ##    MODE            ada, svm
 ##    PREPTRAINMODE   1vs1, 1vsall, 1vsallext
 ##    DATASET         Dataset folder
 ##
 ## Options:
-##    
-##    -h, --help      This help message
-##    --no-eye        Do not perform eye-based face rotation correction
+##
+##    -h, --help        This help message
+##    --no-eye          Do not perform eye-based face rotation correction
+##    --skip-facecrop   Do not perform face cropping (the operation must
+##                      have been completed previously)
 ##
 ## Example:
-##    
+##
 ##    ./train_models.sh -h
 ##
 
@@ -28,8 +30,8 @@
 # UTILITY FUNCTIONS
 # ----------------
 
-echoerr() { 
-  echo "$@" 1>&2; 
+echoerr() {
+  echo "$@" 1>&2;
 }
 usage() {
   [ "$*" ] && echoerr "$0: $*"
@@ -43,6 +45,7 @@ DS_CONFIG=default.cfg
 MODE=adaboost
 PREPTRAINMODE=1vsAll
 EYE="--eye-correction"
+SKIP_FACECROP=0
 
 # ----------------
 # MAIN
@@ -51,10 +54,11 @@ EYE="--eye-correction"
 # Options parsing
 while [ $# -gt 0 ]; do
   case $1 in
-    (-h|--help) usage 2>&1;;
-    (--no-eye) EYE='';;
-    (--) shift; break;;
-    (-*) usage "$1: unknown option";;
+    (-h|--help) usage 2>&1 ;;
+    (--no-eye) EYE=''; shift ;;
+    (--skip-facecrop) SKIP_FACECROP=1; shift ;;
+    (--) shift; break ;;
+    (-*) usage "$1: unknown option" ;;
     (*) break;;
   esac
 done
@@ -87,8 +91,13 @@ esac
 
 DS_FOLDER="$3"
 
-echo "1) Cropping faces:"
-python2 ./datasetCropFaces.py $DS_FOLDER $EYE
+if [[ $SKIP_FACECROP -eq 0 ]] ; then
+  echo "1) Cropping faces:"
+  python2 ./datasetCropFaces.py $DS_FOLDER $EYE
+else
+  echo "1) Cropping faces:"
+  echo "   skipping..."
+fi
 echo "------------------------"
 echo "2) Calculating features using bank of Gabor magnitude filters:"
 python2 ./datasetFeatures.py $DS_FOLDER
