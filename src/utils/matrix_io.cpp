@@ -29,9 +29,6 @@ cv::Mat matrix_io_load(std::string & filePath){
     string format =  matrix_io_fileExt(file); 
     if(format==XMLEXT || format==YMLEXT) {
        string name = matrix_io_fileName(file);  
-       #ifdef DEBUG
-       cout<<"DEBUG: matrix name is '"<<name<<"', file format is "<<format<<endl;
-       #endif 
        FileStorage fs(file, FileStorage::READ);
        Mat * mat = new Mat();
        fs[name] >> *mat;
@@ -55,9 +52,6 @@ bool matrix_io_save( cv::Mat & mat, std::string & filePath){
     string format =  matrix_io_fileExt(file); 
     if(format==XMLEXT || format==YMLEXT) {
        string name = matrix_io_fileName(file); 
-       #ifdef DEBUG
-        cout<<"DEBUG: matrix name is " << name << ", file format is "<< format << endl;
-       #endif 
        FileStorage fs(file, FileStorage::WRITE);
        fs << name << mat;
        fs.release();
