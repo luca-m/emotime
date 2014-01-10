@@ -125,6 +125,8 @@ int main(int argc, const char* argv[])
     emodetector = new BoostEmoDetector(kBoostType, kTrimWeight, kMaxDepth);
   }
 
+  emodetector->init(cl_paths);
+
   cout<<"Insert the video file path: "<<endl; 
   std::getline(std::cin, infile);
   cout<<"Loading '"<<infile<<"'"<<endl;

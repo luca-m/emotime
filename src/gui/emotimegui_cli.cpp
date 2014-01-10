@@ -56,7 +56,7 @@ void banner();
 
 void help() {
 	cout << "Usage:" << endl;
-	cout << "   emotimegui_cli <faceDetecXML> <eyeDetectXML> [<mode>] <classifier>{<classifier>}" << endl;
+	cout << "   emotimegui_cli <faceDetecXML> <eyeDetectXML> <width> <height> <nwidths> <nlambdas> <nthetas> [<mode>] <classifier>{<classifier>}" << endl;
 	cout << "Parameters:" << endl;
 	cout << "   <faceDetectXML>    - OpenCV cascade classifier configuration file (Haar or LBP) for face detection" << endl;
 	cout << "   <eyeDetectXML>     - OpenCV cascade classifier configuration file (Haar or LBP) for eye detection" << endl;
@@ -118,6 +118,7 @@ int main(int argc, const char* argv[]) {
   } else {
     emodetector = new BoostEmoDetector(kBoostType, kTrimWeight, kMaxDepth);
   }
+  emodetector->init(cl_paths);
 
   // Creating and starting the EmotimeGUI
   int fps = 30;
