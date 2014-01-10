@@ -50,7 +50,6 @@ void help() {
 	cout << "   emo_detector_cli (svm|ada) <FaceDetecXML> (<EyeDetecXML>|none) <width> <height> <nwidths> <nlambdas> <nthetas> <svmXML> {<svmXML>}" << endl;
 	cout << "Parameters:" << endl;
 	cout << "   (svm|ada)       - Use ada or svm" << endl;
-	cout << "   <image>       - The input image" << endl;
 	cout << "   <FaceDetectXML>   - OpenCV cascade classifier configuration file (Haar or LBP) for face detection" << endl;
 	cout << "   <EyeDetectXML>   - OpenCV cascade classifier configuration file (Haar or LBP) for eye detection. If the file is 'none', no eye correction is performed." << endl;
 	cout << "   <width>       - Width of the image, the input image will be scaled" << endl;
@@ -59,7 +58,7 @@ void help() {
 	cout << "   <nlambdas>    - " << endl;
 	cout << "   <nthetas>     - " << endl;
 	cout << "   <svmXML>    - The trained svm for detecting an expression " << endl;
-	cout << "                   Name format: EMOTION_* where EMOTION is one of (neutral, contempt, disgust, fear, sadness, surprise)" << endl;
+	cout << "                   Name format: emotion1_emotion2_..._vs_emotion... where emotion* is one of (neutral, contempt, disgust, fear, sadness, surprise)" << endl;
 	cout << endl;
 }
 
