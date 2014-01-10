@@ -49,11 +49,11 @@ namespace emotime {
        *  @param[in]      fps  Desired frame per second
        *
        */
-      AGui(ACapture* capt, FacePreProcessor* fp, EmoDetector* detect, int fps) {
+      AGui(ACapture* capt, FacePreProcessor* fp, EmoDetector* detect, int fps, string title="AGui: Main Emotime GUI") {
         capture = capt;
         preprocessor = fp;
         detector = detect;
-        mainWinTitle = string("AGui: Main Emotime GUI");
+        mainWinTitle = title;
         this->fps = fps;
       }
 

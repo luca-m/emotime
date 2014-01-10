@@ -21,7 +21,7 @@ namespace emotime {
     public:
 
       EmotimeGUI(FacePreProcessor* fp, EmoDetector* detect, int fps) :
-        AGui(new Webcam(true), fp, detect, fps) {
+        AGui(new Webcam(true), fp, detect, fps, "Emotime!") {
 
       }
 
