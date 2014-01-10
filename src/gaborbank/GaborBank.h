@@ -65,7 +65,7 @@ namespace emotime {
        * @see "Jesper Juul Henriksen Thesis" at page 22  (http://covil.sdu.dk/publications/jespermaster07.pdf)
        *
        */
-      void fill_gabor_bank(double nwidths, double nlambdas, double nthetas);
+      void fillGaborBank(double nwidths, double nlambdas, double nthetas);
 
       /**
        * @brief Generates a bank of Gabor filter kernels with different orientations
@@ -75,7 +75,7 @@ namespace emotime {
        * GABOR_DEFAULT_NWIDTH, GABOR_DEFAULT_NLAMBDA, GABOR_DEFAULT_NTHETA)
        *
        */
-      void fill_default_gabor_bank();
+      void fillDefaultGaborrBank();
 
       /**
        * @brief Filter the input (greyscale) image with the given kernels returning
@@ -84,7 +84,7 @@ namespace emotime {
        * @param [in]  src   the input image
        * 
        * */
-      cv::Mat filter_image(cv::Mat& src);
+      cv::Mat filterImage(cv::Mat& src);
 
     protected:
 
@@ -113,7 +113,7 @@ namespace emotime {
        * @see http://en.wikipedia.org/wiki/Gabor_filter
        *
        */
-      GaborKernel* generate_gabor_kernel(cv::Size ksize, double sigma, double theta,
+      GaborKernel* generateGaborKernel(cv::Size ksize, double sigma, double theta,
           double lambda, double gamma, double psi, int ktype);
 
       /**
@@ -124,13 +124,13 @@ namespace emotime {
        *
        * @returns The size of the filtered image.
        * */
-      cv::Size get_filtered_img_size(cv::Mat& src);
+      cv::Size getFilteredImgSize(cv::Mat& src);
 
 
       /**
        *  @brief          Destroy the gabor bank
        */
-      void empty_bank();
+      void emptyBank();
   };
 
 }

@@ -196,9 +196,9 @@ namespace emotime {
         //displayOverlay(mainWinTitle.c_str(), osd.c_str(), 2000);
 
         Mat face;
-        if (AGui::preprocessor->extract_face(copy, face)) {
+        if (AGui::preprocessor->extractFace(copy, face)) {
           Mat gabor;
-          if (AGui::preprocessor->filter_image(face,gabor)){
+          if (AGui::preprocessor->filterImage(face,gabor)){
             double min;
             double max;
             cv::minMaxIdx(gabor, &min, &max);

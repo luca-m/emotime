@@ -47,7 +47,7 @@ namespace emotime {
     return this->boost.predict(features, cv::Mat(), cv::Range::all(), false, false);
   }
 
-  bool AdaBoostClassifier::do_training(cv::Mat train_data, cv::Mat train_labels) {
+  bool AdaBoostClassifier::doTraining(cv::Mat train_data, cv::Mat train_labels) {
     this->params.weak_count = train_data.cols;
     return this->boost.train(train_data, CV_ROW_SAMPLE, train_labels,
         cv::Mat(), cv::Mat(), cv::Mat(), cv::Mat(), this->params, false);

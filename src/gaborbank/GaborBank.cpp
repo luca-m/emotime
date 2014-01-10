@@ -20,16 +20,16 @@ using cv::Mat;
 namespace emotime {
 
   GaborBank::~GaborBank() {
-    this->empty_bank();
+    this->emptyBank();
   }
 
-  void GaborBank::empty_bank() {
+  void GaborBank::emptyBank() {
     for (std::vector<GaborKernel*>::iterator it = this->bank.begin(); it != this->bank.end(); ++it) {
       delete *it;
     }
   }
 
-  GaborKernel* GaborBank::generate_gabor_kernel(cv::Size ksize, double sigma, double
+  GaborKernel* GaborBank::generateGaborKernel(cv::Size ksize, double sigma, double
       theta, double lambd, double gamma, double psi, int ktype) {
 
     double sigma_x = sigma;
@@ -82,9 +82,9 @@ namespace emotime {
     return new GaborKernel(kernel_real, kernel_img);
   }
 
-  void GaborBank::fill_gabor_bank(double nwidths, double nlambdas, double nthetas) {
+  void GaborBank::fillGaborBank(double nwidths, double nlambdas, double nthetas) {
 
-    this->empty_bank();
+    this->emptyBank();
 
     double _sigma;        /// Sigma of the Gaussian envelope
     double _theta;        /// Orientation of the normal to the parallel stripes of the Gabor function
@@ -110,7 +110,7 @@ namespace emotime {
         for (_theta = kGaborThetaMin; _theta < kGaborThetaMax;
             _theta += (kGaborThetaMax - kGaborThetaMin)/((double)(nthetas<=0?1:nthetas))) {
 
-          emotime::GaborKernel* kern = this->generate_gabor_kernel(kernelSize,
+          emotime::GaborKernel* kern = this->generateGaborKernel(kernelSize,
               _sigma, _theta, _lambda, _gamma, _psi, CV_32F);
           bank.push_back(kern);
         }
@@ -118,12 +118,12 @@ namespace emotime {
       }
     }
 
-    void GaborBank::fill_default_gabor_bank() {
-      this->fill_gabor_bank(kGaborDefaultNwidth, kGaborDefaultNtheta,
+    void GaborBank::fillDefaultGaborrBank() {
+      this->fillGaborBank(kGaborDefaultNwidth, kGaborDefaultNtheta,
           kGaborDefaultNlambda);
     }
 
-    Size GaborBank::get_filtered_img_size(Mat & src) {
+    Size GaborBank::getFilteredImgSize(Mat & src) {
       // The output image will contain all the filtered image vertically stacked.
       Size s = Size(0,0);
       s.height = src.rows * bank.size();
@@ -131,14 +131,14 @@ namespace emotime {
       return s;
     }
 
-    Mat GaborBank::filter_image(Mat& src) {
+    Mat GaborBank::filterImage(Mat& src) {
 
       Size size(0,0);
       unsigned int i;
       unsigned int j;
       unsigned int k;
 
-      Size s = this->get_filtered_img_size(src);
+      Size s = this->getFilteredImgSize(src);
       Mat * dest = new Mat(s, CV_32F);
       Mat image;
       size.height=src.rows;

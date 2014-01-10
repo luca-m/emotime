@@ -78,8 +78,8 @@ int main( int argc, const char* argv[] ){
     img.release();
 
     GaborBank bank;
-    bank.fill_gabor_bank((double) nwidths, (double) nlambdas, (double) nthetas);
-    Mat dest = bank.filter_image(scaled);
+    bank.fillGaborBank((double) nwidths, (double) nlambdas, (double) nthetas);
+    Mat dest = bank.filterImage(scaled);
     matrix_io_save(dest, outfile);
 
     scaled.release();

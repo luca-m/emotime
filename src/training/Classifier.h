@@ -74,7 +74,7 @@ namespace emotime {
        *
        *  @details
        */
-      bool load_traindata(std::string csv_file, std::vector<std::pair<std::string, int> >&
+      bool loadTrainData(std::string csv_file, std::vector<std::pair<std::string, int> >&
           sample_files_classes);
 
 
@@ -88,7 +88,7 @@ namespace emotime {
        *
        *  @details
        */
-      virtual bool do_training(cv::Mat train_data, cv::Mat train_labels) = 0;
+      virtual bool doTraining(cv::Mat train_data, cv::Mat train_labels) = 0;
 
     private:
 

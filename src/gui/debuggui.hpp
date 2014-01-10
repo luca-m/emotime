@@ -50,9 +50,9 @@ namespace emotime {
         cout<<"DEBUG: recreating preprocessor"<<endl; 
         ths->preprocessor=new FacePreProcessor(ths->facedetectorconf,ths->eyedetectorconf, ths->size.width, ths->size.height, ths->nwidths, ths->nlambdas, ths->nthetas);
         Mat face;
-        if(ths->preprocessor->extract_face(copy, face)){
+        if(ths->preprocessor->extractFace(copy, face)){
           Mat gabor;
-          if (ths->preprocessor->filter_image(face, gabor)){
+          if (ths->preprocessor->filterImage(face, gabor)){
             double min;
             double max;
             cv::minMaxIdx(gabor, &min, &max);

@@ -30,7 +30,7 @@ namespace emotime{
 
     protected:
 
-      Classifier* create_classifier();
+      Classifier* createClassifier();
 
     private:
 

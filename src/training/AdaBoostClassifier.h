@@ -31,7 +31,7 @@ namespace emotime {
 
     protected:
 
-      bool do_training(cv::Mat train_data, cv::Mat train_labels);
+      bool doTraining(cv::Mat train_data, cv::Mat train_labels);
 
     private:
 

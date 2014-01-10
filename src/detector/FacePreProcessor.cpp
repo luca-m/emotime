@@ -28,7 +28,7 @@ namespace emotime {
     } else {
       this->facedet = FaceDetector(faceDetectorConfig);
     }
-    this->gaborbank.fill_gabor_bank(this->nwidths, this->nlambdas, this->nthetas);
+    this->gaborbank.fillGaborBank(this->nwidths, this->nlambdas, this->nthetas);
   }
 
   FacePreProcessor::FacePreProcessor(string faceDetectorConfig, string
@@ -50,17 +50,17 @@ namespace emotime {
   bool FacePreProcessor::preprocess(Mat& img, Mat& featvec) {
     Mat face, filtered, fvec;
     bool res;
-    res = this->extract_face(img, face);
+    res = this->extractFace(img, face);
     if (res) {
-      res = this->filter_image(face, filtered);
+      res = this->filterImage(face, filtered);
       if (res) {
-        res = this->to_features_vector(filtered, featvec);
+        res = this->toFeaturesVector(filtered, featvec);
       }
     }
     return res;
   }
 
-  bool FacePreProcessor::extract_face(Mat& src, Mat& out) {
+  bool FacePreProcessor::extractFace(Mat& src, Mat& out) {
     Mat face;
     bool faceFound=this->facedet.detect(src, face);
     if (!faceFound){
@@ -70,15 +70,15 @@ namespace emotime {
     return true;
   }
 
-  bool FacePreProcessor::filter_image(Mat& src, Mat& out) {
+  bool FacePreProcessor::filterImage(Mat& src, Mat& out) {
     Mat resized, filtered;
     resize(src, resized, this->imgsize, 0, 0, CV_INTER_AREA);
-    filtered = this->gaborbank.filter_image(resized);
+    filtered = this->gaborbank.filterImage(resized);
     filtered.copyTo(out);
     return true;
   }
 
-  bool FacePreProcessor::to_features_vector(Mat& src, Mat& out) {
+  bool FacePreProcessor::toFeaturesVector(Mat& src, Mat& out) {
     Mat feat;
     feat = src.reshape(1/*chan*/, 1/*rows*/);
     feat.copyTo(out);

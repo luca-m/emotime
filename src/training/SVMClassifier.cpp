@@ -34,7 +34,7 @@ namespace emotime {
 
   }
 
-  bool SVMClassifier::do_training(cv::Mat train_data, cv::Mat train_labels) {
+  bool SVMClassifier::doTraining(cv::Mat train_data, cv::Mat train_labels) {
     return this->svm.train(train_data, train_labels, cv::Mat(), cv::Mat(), this->params);
   }
 

@@ -29,7 +29,7 @@ namespace emotime {
   }
 
 
-  Classifier* BoostEmoDetector::create_classifier() {
+  Classifier* BoostEmoDetector::createClassifier() {
     return new AdaBoostClassifier(this->boost_type, this->trim_weight, this->max_depth);
   }
 

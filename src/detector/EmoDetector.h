@@ -87,15 +87,6 @@ namespace emotime {
       bool contains(std::string& name);
 
       /**
-       *  Add a classifier
-       *
-       *  @param name
-       *  @param emo
-       *  @param classifier
-       */
-      void put_classifier(std::string& name, Emotion emo, Classifier* classifier);
-
-      /**
        *  @brief          Predict the emotion using the extended classification.
        *
        *  @param[in]      frame The image to predict
@@ -142,7 +133,7 @@ namespace emotime {
        *  @return         A new classifier
        *
        */
-      virtual Classifier* create_classifier() = 0;
+      virtual Classifier* createClassifier() = 0;
 
     private:
 

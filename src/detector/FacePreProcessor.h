@@ -57,7 +57,7 @@ namespace emotime{
        *  @return         True if the face was extracted
        *
        */
-      bool extract_face(cv::Mat& src, cv::Mat& out);
+      bool extractFace(cv::Mat& src, cv::Mat& out);
 
       /**
        *  @brief          Filter the given image
@@ -68,7 +68,7 @@ namespace emotime{
        *  @return         True if the image was filtered
        *
        */
-      bool filter_image(cv::Mat& src, cv::Mat& out);
+      bool filterImage(cv::Mat& src, cv::Mat& out);
 
     private:
 
@@ -95,7 +95,7 @@ namespace emotime{
        *  @return         True if the operation succeded
        *
        */
-      bool to_features_vector(cv::Mat& src, cv::Mat& out);
+      bool toFeaturesVector(cv::Mat& src, cv::Mat& out);
 
       /**
        *  @brief          Initialize the FacePreProcessor

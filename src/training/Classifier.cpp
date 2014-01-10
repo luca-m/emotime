@@ -36,7 +36,7 @@ namespace emotime {
 
   bool Classifier::train(std::string csv_file) {
     vector<pair<string, int> > files_classes;
-    if (!this->load_traindata(csv_file, files_classes)) {
+    if (!this->loadTrainData(csv_file, files_classes)) {
       return false;
     }
     if (files_classes.size() == 0){
@@ -63,11 +63,11 @@ namespace emotime {
       train_labels.push_back(files_classes.at(i).second);
     }
 
-    return this->do_training(train_data, train_labels);
+    return this->doTraining(train_data, train_labels);
   }
 
 
-  bool Classifier::load_traindata(string csv_file,
+  bool Classifier::loadTrainData(string csv_file,
       std::vector<std::pair<std::string, int> >& sample_files_classes) {
     try {
       ifstream csvf(csv_file.c_str());

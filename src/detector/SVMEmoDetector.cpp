@@ -29,7 +29,7 @@ namespace emotime {
   }
 
 
-  Classifier* SVMEmoDetector::create_classifier() {
+  Classifier* SVMEmoDetector::createClassifier() {
     return new SVMClassifier(this->C_factor, this->max_iteration, this->error_margin);
   }
 

@@ -83,7 +83,7 @@ namespace emotime {
     for(size_t i = 0; i < classifier_paths.size(); i++) {
 
       string clpath = classifier_paths.at(i);
-      Classifier* cvD = this->create_classifier();
+      Classifier* cvD = this->createClassifier();
 
       string fname = matrix_io_fileBaseName(clpath);
       Emotion emo = UNKNOWN;
