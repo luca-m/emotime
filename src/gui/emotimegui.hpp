@@ -17,11 +17,11 @@
 
 namespace emotime {
 
-  template < class T > class EmotimeGUI : public AGui<T> {
+  class EmotimeGUI : public AGui {
     public:
 
-      EmotimeGUI(FacePreProcessor * fp, EmoDetector<T> * detect, int fps) :
-        AGui<T>(new Webcam(true), fp, detect, fps) {
+      EmotimeGUI(FacePreProcessor* fp, EmoDetector* detect, int fps) :
+        AGui(new Webcam(true), fp, detect, fps) {
 
       }
 

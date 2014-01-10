@@ -3,7 +3,7 @@
  * */
 #include "debuggui.hpp"
 #include "capture.hpp"
-#include "boost_emo_detector.h"
+#include "BoostEmoDetector.h"
 #include "matrix_io.h"
 #include "gaborbank.h"
 

@@ -26,7 +26,7 @@ namespace emotime{
       ACapture(bool toGray){
         toGrayscale=toGray;
       };
-      ~ACapture(){};
+      virtual ~ACapture(){};
       virtual bool isReady() = 0;
       bool nextFrame(Mat & frame){
         Mat frm;

@@ -1,5 +1,5 @@
 /*
- * debuggui.hpp
+* debuggui.hpp
  */
 
 #ifndef DEBUGGUI_HPP
@@ -11,31 +11,19 @@
 #include <opencv2/ml/ml.hpp>
 
 #include "agui.hpp"
-#include "preprocessor.hpp"
-#include "emo_detector.hpp"
-#include "boost_emo_detector.h"
+#include "FacePreProcessor.h"
+#include "EmoDetector.h"
 
 using namespace std;
 using namespace cv;
 using namespace emotime;
 
-namespace emotime{
+namespace emotime {
 
-  class DebugGuiBoost: public ADebugGui<CvBoost>{
-    public:
-      DebugGuiBoost(ACapture * capt, FacePreProcessor * fp, EmoDetector<CvBoost> * detect, int fps): ADebugGui<CvBoost>(capt, fp, detect, fps){
-      }
-  };
-  class DebugGuiSVM: public ADebugGui<CvSVM>{
-    public:
-      DebugGuiSVM(ACapture * capt, FacePreProcessor * fp, EmoDetector<CvSVM> * detect, int fps): ADebugGui<CvSVM>(capt, fp, detect, fps){
-      }
-  };
-
-  class GaborGui{
+  class GaborGui {
     protected:
       FacePreProcessor *preprocessor;
-      ACapture * capture;
+      ACapture* capture;
       string mainWinTitle;
       string gaborWinTitle;
       Size size;
@@ -50,7 +38,7 @@ namespace emotime{
         #ifdef DEBUG
         cout<<"DEBUG: Parameters changed, reconfiguring.. (this@"<<obj<<")"<<endl; 
         #endif
-        GaborGui * ths = (GaborGui *) obj;
+        GaborGui* ths = (GaborGui *) obj;
         if (ths==NULL){
           return;
         }
@@ -62,9 +50,9 @@ namespace emotime{
         cout<<"DEBUG: recreating preprocessor"<<endl; 
         ths->preprocessor=new FacePreProcessor(ths->facedetectorconf,ths->eyedetectorconf, ths->size.width, ths->size.height, ths->nwidths, ths->nlambdas, ths->nthetas);
         Mat face;
-        if(ths->preprocessor->extractFace(copy, face)){
+        if(ths->preprocessor->extract_face(copy, face)){
           Mat gabor;
-          if (ths->preprocessor->filterImage(face, gabor)){
+          if (ths->preprocessor->filter_image(face, gabor)){
             double min;
             double max;
             cv::minMaxIdx(gabor, &min, &max);
@@ -79,7 +67,7 @@ namespace emotime{
        }
       }
     public:
-      GaborGui(ACapture * cap, string facedetconf, string eyedetconf){
+      GaborGui(ACapture* cap, string facedetconf, string eyedetconf){
         preprocessor=NULL;
         capture=cap;
         size=Size(48,48);

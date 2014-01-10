@@ -1,6 +1,6 @@
 /**
  *
- * @file    svm_emo_detector_cli.cpp
+ * @file    emo_detector_cli.cpp
  * @author  Daniele Bellavista (daniele.bellavista@studio.unibo.it)
  * @date    12/27/2013 12:18:32 PM
  * @brief
@@ -9,11 +9,12 @@
  *
  */
 
-#include "svm_emo_detector.h"
+#include "SVMEmoDetector.h"
+#include "BoostEmoDetector.h"
 #include "matrix_io.h"
-#include "gaborbank.h"
-#include "preprocessor.hpp"
-#include "string_utils.h"
+#include "FacePreProcessor.h"
+
+#include "DetectionParameters.h"
 
 #include <opencv2/opencv.hpp>
 #include <iostream>
@@ -32,11 +33,23 @@ using std::cerr;
 using std::string;
 using std::pair;
 
-void help()
-{
+/**
+ *  @brief          Prints the CLI banner
+ *
+ */
+void banner();
+
+/**
+ *  @brief          Prints the CLI help
+ *
+ */
+void help();
+
+void help() {
 	cout << "Usage:" << endl;
-	cout << "   svm_emo_detector_cli <FaceDetecXML> (<EyeDetecXML>|none) <width> <height> <nwidths> <nlambdas> <nthetas> <svmXML> {<svmXML>}" << endl;
+	cout << "   emo_detector_cli (svm|ada) <FaceDetecXML> (<EyeDetecXML>|none) <width> <height> <nwidths> <nlambdas> <nthetas> <svmXML> {<svmXML>}" << endl;
 	cout << "Parameters:" << endl;
+	cout << "   (svm|ada)       - Use ada or svm" << endl;
 	cout << "   <image>       - The input image" << endl;
 	cout << "   <FaceDetectXML>   - OpenCV cascade classifier configuration file (Haar or LBP) for face detection" << endl;
 	cout << "   <EyeDetectXML>   - OpenCV cascade classifier configuration file (Haar or LBP) for eye detection. If the file is 'none', no eye correction is performed." << endl;
@@ -49,53 +62,47 @@ void help()
 	cout << "                   Name format: EMOTION_* where EMOTION is one of (neutral, contempt, disgust, fear, sadness, surprise)" << endl;
 	cout << endl;
 }
-void banner()
-{
-	cout << "SVMEmoDetector Utility:" << endl;
-	cout << "     Detect emotions using trained svm" << endl;
+
+void banner() {
+	cout << "EmoDetector Utility:" << endl;
+	cout << "     Detect emotions using trained classificator" << endl;
 }
 
-int main(int argc, const char *argv[])
-{
-  if (argc < 8) {
+int main(int argc, const char *argv[]) {
+  if (argc < 9) {
 		banner();
 		help();
 		cerr << "ERR: missing parameters" << endl;
 		return -3;
 	}
 	string infile; // = string(argv[1]);
-	string config = string(argv[1]);
-	string config_e = string(argv[2]);
+	string method(argv[1]);
+	string config(argv[2]);
+	string config_e(argv[3]);
+
   cv::Size size(0,0);
   int nwidths, nlambdas, nthetas;
-  size.width = abs(atoi(argv[3]));
-	size.height = abs(atoi(argv[4]));
-  nwidths = abs(atoi(argv[5]));
-  nlambdas= abs(atoi(argv[6]));
-  nthetas = abs(atoi(argv[7]));
+  size.width = abs(atoi(argv[4]));
+	size.height = abs(atoi(argv[5]));
+  nwidths = abs(atoi(argv[6]));
+  nlambdas= abs(atoi(argv[7]));
+  nthetas = abs(atoi(argv[8]));
   vector<string> classifier_paths;
-  vector<CvSVM*> classifiers;
 
-  if (argc >= 9) {
+  if (argc >= 10) {
     // Read boost XML paths
-    CvSVM* cvsvm;
-    for (int i = 8; i < argc; i++) {
+    for (int i = 9; i < argc; i++) {
       string clpath(argv[i]);
-      cvsvm = new CvSVM();
-      cvsvm->load(argv[i]);
-      if(!cvsvm->get_var_count()) {
-        cerr << "ERR: Could not read the classifier '" << clpath << "' (skip)" << endl;
-        continue;
-      }
       classifier_paths.push_back(string(argv[i]));
-      classifiers.push_back(cvsvm);
     }
   } else {
-    cerr << "ERR: you must specify some svm" << endl;
+    cerr << "ERR: you must specify some classifiers" << endl;
     return -2;
   }
 
   FacePreProcessor* preprocessor;
+  EmoDetector* emodetector;
+
 	try {
 
     if (config_e == "none") {
@@ -106,7 +113,13 @@ int main(int argc, const char *argv[])
           size.height, nwidths, nlambdas, nthetas);
     }
 
-    SVMEmoDetector emodetector = SVMEmoDetector(classifier_paths, classifiers);
+    if (method == "svm") {
+      emodetector = new SVMEmoDetector(kCfactor, kMaxIteration, kErrorMargin);
+    } else {
+      emodetector = new BoostEmoDetector(kBoostType, kTrimWeight, kMaxDepth);
+    }
+
+    emodetector->init(classifier_paths);
 
     cout << "Insert the image file path: " << endl;
     while(std::getline(std::cin, infile)) {
@@ -119,23 +132,20 @@ int main(int argc, const char *argv[])
           cerr << "ERR: Cannot preprocess this image '" << infile << "'" << endl;
           continue;
         }
-        pair<Emotion,float> prediction = emodetector.predictVotingOneVsAllExt(features);
+        pair<Emotion,float> prediction = emodetector->predict(features);
         cout << "Emotion predicted: " << emotionStrings(prediction.first) << " with score " << prediction.second << endl;
         cout << "Insert the image file path: " << endl;
       } catch (int ee) {
         cerr << "ERR: Something wrong with '" << infile << "'" << endl;
       }
     }
+
+    delete emodetector;
+    delete preprocessor;
 	} catch (int e) {
 		cerr << "ERR: Exception #" << e << endl;
 		return -e;
 	}
-
-  for(vector<CvSVM*>::iterator it = classifiers.begin(); it !=
-      classifiers.end(); ++it) {
-    delete *it;
-  }
-  delete preprocessor;
 
   return 0;
 }

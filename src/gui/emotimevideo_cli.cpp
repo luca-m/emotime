@@ -11,11 +11,13 @@
 
 #include "capture.hpp"
 #include "debuggui.hpp"
-#include "boost_emo_detector.h"
-#include "svm_emo_detector.h"
+#include "BoostEmoDetector.h"
+#include "SVMEmoDetector.h"
 #include "matrix_io.h"
 #include "emotimegui.hpp"
-#include "facedetector.h"
+#include "FaceDetector.h"
+
+#include "DetectionParameters.h"
 
 #include <opencv2/opencv.hpp>
 #include <iostream>
@@ -111,34 +113,16 @@ int main(int argc, const char* argv[])
 
   // Setting the classifiers
   vector<string> cl_paths;
-  vector<CvSVM*> classifiers_svm;
-  vector<CvBoost*> classifiers_ada;
-
-  CvSVM* cvsvm;
-  CvBoost* cvboost;
+  EmoDetector* emodetector;
 
   for(; i < argc; i++) {
-    string clpath(argv[i]);
-    if(mode == "svm") {
-      // SVM loading
-      cvsvm = new CvSVM();
-      cvsvm->load(argv[i]);
-      if(!cvsvm->get_var_count()) {
-        cerr << "ERR: Could not read the classifier '" << clpath << "' (skip)" << endl;
-        continue;
-      }
-      classifiers_svm.push_back(cvsvm);
-    } else {
-      // ADA loading
-      cvboost = new CvBoost();
-      cvboost->load(argv[i]);
-      if(!cvboost->get_weak_predictors()) {
-        cerr << "ERR: Could not read the classifier '" << clpath << "' (skip)" << endl;
-        continue;
-      }
-      classifiers_ada.push_back(cvboost);
-    }
     cl_paths.push_back(string(argv[i]));
+  }
+
+  if (mode == "svm") {
+    emodetector = new SVMEmoDetector(kCfactor, kMaxIteration, kErrorMargin);
+  } else {
+    emodetector = new BoostEmoDetector(kBoostType, kTrimWeight, kMaxDepth);
   }
 
   cout<<"Insert the video file path: "<<endl; 
@@ -149,31 +133,14 @@ int main(int argc, const char* argv[])
   int fps = 30;
   try{
     FacePreProcessor preprocessor(faceDetConfig, eyeDetConfig, width, height, nwidths, nlambdas, nthetas);
-	  if(mode == "svm") {
-	    SVMEmoDetector svm_det(cl_paths, classifiers_svm);
-      DebugGuiSVM guiS=DebugGuiSVM(&capture, &preprocessor, &svm_det, 30);
-      guiS.run();
-    } else {
-	    BoostEmoDetector boost_det(cl_paths, classifiers_ada);
-      DebugGuiBoost guiB=DebugGuiBoost(&capture, &preprocessor, &boost_det, 30);
-      guiB.run();
-    }
+    ADebugGui guiS(&capture, &preprocessor, emodetector, fps);
+    guiS.run();
 	} catch (int e) {
 		cerr << "ERR: Exception #" << e << endl;
 		return -e;
 	}
 
-  if(mode == "svm") {
-    for(vector<CvSVM*>::iterator it = classifiers_svm.begin(); it !=
-        classifiers_svm.end(); ++it) {
-      delete *it;
-    }
-  } else {
-    for(vector<CvBoost*>::iterator it = classifiers_ada.begin(); it !=
-        classifiers_ada.end(); ++it) {
-      delete *it;
-    }
-  }
+  delete emodetector;
 
   return 0;
 }

@@ -10,11 +10,13 @@
  */
 
 #include "capture.hpp"
-#include "boost_emo_detector.h"
-#include "svm_emo_detector.h"
+#include "BoostEmoDetector.h"
+#include "SVMEmoDetector.h"
 #include "matrix_io.h"
 #include "emotimegui.hpp"
-#include "facedetector.h"
+#include "FaceDetector.h"
+
+#include "DetectionParameters.h"
 
 #include <opencv2/opencv.hpp>
 #include <iostream>
@@ -52,8 +54,7 @@ void help();
  */
 void banner();
 
-void help()
-{
+void help() {
 	cout << "Usage:" << endl;
 	cout << "   emotimegui_cli <faceDetecXML> <eyeDetectXML> [<mode>] <classifier>{<classifier>}" << endl;
 	cout << "Parameters:" << endl;
@@ -69,14 +70,12 @@ void help()
 	cout << endl;
 }
 
-void banner()
-{
+void banner() {
 	cout << "EmotimeGui Utility:" << endl;
 	cout << "     GUI for emotime" << endl;
 }
 
-int main(int argc, const char* argv[])
-{
+int main(int argc, const char* argv[]) {
   if (argc < 5) {
 		banner();
 		help();
@@ -85,8 +84,8 @@ int main(int argc, const char* argv[])
 	}
 
   // Intializing the face detector
-	string faceDetConfig = string(argv[1]);
-	string eyeDetConfig = string(argv[2]);
+	string faceDetConfig(argv[1]);
+	string eyeDetConfig(argv[2]);
   int width = std::atoi(argv[3]);
   int height = std::atoi(argv[4]);
   int nwidths = std::atoi(argv[5]);
@@ -108,64 +107,28 @@ int main(int argc, const char* argv[])
 
   // Setting the classifiers
   vector<string> cl_paths;
-  vector<CvSVM*> classifiers_svm;
-  vector<CvBoost*> classifiers_ada;
-
-  CvSVM* cvsvm;
-  CvBoost* cvboost;
+  EmoDetector* emodetector;
 
   for(; i < argc; i++) {
-    string clpath(argv[i]);
-    if(mode == "svm") {
-      // SVM loading
-      cvsvm = new CvSVM();
-      cvsvm->load(argv[i]);
-      if(!cvsvm->get_var_count()) {
-        cerr << "ERR: Could not read the classifier '" << clpath << "' (skip)" << endl;
-        continue;
-      }
-      classifiers_svm.push_back(cvsvm);
-    } else {
-      // ADA loading
-      cvboost = new CvBoost();
-      cvboost->load(argv[i]);
-      if(!cvboost->get_weak_predictors()) {
-        cerr << "ERR: Could not read the classifier '" << clpath << "' (skip)" << endl;
-        continue;
-      }
-      classifiers_ada.push_back(cvboost);
-    }
     cl_paths.push_back(string(argv[i]));
+  }
+
+  if (mode == "svm") {
+    emodetector = new SVMEmoDetector(kCfactor, kMaxIteration, kErrorMargin);
+  } else {
+    emodetector = new BoostEmoDetector(kBoostType, kTrimWeight, kMaxDepth);
   }
 
   // Creating and starting the EmotimeGUI
   int fps = 30;
 	try {
-	  if(mode == "svm") {
-	    SVMEmoDetector svm_det(cl_paths, classifiers_svm);
-      EmotimeGUI<CvSVM> gui(&facepreproc, &svm_det, fps);
-      gui.run();
-    } else {
-	    BoostEmoDetector boost_det(cl_paths, classifiers_ada);
-      EmotimeGUI<CvBoost> gui(&facepreproc, &boost_det, fps);
-      gui.run();
-    }
+    EmotimeGUI gui(&facepreproc, emodetector, fps);
+    gui.run();
 	} catch (int e) {
 		cerr << "ERR: Exception #" << e << endl;
 		return -e;
 	}
 
-  if(mode == "svm") {
-    for(vector<CvSVM*>::iterator it = classifiers_svm.begin(); it !=
-        classifiers_svm.end(); ++it) {
-      delete *it;
-    }
-  } else {
-    for(vector<CvBoost*>::iterator it = classifiers_ada.begin(); it !=
-        classifiers_ada.end(); ++it) {
-      delete *it;
-    }
-  }
-
+  delete emodetector;
   return 0;
 }

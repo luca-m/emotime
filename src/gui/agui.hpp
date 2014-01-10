@@ -12,9 +12,10 @@
 #include <string>
 #include <sstream>
 #include <opencv2/opencv.hpp>
+
 #include "capture.hpp"
-#include "emo_detector.hpp"
-#include "preprocessor.hpp"
+#include "EmoDetector.h"
+#include "FacePreProcessor.h"
 
 using std::stringstream;
 using std::string;
@@ -32,12 +33,10 @@ namespace emotime {
   *
   * @brief   Generic GUI
   *
-  * @tparam D CvBoost or CvSVM
-  *
   * @details
   *
   */
-  template <class D> class AGui {
+  class AGui {
 
     public:
 
@@ -50,7 +49,7 @@ namespace emotime {
        *  @param[in]      fps  Desired frame per second
        *
        */
-      AGui(ACapture * capt, FacePreProcessor * fp, EmoDetector<D> * detect, int fps) {
+      AGui(ACapture* capt, FacePreProcessor* fp, EmoDetector* detect, int fps) {
         capture = capt;
         preprocessor = fp;
         detector = detect;
@@ -85,11 +84,11 @@ namespace emotime {
     protected:
 
       /// Face preprocessor
-      FacePreProcessor * preprocessor;
+      FacePreProcessor* preprocessor;
       /// Emotion detector
-      EmoDetector<D> * detector;
+      EmoDetector* detector;
       /// Capture instance
-      ACapture * capture;
+      ACapture* capture;
       /// Title for the main window
       string mainWinTitle;
       /// Desired frames per second
@@ -150,10 +149,8 @@ namespace emotime {
   *
   * @brief   GUI for debugging purpose
   *
-  * @tparam D CvBoost or CvSVM
-  *
   */
-  template <class D> class ADebugGui : public AGui<D> {
+  class ADebugGui : public AGui {
 
     public:
 
@@ -166,8 +163,8 @@ namespace emotime {
        *  @param[in]      fps  Desired frame per second
        *
        */
-      ADebugGui(ACapture * capt, FacePreProcessor * fp, EmoDetector<D> *
-          detect, int fps) : AGui<D>(capt, fp, detect, fps) {
+      ADebugGui(ACapture* capt, FacePreProcessor* fp, EmoDetector*
+          detect, int fps) : AGui(capt, fp, detect, fps) {
         faceWinTitle = string("AGui: Face");
         featsWinTitle = string("AGui: Features");
       }
@@ -179,7 +176,7 @@ namespace emotime {
       string featsWinTitle;
 
       bool init() {
-        if (!AGui<D>::init()) {
+        if (!AGui::init()) {
           return false;
         }
         //namedWindow(faceWinTitle.c_str(), CV_WINDOW_AUTOSIZE);
@@ -199,9 +196,9 @@ namespace emotime {
         //displayOverlay(mainWinTitle.c_str(), osd.c_str(), 2000);
 
         Mat face;
-        if (AGui<D>::preprocessor->extractFace(copy, face)) {
+        if (AGui::preprocessor->extract_face(copy, face)) {
           Mat gabor;
-          if (AGui<D>::preprocessor->filterImage(face,gabor)){
+          if (AGui::preprocessor->filter_image(face,gabor)){
             double min;
             double max;
             cv::minMaxIdx(gabor, &min, &max);
