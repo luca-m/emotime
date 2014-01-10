@@ -5,7 +5,6 @@
 #include "capture.hpp"
 #include "BoostEmoDetector.h"
 #include "matrix_io.h"
-#include "gaborbank.h"
 
 #include <opencv2/opencv.hpp>
 #include <iostream>
