@@ -43,5 +43,8 @@ def parse_ini_config(configFile):
   for opt in parser.options('DETECTION'):
     config['DETECTION_{0}'.format(upper(opt))]=parser.get('DETECTION',opt)
 
+  for opt in parser.options('GUI'):
+    config['GUI_{0}'.format(upper(opt))]=parser.get('GUI',opt)
+
   return config
 
