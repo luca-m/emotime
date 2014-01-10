@@ -32,12 +32,13 @@ def dataset_do_prediction(dsfolder, config, mode, eye_detection, do_prints=True)
 
   if mode == 'svm':
     class_dir = os.path.join(dsfolder, config['CLASSIFIER_SVM_FOLDER'])
-    execut = config['DETECTION_SVM_TOOL']
+    mode_s = 'svm'
   else:
     class_dir = os.path.join(dsfolder, config['CLASSIFIER_FOLDER'])
-    execut = config['DETECTION_ADA_TOOL']
+    mode_s = 'ada'
 
-  print "INFO: detector tool '%s', eye detection: %r"%(execut, eye_detection)
+  execut = config['DETECTION_TOOL']
+  print "INFO: detector tool '%s %s', eye detection: %r"%(execut, mode_s, eye_detection)
 
   classificators = []
   for f in os.listdir(class_dir):
@@ -48,7 +49,7 @@ def dataset_do_prediction(dsfolder, config, mode, eye_detection, do_prints=True)
   #print "INFO: classifiers %s"%str(classificators)
 
   results = {}
-  args = [execut, config['FACECROP_FACE_DETECTOR_CFG']]
+  args = [execut, mode_s, config['FACECROP_FACE_DETECTOR_CFG']]
   if eye_detection:
     args.append(config['FACECROP_EYE_DETECTOR_CFG'])
   else:
@@ -59,13 +60,16 @@ def dataset_do_prediction(dsfolder, config, mode, eye_detection, do_prints=True)
 
   res_reg =  re.compile("predicted: (\w*) with score (.*)")
   for emo in os.listdir(faces_dir):
-    if do_prints:
-      print "Predicting:", emo
     emo_dir = os.path.join(faces_dir, emo)
 
     if not os.path.isdir(emo_dir):
       continue
-    faces = '\n'.join([os.path.join(emo_dir, f) for f in os.listdir(emo_dir)])
+
+    faces_list = [os.path.join(emo_dir, f) for f in os.listdir(emo_dir)]
+    faces = '\n'.join(faces_list)
+    if do_prints:
+      print "Predicting:", emo, "(%d faces)"%len(faces_list)
+
     p = subprocess.Popen(args, stdout=PIPE, stdin=PIPE, stderr=PIPE)
     out = p.communicate(input=faces)
     results[emo] = re.findall(res_reg, out[0])

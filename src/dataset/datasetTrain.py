@@ -6,14 +6,9 @@ import argparse
 import os
 import subprocess
 import multiprocessing
-import string
 import datasetConfigParser as dcp
 
 from os.path import join
-from os.path import isfile
-from os.path import isdir
-from os.path import basename
-from os.path import splitext
 
 def _subproc_call(args):
     """ Wrap a subprocess.call """
@@ -27,45 +22,7 @@ def _subproc_call(args):
       print "ERR: '%s' has encountered problems" % comstr 
       return (comstr,False)
 
-def dataset_selectFeatures(classifierFolder, filterFile, config):
-  """
-      Prepare the feature filter using trained boost trees
-  """
-  print "INFO: starting feature selection."
-  for f in os.listdir(classifierFolder):
-    if string.lower(splitext(f)[1]) == ".xml":
-      retcode=subprocess.call( [config['TRAIN_FEATSEL_TOOL'], '{0}'.format(join(classifierFolder, f)), '{0}'.format(join(classifierFolder, filterFile)) ] )
-      if retcode<0:
-        print "WARN: extracting selected features for '%s' has returned error (%d)" % (f, retcode)
-  print "INFO: selected feature index written to %s" % (filterFile)
-
-def dataset_trainAdaboost(trainFolder, outFolder, config):
-  """
-      Train adaboos classifiers
-  """
-  bagoftask=[]
-  print "INFO: starting adaboost training"
-  for f in os.listdir(trainFolder):
-    ext=os.path.splitext(f)[1]
-    of=f[:-len(ext)]+'.xml'
-    
-    #fields=0
-    # Detect number of features
-    #with open(join(trainFolder,f),'r') as r:
-    #  fields=len(r.readline().split(','))
-
-    bagoftask.append(([config['TRAIN_ADA_TOOL'], '{0}'.format(join(trainFolder, f)), '{0}'.format(join(outFolder, of)) ], os.path.splitext(f)[0]))#, str(fields)] ) 
-  
-  #print "INFO: tasks prepared, starting training procedure"
-  nprocs=max( 1, int(multiprocessing.cpu_count()*abs(float(config['TRAIN_ADA_CPU_USAGE']))) )
-  results=[]
-  pool=multiprocessing.Pool(processes=nprocs)
-  res=pool.map_async(_subproc_call,bagoftask,callback=results.append).get(2**32) # workaround for properly handling SIGINT
-  #res.wait()
-  print "INFO: AdaBoost training finished."
-  return results
-
-def dataset_trainSVM(trainFolder, outFolder, config):
+def dataset_train(smode, trainFolder, outFolder, config):
   """
       Train svm classifiers
   """
@@ -74,7 +31,7 @@ def dataset_trainSVM(trainFolder, outFolder, config):
   print "INFO: starting svm training"
   for f in os.listdir(trainFolder):
     of = os.path.splitext(f)[0] + '.xml'
-    bagoftask.append(([config['TRAIN_SVM_TOOL'], '{0}'.format(join(trainFolder,
+    bagoftask.append(([config['TRAIN_TOOL'], smode, '{0}'.format(join(trainFolder,
       f)), '{0}'.format(join(outFolder, of))], os.path.splitext(f)[0]))
 
   #print "INFO: tasks prepared, starting training procedure"
@@ -87,27 +44,23 @@ def dataset_trainSVM(trainFolder, outFolder, config):
   pool.close()
   pool.join()
 
-  print "INFO: SVM training finished."
+  print "INFO: %s training finished."%smode
   return results
 
 def dataset_run_training(dsFolder, config, mode):
   """
       Start training
   """
-  trainFldr=join(dsFolder, config['TRAIN_FOLDER']) 
+  trainFldr = join(dsFolder, config['TRAIN_FOLDER'])
 
   if mode == "adaboost":
-    classifFldr=join(dsFolder, config['CLASSIFIER_FOLDER'])
-    print "INFO: training decision trees using AdaBoost"
-    results=dataset_trainAdaboost(trainFldr, classifFldr, config)
-    classif_file = config['TRAIN_ADA_FILTER_FNAME']
-    print "INFO: selectiong features using trained decision trees"
-    dataset_selectFeatures(classifFldr, join(classifFldr, classif_file), config)
+    smode = "ada"
+    classifFldr = join(dsFolder, config['CLASSIFIER_FOLDER'])
+  else:
+    smode = "svm"
+    classifFldr = join(dsFolder, config['CLASSIFIER_SVM_FOLDER'])
 
-  elif mode == "svm":
-    classifFldr=join(dsFolder, config['CLASSIFIER_SVM_FOLDER'])
-    print "INFO: training decision trees using SVM"
-    dataset_trainSVM(trainFldr, classifFldr, config)
+  dataset_train(smode, trainFldr, classifFldr, config)
 
 if __name__ == "__main__":
   parser = argparse.ArgumentParser()
