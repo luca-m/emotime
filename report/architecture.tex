@@ -1,0 +1,116 @@
+\section{Project Architecture}
+
+The project is composed by the following entities:
+
+\begin{description}
+  \item[FaceDetector:] an utility class that extracts faces from images.
+  \item[GaborBank:] generator of features using gabor filters.
+  \item[Classifier:] generic 2-class classificator, which can be
+    trained to predict a feature matrix.
+  \item[EmoDetector:] using a set of classifiers, it realizes a multi-class
+    detection for emotions.
+  \item[GUI:] generic GUI that uses an EmoDetector to predict the emotion.
+\end{description}
+
+Instead of creating a single executable that does everything, we choose a
+\emph{linux-like} approach of having a set of tools, where each of them
+performs a single task.
+
+Thus, we created a set of efficient tools, written in \code{C++}, which perform
+training and detection, while high-level tasks such as data and training
+organization are done by \code{Python} scripts.
+
+\subsection{Face detection}
+
+The face detection task is realized by the class \code{FaceDetector}. It uses
+trained \emph{Haar Cascadesthe} classifiers to detect and crop the first face
+from an image.
+
+Since the face can be partially occulted or rotated around the principal axis,
+mere detection is not enough. We implemented only the roll correction, by using
+another \emph{Haar Cascadesthe} classifier to detect the eyes coordinates. If
+the eye are not on the same axis, the image is rotated.
+
+The face detection receives as input an image and outputs a matrix containing
+the cropped and adjusted face.
+
+\subsection{Gabor bank}
+
+The class \code{GaborBank} is a generator and container of \code{GaborKernel}.
+It permits the generation of various Gabor kernels with different orientations,
+dimensions and wavelengths.
+
+Once filled, \code{GaborBank} can filter images, returning a matrix that
+contains a stack of images, one for each filter present in the bank.
+
+\subsection{Classifier}
+
+\code{Classifier} is a generic 2-class classificator, which can be trained to
+predict a feature matrix. The specializations classes we implemented are
+\code{SVMClassifier} and \code{AdaBoostClassifier}.
+
+The training set is composed by \emph{negative} (class 0) and \emph{positive}
+(class 1) samples. The output is a trained classifier. We used the
+\emph{OpenCV} \code{CvSVM} and \code{CvBoost}, which permit to save and load
+their internal state.
+
+\subsection{Emotion detector}
+
+Once the 2-class classifiers are trained, they can be used together to realize
+a multi-class classifiers. This goal is achieved by \code{EmoDetector}. It is
+composed by multiple \code{Classifier} and combines their prediction in various
+ways to detect the emotion.
+
+The input is an image, which is preprocessed: the face is extracted and then
+features are computed. Then result is the detected emotion with its prediction
+score.
+
+\subsection{GUI}
+
+The GUI is realized using the \emph{OpenCV} API. A generic GUI (\code{AGui}) is
+composed by a \code{FacePreProcessor}, which extracts features from images, an
+\code{EmoDetector} and a \code{ACapture}.
+
+An \code{ACapture} is a generic frame capture. The specializations we
+implemented permit the capture from videos, images and webcams.
+
+\subsection{Tools and scripts}
+
+Tools are \code{C++} programs performing high-performance tasks. In order
+to be generic, they require every algorithm parameter as input argument.
+
+\begin{description}
+  \item[facecrop\_cli] reads an image and output a new image with the cropped
+    face. It performs also eye-adjusting.
+  \item[gaborbank\_cli] reads an image and output a file containing the
+    extracted features.
+  \item[train\_cli] reads a training file, trains a classifier and writes the
+    trained state in an output file in \emph{xml} format.
+  \item[emo\_detector\_cli] reads images and detect emotions using trained
+    classifiers.
+  \item[emotimegui\_cli] capture the webcam and performs real-time emotion
+    detection.
+\end{description}
+
+The duty of python scripts is to organize the training process, by using the
+\code{C++} tools. The configuration, such as tools name and algorithm
+parameters, are read from a configuration file.
+
+\begin{description}
+  \item[datasetInit.py] initializes the directory hierarchy needed by the
+    training process. This directory is called \code{dataset} directory.
+  \item[datasetFillCK.py] fills the \code{dataset} with images from the CK database.
+  \item[datasetCropFaces.py] applies the facecrop tool to the images, saving
+    them in the \code{dataset}.
+  \item[datasetFeatures.py] uses the gaborbank tool to extract features from
+    the faces. The features are saved as \emph{yml} files.
+  \item[datasetPrepTrain.py] prepares the training files by combining the
+    features files using various strategies. The output are \emph{csv} files
+    containing the positive and negative samples.
+  \item[datasetTrain.py] iterates the \emph{csv} training files and launch a
+    multi-threading training using the train tool. Their output is trained
+    classifiers, which are saved in the \code{dataset} as \code{xml} files.
+  \item[datasetVerifyPrediction.py] uses the emo\_detector tool to verify the
+    prediction of the trained classifiers. We don't have a \emph{validation
+    set}, so we just test the prediction on the \emph{training set}.
+\end{description}
