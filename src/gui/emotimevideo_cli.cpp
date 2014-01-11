@@ -9,12 +9,11 @@
  *
  */
 
-#include "capture.hpp"
-#include "debuggui.hpp"
+#include "VideoCapture.h"
 #include "BoostEmoDetector.h"
 #include "SVMEmoDetector.h"
 #include "matrix_io.h"
-#include "emotimegui.hpp"
+#include "EmotimeGui.h"
 #include "FaceDetector.h"
 
 #include "DetectionParameters.h"
@@ -35,30 +34,17 @@ using std::endl;
 using std::string;
 
 /// Width of the faces used during training
-const int kWidth = 32;
+const int kWidth = 48;
 /// Height of the faces used during training
-const int kHeight = 32;
+const int kHeight = 48;
 /// N-Widths used during training
-const double kNWidths = 1;
+const double kNWidths = 2;
 /// N-Lambdas used during training
 const double kNLambdas = 5;
 /// N-Thetas used during training
-const double kNThetas = 8;
+const double kNThetas = 4;
 
-/**
- *  @brief          Prints the help
- *
- */
-void help();
-
-/**
- *  @brief          Prints the program banner
- *
- */
-void banner();
-
-void help()
-{
+void help(){
 	cout << "Usage:" << endl;
 	cout << "   emotimegui_cli <faceDetecXML> <eyeDetectXML> [<mode>] <classifier>{<classifier>}" << endl;
 	cout << "Parameters:" << endl;
@@ -74,14 +60,12 @@ void help()
 	cout << endl;
 }
 
-void banner()
-{
+void banner(){
 	cout << "EmotimeGui Utility:" << endl;
-	cout << "     GUI for emotime" << endl;
+	cout << "     GUI for emotime. Load the video specified in stdin" << endl;
 }
 
-int main(int argc, const char* argv[])
-{
+int main(int argc, const char* argv[]){
   if (argc < 5) {
 		banner();
 		help();
@@ -98,14 +82,14 @@ int main(int argc, const char* argv[])
   int nwidths = std::atoi(argv[5]);
   int nlambdas = std::atoi(argv[6]);
   int nthetas = std::atoi(argv[7]);
+  FacePreProcessor facepreproc(faceDetConfig, eyeDetConfig, width, height, nwidths, nlambdas, nthetas);
 
   // Setting the mode
   int i;
 	string mode;
   mode = string(argv[8]);
-
-	if (mode != "svm" && mode != "ada") {
-    mode = "ada";
+	if (mode!="svm" && mode!="ada") {
+    mode="ada";
     i = 8;
   } else {
     i = 9;
@@ -127,16 +111,15 @@ int main(int argc, const char* argv[])
 
   emodetector->init(cl_paths);
 
-  cout<<"Insert the video file path: "<<endl; 
+  cout<<"Insert the video file path: "; 
   std::getline(std::cin, infile);
   cout<<"Loading '"<<infile<<"'"<<endl;
-  Video capture=Video(infile, true/*grayscale*/);
+  emotime::VideoCapture capture=emotime::VideoCapture(infile, true/*grayscale*/);
   // Creating and starting the EmotimeGUI
   int fps = 30;
   try{
-    FacePreProcessor preprocessor(faceDetConfig, eyeDetConfig, width, height, nwidths, nlambdas, nthetas);
-    ADebugGui guiS(&capture, &preprocessor, emodetector, fps);
-    guiS.run();
+    EmotimeGui gui(&capture, &facepreproc, emodetector, fps);
+    gui.run();
 	} catch (int e) {
 		cerr << "ERR: Exception #" << e << endl;
 		return -e;
