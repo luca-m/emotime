@@ -1,0 +1,93 @@
+\documentclass[11pt]{article}
+
+\newcommand{\xautha}{Luca Mella}
+\newcommand{\xauthb}{Daniele Bellavista}
+\newcommand{\xtitle}{Emotime: Recognizing emotional states in faces}
+
+\usepackage{amsmath}
+\usepackage{placeins}
+\usepackage{float}
+\usepackage{ifpdf,ifluatex}
+\ifluatex
+\usepackage{fontspec}
+\else
+\usepackage[utf8x]{inputenc}
+\fi
+
+\usepackage{url}
+\ifpdf
+\usepackage{hyperref}
+\hypersetup{unicode=true,
+    pdftitle={\xtitle},
+    pdfauthor={\xautha, \xauthb},
+}
+\fi
+
+\usepackage{chngcntr}
+\counterwithin{figure}{subsection}
+\counterwithin{table}{subsection}
+
+\usepackage{xspace}
+\usepackage[usenames,dvipsnames]{xcolor}
+\usepackage{graphicx}
+
+\usepackage{listings}
+\lstset{%
+  breakatwhitespace=false,
+  breaklines=true,
+  captionpos=t,
+  extendedchars=true,
+  literate= {à}{{\`a}}1
+            {η}{{$\eta$}}1
+            {μ}{{$\mu$}}1
+            {ρ}{{$\rho$}}1,
+  frame=single,
+  keepspaces=true,
+  basicstyle=\ttfamily\footnotesize,
+  keywordstyle=\color{blue},
+  commentstyle=\color{OliveGreen},
+  stringstyle=\color{RedOrange},
+  numbers=left,
+  numberstyle=\tiny\color{CadetBlue},
+  rulecolor=\color{black},
+  showspaces=false,
+  showstringspaces=false,
+  showtabs=false,
+  tabsize=2,
+  title=\lstname
+}
+
+\newcommand{\action}[1]{\texttt{#1}\xspace}
+\newcommand{\code}[1]{{\small{\texttt{#1}}}\xspace}
+\newcommand{\codescript}[1]{{\scriptsize{\texttt{#1}}}\xspace}
+
+% Cross-referencing
+\newcommand{\labelsec}[1]{\label{sec:#1}}
+\newcommand{\xs}[1]{\sectionname~\ref{sec:#1}}
+\newcommand{\xsp}[1]{\sectionname~\ref{sec:#1} \onpagename~\pageref{sec:#1}}
+\newcommand{\labelssec}[1]{\label{ssec:#1}}
+\newcommand{\xss}[1]{\subsectionname~\ref{ssec:#1}}
+\newcommand{\xssp}[1]{\subsectionname~\ref{ssec:#1} \onpagename~\pageref{ssec:#1}}
+\newcommand{\labelsssec}[1]{\label{sssec:#1}}
+\newcommand{\xsss}[1]{\subsectionname~\ref{sssec:#1}}
+\newcommand{\xsssp}[1]{\subsectionname~\ref{sssec:#1} \onpagename~\pageref{sssec:#1}}
+\newcommand{\labelfig}[1]{\label{fig:#1}}
+\newcommand{\xf}[1]{\figurename~\ref{fig:#1}}
+\newcommand{\xfp}[1]{\figurename~\ref{fig:#1} \onpagename~\pageref{fig:#1}}
+\newcommand{\labeltab}[1]{\label{tab:#1}}
+\newcommand{\xt}[1]{\tablename~\ref{tab:#1}}
+\newcommand{\xtp}[1]{\tablename~\ref{tab:#1} \onpagename~\pageref{tab:#1}}
+
+\begin{document}
+\title{\xtitle}
+\author{\xautha\\\xauthb}
+
+\maketitle
+
+
+%\input{file.tex}
+
+\bibliographystyle{plain}
+\bibliography{bib/bib}{}
+
+\end{document}
