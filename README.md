@@ -7,16 +7,16 @@ _Recognizing emotional states in faces_
 Copyleft [CC-BY-NC 2013](http://creativecommons.org/licenses/by-nc/3.0/)
 
 ## Goal
-This project aim to recognize main facial expressions (neutral, anger, disgust, fear, joy, sadness, surprise) in image 
-sequence using the approaches described in:
+This project aims to recognize main facial expressions (neutral, anger, disgust, fear, joy, sadness, surprise) in image
+sequences using the approaches described in:
 
 * [Dynamics of Facial Expression Extracted Automatically from Video](http://ieeexplore.ieee.org/xpl/articleDetails.jsp?arnumber=1384873)
 * [Fully Automatic Facial Action Recognition in Spontaneous Behavior](http://ieeexplore.ieee.org/xpl/articleDetails.jsp?arnumber=1613024)
 
 ## References
 
-Here is listed some interesting material about machine learning, opencv, gabor transforms and other 
-stuff that could be usefull to get in this topic:
+Here is listed some interesting material about machine learning, opencv, gabor transforms and other
+stuff that could be useful to get in this topic:
 
  * [AdaBoost and the Super Bowl of Classifiers](http://www.inf.fu-berlin.de/inst/ag-ki/rojas_home/documents/tutorials/adaboost4.pdf)
  * [Tutorial on Gabor Filters](http://mplab.ucsd.edu/tutorials/gabor.pdf)
@@ -46,7 +46,7 @@ test               Some testing scripts here
 Dependencies:
 
 * CMake > 2.8
-* Python > 2.7, < 3.0 
+* Python > 2.7, < 3.0
 * OpenCV > 2.4.5
 
 ~~_NOTE: OpenCV CvMLData is used for loading training files, but if you try to run the ML-Training procedure as is you could encounter some problem related to OpenCV default values and size of training data. For the sake of simplicity you MAY NEEED to make CvMLData.read.csv capable of reading bigger data. In order to do it you should RECOMPILE and REINSTALL OpenCV after a very quick modification. In detail you should go to `opencv-2.x.x` folder, then edit `modules/ml/src/data.cpp`, find the `read_csv` method, find the `storage = cvCreateMemStorage();` line and specify a bigger value than the default one (eg.`storage = cvCreateMemStorage(256*2048)` instead of 64K)_~~
@@ -68,7 +68,7 @@ Compiling on linux:
 
 ### Dataset
 
-The [Cohn-Kanade database](http://www.consortium.ri.cmu.edu/ckagree/) is one of the most used face database. In it's extended version (CK+) it contains also [FACS](http://en.wikipedia.org/wiki/Facial_Action_Coding_System) 
+The [Cohn-Kanade database](http://www.consortium.ri.cmu.edu/ckagree/) is one of the most used faces database. Its extended version (CK+) contains also [FACS](http://en.wikipedia.org/wiki/Facial_Action_Coding_System)
 code labels (aka Action Units) and emotion labels (neutral, anger, contempt, disgust, fear, happy, sadness, surprise).
 
 ### Usage
@@ -82,7 +82,7 @@ Train some models:
 
     ./train_models.sh svm 1vsallext ./dataset
 
-Or also :
+Or also:
 
     python datasetCropFaces.py [-h] [--eye-correction] dsFolder
     python datasetFeatures.py [-h] dsFolder 
@@ -111,7 +111,7 @@ Training parameters:
 
 AdaBoost opencv _realboost_ results (no neutral, only true positive):
 
-``` 
+```
 anger : 39/45   -  .8666666666
 contempt : 8/18   -  .4444444444
 disgust : 52/59   -  .8813559322
@@ -213,7 +213,7 @@ Considerations:
 
 ## Validation
 
-Due to the lack of availability of other dataset with respect to the time available for the project, we did __not__ performed formal _validation test_, so we cannot provide a validation error confusion matrix. __Try it yourself__. 
+Due to the lack of availability of other dataset with respect to the time available for the project, we did __not__ performed formal _validation test_, so we cannot provide a validation error confusion matrix. __Try it yourself__.
 
 ## Detection and Prediction
 
@@ -223,14 +223,18 @@ Due to the lack of availability of other dataset with respect to the time availa
 Video gui:
 
     echo "<VIDEOPATH>"|./emotimevideo_cli FACEDETECTORXML (EXEDETECTORXML|none) WIDTH HEIGHT NWIDTHS NLAMBDAS NTHETAS (svm|ada) (TRAINEDCLASSIFIERSXML)+
-  
+
 Cam gui:
 
     ./emotimegui_cli FACEDETECTORXML (EXEDETECTORXML|none) WIDTH HEIGHT NWIDTHS NLAMBDAS NTHETAS (svm|ada) (TRAINEDCLASSIFIERSXML)+
 
+Or:
+
+    ./gui.py --mode svm --eye-correction <dataset_path>
+
 ## Further Development
 
-* Validation dataset 
+* Validation dataset
 * Much more training samples, some emotions in Cohn-Kanade are under-sampled.
 * Better GUI
 * Better CLI tools
