@@ -45,17 +45,17 @@ namespace emotime{
         return false;
       }  
   };
+
   /**
-   * Video Capture class. 
-   * Enable capturing video frames from devices or video files. 
-   * */
-  class Video: public ACapture{
-    private:
-      VideoCapture cap;
-    protected: 
-      bool extractFrame(Mat & frm){
-        return cap.read(frm); 
-      }
+   * @class    Video
+   *
+   * @brief   Capture implementation using opencv VideoCapture
+   *
+   * @details
+   *
+   */
+  class Video: public ACapture {
+
     public:
       /**
        * Open a video from input device (eg. Camera)
@@ -69,16 +69,27 @@ namespace emotime{
       Video(string infile, bool grayScale): ACapture(grayScale) {
         cap.open(infile.c_str());
       }
-      ~Video(){
-       cap.release(); 
+
+      ~Video() {
+       cap.release();
       }
-      bool isReady(){
-        if (cap.isOpened()){
+
+      bool isReady() {
+        if (cap.isOpened()) {
           return true;
         } else {
           return true;
         }
       }
+
+    protected:
+
+      bool extractFrame(Mat& frm) {
+        return cap.read(frm);
+      }
+
+    private:
+      VideoCapture cap;
   };
   /**
    * Capture frames from a single image.
@@ -110,18 +121,15 @@ namespace emotime{
 
   /**
    * @class    Webcam
-   * @author   Daniele Bellavista (daniele.bellavista@studio.unibo.it)
-   * @date    12/31/2013 10:22:15 AM
    *
    * @brief   Capture implementation using a Webcam
    *
    * @details
    *
    */
-  class Webcam : public ACapture {
+  class Webcam : public Video {
 
     public:
-
 
       /**
        *  @brief          Webcam costructor
@@ -129,28 +137,14 @@ namespace emotime{
        *  @param[in]      to_grey If true, each photogram will be converted to greyscale
        *
        */
-      Webcam(bool to_grey) : ACapture(to_grey) {
-        this->capture = cvCaptureFromCAM(CV_CAP_ANY);
+      Webcam(bool to_grey) : Video(0, to_grey) {
+
       }
 
     protected:
 
-      bool extractFrame(Mat& frm) {
-        IplImage* frame = cvQueryFrame(capture);
-        if(frame == NULL) {
-          return false;
-        }
-        Mat(frame).copyTo(frm);
-        return true;
-      }
-
-      bool isReady() {
-        return true;
-      }
-
     private:
-      /// The opencv webcam capture
-      CvCapture* capture;
+
   };
 }
 
