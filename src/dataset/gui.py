@@ -31,6 +31,7 @@ def launch_gui(dsfolder, config, mode, eye_detection, do_prints=True):
       config['GABOR_NWIDTHS'], config['GABOR_NLAMBDAS'],
       config['GABOR_NTHETAS'], mode_s] + classificators
 
+  print "Launching emotime gui! Smile :)"
   os.execv(execut, args);
 
 
