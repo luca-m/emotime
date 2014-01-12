@@ -59,7 +59,7 @@ Our projects also implement a simple face rotation correction algorithm, which i
 
 \subsection{Gabor Filters}
 
-Roughly speaking Gabor filters are \emph{linear} filter obtained by modulating a sinusoid with a \emph{Gaussian}, this kind of filters is typically used in image processing for tasks like edge detection, texture classification and face recognition\cite{gaborApplication}. These filters result particularly effective in case of a time-frequency analysis, which is an analysis technique that aims to study a signal in both time and frequency domain \emph{simultaneously}, due to multi-resolution\footnote{Multi-resolution is a method for orthonormal base creation by slicing the signal space into subspaces at different scales} and multi-orientation properties. One reason of the great success of this kind of filters is the discovery that simple cells in the human visual cortex can be modelled with this particular filter.
+Rawly speaking Gabor filters are \emph{linear} filter obtained by modulating a sinusoid with a \emph{Gaussian}, this kind of filters is typically used in image processing for tasks like edge detection, texture classification and face recognition\cite{gaborApplication}. These filters result particularly effective in case of a time-frequency analysis, which is an analysis technique which aim to study a signal in both time and frequency domain \emph{simultaneously}, due to multi-resolution\footnote{Multi-resolution is a method for orthonormal base creation by slicing the signal space into subspaces at different scales} and multi-orientation properties. One reason of the great success of this kind of filters is the discovery that simple cells in the human visual cortex can be modelled with this particular filter.
 
 \begin{equation}
 g(x,y;\lambda,\theta,\psi,\sigma,\gamma) = \exp\left(-\frac{x'^2+\gamma^2y'^2}{2\sigma^2}\right)\exp\left(i\left(2\pi\frac{x'}{\lambda}+\psi\right)\right)
@@ -84,7 +84,7 @@ One of the basic way to deal with complex Gabor filter is to consider the magnit
 \subsection{Boosting}
 \label{appr:boosting}
 
-Boosting is a powerful learning concept that combines the performance of many ``weak'' classifiers to produce a ``strong'' one. For ``weak classifier'' is intended a generic classifier that performs slightly better than random choice, this non-restrictive requirement open new prospective for simple and computationally cheap classifiers (e.g.\ simple thresholds). Boosting is some kind of meta-algorithm which can be applied in a lot of cases, using different classifiers, different weighting scheme or error functions. The general concept behind this supervised learning strategy is the weighting and re-weighting of the features in order focus on weak learner misprediction, and then weight their votes\cite{rojas2009adaboost}.\\
+Boosting is a powerful learning concept that combines the performance of many ``weak'' classifiers to produce a ``strong'' one. For ``weak classifier'' is intended a generic classifier which perform slightly better than random choice, this non-restrictive requirement open new prospective for simple and computationally cheap classifiers (eg. simple thresholds). Boosting is some kind of meta-algorithm which can be applied in a lot of cases, using different classifiers, different weighting scheme or error functions. The general concept behind this supervised learning strategy is the weighting and re-weighting of the features in order focus on weak learner misprediction, and then weight their votes\cite{rojas2009adaboost}.\\
 
 A classical case of boosting algorithm is the Adaptative Boost (\code{AdaBoost})\cite{Friedman98additivelogistic}, which one of the first boosting approaches proposed. For this reason we briefly introduce its behaviour and we introduce some variants.
 
@@ -92,13 +92,13 @@ A classical case of boosting algorithm is the Adaptative Boost (\code{AdaBoost})
 \caption{Discrete AdaBoost algorithm (binary classification)} 
 \label{alg:adaboost}
 \begin{algorithmic}
-\STATE $i=1,\ldots,T$ training data, $x_i$ is sample and $y_i \in \{-1,+1\}$ is label
+\STATE $i=1 \ldots T$ training data, $x_i$ is sample and $y_i \in \{-1,+1\}$ is label
 \STATE $w_{i}^{(1)}=1$ is the initial weight of $x_i$
 \STATE $N$ iteration number
 \STATE $M$ classifier number
 \STATE $W$ is the sum of weights of all data points
 \STATE $W_e$ is sum of weight of data where considered classifier yields wrong label
-\FOR{$i \in 1,\ldots,N$ } 
+\FOR{$i \in 1 \ldots N$ } 
 %	\FOR{$m \in 1,\ldots,M$ } 
 		\STATE find classifier $k_{m}(x)$ which minimize $W_e=\sum_{y_i \neq k_m(x_i)}{w_{i}^{(m)}}$
 		\STATE set weight of classifier to $\alpha_{m}=\frac{1}{2}ln(\frac{1-e_m}{e_m}) $, where $e_m=W_e/W$
@@ -121,28 +121,28 @@ OpenCV framework implements several AdaBoost variants like \code{Real AdaBoost},
 \subsection{SVM}
 
 Support Vector Machine (\emph{SVM}) is a machine learning approach that
-constructs an hyperplane, which maximizes the distance between the training
-data of any class, performing a classification.
-
-Since results in \cite{Littlewort04dynamicsof} show that linear SVM performs
-slightly better than non-linear approaches, we used only \emph{Linear SVM} for
-its faster training speed. Specifically, we used the linear SVM implementation
-of \emph{OpenCV}, which realizes a \emph{C-Support Linear SVM}, or \emph{Linear
-SVM} with \emph{Soft Margin}.
-
-\begin{align}
-  \min & \frac{1}{2} \boldsymbol{\omega}^T \boldsymbol{\omega} + C*\sum_{i=1}^l \xi_i\\
-  & y_i * (\boldsymbol{\omega}^T \phi(\textbf{x}_i) + b) \geq 1 - \xi_i,\\
-  & \xi_i \geq 0, i = 1, \dots, l
-  \label{mt:lin_svm}
-\end{align}
-
-Where $\boldsymbol{\omega} \cdot \textbf{x} - b = 0$ is the hyperplane:
-$\boldsymbol{\omega}$ is the normal vector to the hyperplane and $\textbf{x}_i
-\in \mathbb{R}^n, i = 1,\dots,l$ are the training vector.  $y \in \mathbb{R}^l,
-y_i \in \{1, -1\}$ is a class indicator, $\xi_i$ is a non-negative slack
-variable measuring the degree of misclassification on $\textbf{x}_i$. The
-parameter $C$ gives a weight to these misclassification variables.
+ constructs an hyperplane, which maximizes the distance between the training
+ data of any class, performing a classification.
+ 
+ Since results in \cite{Littlewort04dynamicsof} show that linear SVM performs
+ slightly better than non-linear approaches, we used only \emph{Linear SVM} for
+ its faster training speed. Specifically, we used the linear SVM implementation
+ of \emph{OpenCV}, which realizes a \emph{C-Support Linear SVM}, or \emph{Linear
+ SVM} with \emph{Soft Margin}.
+ 
+ \begin{align}
+   \min & \frac{1}{2} \boldsymbol{\omega}^T \boldsymbol{\omega} + C*\sum_{i=1}^l \xi_i\\
+   & y_i * (\boldsymbol{\omega}^T \phi(\textbf{x}_i) + b) \geq 1 - \xi_i,\\
+   & \xi_i \geq 0, i = 1, \dots, l
+   \label{mt:lin_svm}
+ \end{align}
+ 
+ Where $\boldsymbol{\omega} \cdot \textbf{x} - b = 0$ is the hyperplane:
+ $\boldsymbol{\omega}$ is the normal vector to the hyperplane and $\textbf{x}_i
+ \in \mathbb{R}^n, i = 1,\dots,l$ are the training vector.  $y \in \mathbb{R}^l,
+ y_i \in \{1, -1\}$ is a class indicator, $\xi_i$ is a non-negative slack
+ variable measuring the degree of misclassification on $\textbf{x}_i$. The
+ parameter $C$ gives a weight to these misclassification variables.
 
 \subsection{Dataset}
 
