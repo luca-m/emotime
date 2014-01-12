@@ -1,22 +1,93 @@
 \section{Results}
 
+We performed training with with several dataset configuration, but here we'll report only the most significant, however the reader may find implementation details, source code, trained models and log at \url{https://github.com/luca-m/emotime/}.
 
 \subsection{Training Results}
 
+\begin{table}[htb]
+\scriptsize
+\begin{tabular}{|p{2cm}|p{1.5cm}|p{1.5cm}|p{1.5cm}|p{1.5cm}|p{1.5cm}|p{1.5cm}|p{1.5cm}|p{1.5cm}|}
+\hline
+{\bf Algorithm }& {\bf Face Detector }& {\bf Eye Rotation}& {\bf Multiclass Strategy } & {\bf nKWidths} & {\bf nLambdas} & {\bf nThetas} &  {\bf Training Accuracy}\\ 
+\hline
+SVM & default & yes & many vs many & 2 & 5 & 4 & 100\% \\
+\hline 
+SVM & cbcl1   & yes & many vs many & 2 & 5 & 4 & 100\% \\
+\hline 
+\end{tabular}
+\label{tab:train}
+\caption{Experimental training results}
+\end{table}
+
+Generalization performance are not formerly available due to the lack of a meaningful validation set\ref{res:issues}, so any generalization performance consideration should be taken ``as is''.
 
 \subsection{Issues}
+\label{res:issues}
+
+Here a brief discussion about problems and issues in general which remains unsolved due to the limited amount of time available for this class project.
 
 \subsubsection*{Training Samples Number}
 
+One of the main problem noticed during testing on arbitrary video or webcam is that detection of some emotions is not good as some other ones, a possible explanation rely on the limited amount of samples of the adopted datased: some emotions have only 10/20 samples, which is certainly not a huge number.\\
+Also the Cohn-Kanade Expression Database represent only the first step in several articles we have red, typically other dataset flanked to it. 
+
 \subsubsection*{Validation Dataset}
+
+The availability of a single, basic, limited dataset did not give us the opportunity to calculate the confusion matrix on validation set for assessing generalization performance.\\ Also gaining access to datasets is not properly immediate: registration, licence agreement and university affiliation are necessary.
 
 \subsubsection*{Boosting Training Time}
 
-\subsubsection*{Bosting Training Time}
+Training time of multiple AdaBoost classifiers with $92160$ features is not negligible, it took more than a day to complete the whole training process. For this reason we chose to temporary skip this training and the feature selection approach based on the boosting results and focus on SVM with linear kernel. This mean that our performance are not optimal because we may calculate some features which is actually not crucial in the decision process, however real-time performance are achieved equally.
 
 \subsubsection*{Face Detector Side Effect}
 
+We empirically noted that the face detector adopted for training and detection has side effect on generalization performance, a more formal discussion is not possible due to the lack of validation dataset availability. However we noted that using \code{haarcascade\_frontalface\_defaul} the face detection rate increase, but part of the ROI of the face is not useful for emotion detection due to the presence of part of background, hair and ears, giving worst generalization performance. \\
+Using \code{haarcascade\_frontalface\_cbcl1} only the inner part of the face are detected, this lead to a lower face detection rate but the ROI results more dense of meaningful features. Since we resize ROI to a 48x48 rectangle, which are relatively small images, the effect of the trade-off described above is not negligible.\\
 
 \subsection{Examples}
 
+Some screen-shot of live test with webcam capture and video capture.
 
+\begin{figure}
+\centering
+\includegraphics[width=7cm]{images/example_happy3.png}
+\label{fig:example_happy3}
+\caption{Happiness detection on a video from MMI dataset}
+\end{figure}
+
+\begin{figure}
+\centering
+\includegraphics[width=7cm]{images/example_surprise.png}
+\label{fig:example_surprise}
+\caption{Surprise detection on a video from MMI dataset}
+\end{figure}
+
+\begin{figure}
+\centering
+\includegraphics[width=7cm]{images/example_happy1.png}
+\label{fig:example_happy1}
+\caption{Happiness detection on live webcam capture}
+\end{figure}
+
+\begin{figure}
+\centering
+\includegraphics[width=7cm]{images/example_anger.png}
+\label{fig:example_anger}
+\caption{Anger detection on a video from MMI dataset}
+\end{figure}
+
+\begin{figure}
+\centering
+\includegraphics[width=7cm]{images/example_sad.png}
+\label{fig:example_sad}
+\caption{Sadness detection on live webcam capture}
+\end{figure}
+
+\begin{figure}
+\centering
+\includegraphics[width=7cm]{images/exampl_happy2.png}
+\label{fig:exampl_happy2}
+\caption{Happiness for happiness detection on live webcam capture}
+\end{figure}
+
+\newpage
