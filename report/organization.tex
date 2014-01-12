@@ -1,0 +1,74 @@
+\section{Project organization and usage}
+
+The project is managed by \emph{CMake} and its organized as following:
+
+\begin{verbatim}
+
+src
+  \-->dataset      Scripts for dataset management
+  \-->detector     Multiclass detector and preprocessor
+  \-->facedetector Face cropping, adjusting and registration
+  \-->gaborbank    Generation of gabor filters and image filtering
+  \-->gui          Graphical interfaces and interaction with videos and webcam
+  \-->training     2-class training and prediction
+  \-->utils        String and IO utilities, CSV supports, and so on..
+doc                Documentation (doxigen)
+report             Report sources
+resources          Containing third party resources (eg. OpenCV haar classifiers)
+assets             Binary folder
+
+\end{verbatim}
+
+Just like any other \emph{CMake} projects, the first step is to initialize the
+compilation by doing:
+
+\begin{verbatim}
+mkdir build
+cd build
+cmake ../
+\end{verbatim}
+
+The \code{make install} command, or equivalent, compiles and moves binaries and
+scripts in the \code{assets} directory.
+
+\subsection{Usage}
+
+The general usage is to initialize the \code{dataset} directory, fill it with
+images from the \code{CK} database, train the classifiers with those images and
+launch the GUI. Algorithm parameters can be changed editing
+\code{assets/default.cfg} prior to initialization.
+
+\subsubsection*{Initialize and fill a dataset}
+
+\begin{verbatim}
+python2 datasetInit.py [-h] dsPath config
+python2 datasetFillCK.py [-h] datasetFolder cohnKanadeFolder
+                                      cohnKanadeEmotionsFolder
+\end{verbatim}
+
+Any further adjustment to the configuration parameters must be
+\emph{``committed''} by replacing the configuration file
+\code{dataset/dataset.cfg}.
+
+\subsubsection*{Classifier training}
+
+\begin{verbatim}
+./train_models.sh svm 1vsallext ./dataset
+\end{verbatim}
+
+Or also:
+
+\begin{verbatim}
+python2 datasetCropFaces.py [-h] [--eye-correction] dsFolder
+python2 datasetFeatures.py [-h] dsFolder
+python2 datasetPrepTrain.py [-h] [--mode {1vs1,1vsAll,1vsAllExt}] dsFolder
+python2 datasetTrain.py [-h] [--mode {adaboost,svm}] dsFolder
+python2 datasetVerifyPrediction.py [-h] [--mode {adaboost,svm}]
+                                          [--eye-correction] dsFolder
+\end{verbatim}
+
+\subsubsection*{GUI webcam}
+
+\begin{verbatim}
+python2 gui.py [-h] [--eye-correction]
+\end{verbatim}
