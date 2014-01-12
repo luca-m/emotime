@@ -99,14 +99,28 @@ namespace emotime {
     int minfwidth = kGaborWidthMin;
     int maxfwidth = kGaborWidthMax;
 
-    for (fwidth = minfwidth; fwidth < maxfwidth; fwidth += (int)
-        ((maxfwidth-minfwidth)/((double)(nwidths<=0?1:nwidths)))) {
-      cv::Size kernelSize(fwidth, fwidth);
+
+//    for (fwidth = minfwidth; fwidth < maxfwidth; fwidth += (int)
+//        ((maxfwidth-minfwidth)/((double)(nwidths<=0?1:nwidths)))) {
+//      cv::Size kernelSize(fwidth, fwidth);
 
       for (_lambda = kGaborLambdaMin; _lambda < kGaborLambdaMax;
           _lambda += (kGaborLambdaMax-kGaborLambdaMin)/((double)(nlambdas<=0?1:nlambdas))) {
         //    for (int j = 0; j < kGaborPaperLamdasLen; j++) {
         //      _lambda = kGaborPaperLambdas[j];
+
+    float octave = 1;
+    _sigma = _lambda * 1/M_PI * sqrt(log(2)/2) * (pow(2,octave)+1)/(pow(2,octave)-1);
+
+
+    float limit = 0.0005;
+    // x = sqrt( -2 * sigm^2 * ln(limit * sqrt(2pi * sigm^2)))
+    float factor = 2.5066282746310002 * _sigma;
+    int x = ceil(_sigma * 1.4142135623730951 * sqrt(-log(limit * factor)));
+
+    if(x % 2 == 1) x++;
+    cv::Size kernelSize(2*x + 1, 2*x + 1);
+
         for (_theta = kGaborThetaMin; _theta < kGaborThetaMax;
             _theta += (kGaborThetaMax - kGaborThetaMin)/((double)(nthetas<=0?1:nthetas))) {
 
@@ -115,7 +129,7 @@ namespace emotime {
           bank.push_back(kern);
         }
       }
-      }
+//      }
     }
 
     void GaborBank::fillDefaultGaborrBank() {
