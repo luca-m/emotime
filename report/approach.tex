@@ -65,7 +65,7 @@ Rawly speaking Gabor filters are \emph{linear} filter obtained by modulating a s
 g(x,y;\lambda,\theta,\psi,\sigma,\gamma) = \exp\left(-\frac{x'^2+\gamma^2y'^2}{2\sigma^2}\right)\exp\left(i\left(2\pi\frac{x'}{\lambda}+\psi\right)\right)
 \end{equation}
 
-Where $x' = x \cos\theta + y \sin\theta$, $y' = -x \sin\theta + y \cos\theta$, $\lambda$ is the wavelength of the sinusoid, $\theta$ is the spatial orientation of the filter, $\phi$ is the phase offset, $\sigma$ is the standard deviation of the Gaussian support and $\gamma$ is the aspect ratio factor.
+Where $x' = x \cos\theta + y \sin\theta$, $y' = -x \sin\theta + y \cos\theta$, $\lambda$ is the wavelength of the sinusoid, $\theta$ is the spatial orientation of the filter, $\phi$ is the phase offset, $\sigma$ is the standard deviation of the Gaussian support and $\gamma$ is the aspect ratio factor (eg. 1.0 for circular).
 
 \subsubsection*{Gabor Energy Filters}
 One of the basic way to deal with complex Gabor filter is to consider the magnitude of the filter response and considering the energy response of the filter. In our implementation we used the euclidean norm $\left \| g \right \|_2 = \sqrt{ g_{real}^2+g_{imag}^2 }$ due to the separate calculation of both imaginary and real part.

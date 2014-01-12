@@ -1,11 +1,53 @@
 \section{Parameters}
 
+In this section we will discuss the parameter used for the algorithm adopted in the class project
+
 \subsection{Face Detection Parameters}
+
+OpenCV support several parameter for multi-scale detection, from the classifier to use, to scale factor and minimum object size. We performed several test using a quick and dirty python script to test which values provide good accuracy. After some empirical test we figure out that considering a 640x480 figure a the minimum face size of size of 120x200 produce good detection (face/image ratio is nearly 10\%). But for ensuring to detect all possible treatable faces for our system we setted up a minimum size of 30x60, this value is related to the resizing performed before feature extraction, in our experiments we chose 48x48, as performed also in\cite{Littlewort04dynamicsof}. So at the moment we decided to ignore the computational overhead introduced by this choice. \\
+
+In the eyes detection step we decided to set the minimum object threshold to a dynamical value calculated using knowledge of face area size and a qualitative estimation of the human face proportions, in detail we consider that the width of an eye cannot be smaller than $\frac{1}{5}$ of the face width.\\
+
+Also we tried several face detector in order to see which one fits better our purposes, for example we considered the \emph{haarcascade\_ frontalface\_default.xml} and the \emph{haarcascade\_frontalface\_cbcl1.xml}. The latest one is interesting because it detect the inner part of the face, discarding the surrounding. This choice has side effects on results\ref{res:issues}.
 
 \subsection{Gabor Kernels Parameters}
 
+Gabor parameters selection is one of the most delicate part of the tuning process, it directly affects the features evaluated for the emotional state classification. Hopefully \cite{Littlewort04dynamicsof, Bartlett06fullyautomatic, Lades93distortioninvariant} provide some hints on  the Gabor bank parameters which can be used for achieving good results, in detail the number of $\lambda$ (wavelength) to use, number of $\theta$ (orientation) and some clues about interesting wavelength ranges are provided:
+
+\begin{itemize}
+\item $\lambda \in ( \frac{\pi}{32} \ldots \frac{\pi}{2} ) $ as suggested in \cite{Lades93distortioninvariant}
+\item $\theta \in ( 0 \ldots \frac{\pi}{2} )$
+\item suggested 5 $\lambda$ and 8 $\theta$ subdivisions
+\item same aspect ration $\gamma$ for each kernel in the bank
+\end{itemize}
+
+However despite these indications we decided to adopt a flexible approach by keeping subdivision number configurable in order to be able to refine parameters in further development stages. \\
+Least, no clear indication about the size of the kernel, so we decide to support multiple kernel size ranging from $7$ to $17$, this values have been fixed in the first testing phase, using the developed Gabor utilities for visualizing the resulting bank. 
+
 \subsection{Boosting Parameters}
+
+Boosting parameters were considered in the early development stages and have ignored in the latest phases due to the huge amount of time needed for \code{AdaBoost} training. However parameters choice involves:
+
+\begin{itemize}
+\item algorithm variant to use, in our case \code{Real AdaBoost}, \code{Discrete AdaBoost} and \code{Gentle AdaBoost} 
+\item classifier trim weight, as the lower accepted weight for a weak classifier
+\item depth of the trained decision tree
+\end{itemize}
+
+We have no clues about this parameters so we tried several configuration and the better results have been obtained via \emph{Gentle AdaBoost}, trimming weak classifiers provide a speed-up but it is a sensible operation due to distribution of classifier weights. However, as reported in \ref{res:issues} we have temporary dismissed the boosting approach due to lack of time.
 
 \subsection{SVM Parameters}
 
 \subsection{Multiclass Strategies}
+
+Each classification algorithm adopted works only for binary classification tasks, and our problem involves 7 distinct classes. For this reason we follow the indications in \cite{Littlewort04dynamicsof, Bartlett06fullyautomatic} and implement a quite general support building a voting scheme based multi-class classifier which rely on binary classifiers.\\
+In detail we support multi-class training and detection in the following configurations:
+
+\begin{itemize}
+\item \emph{1 vs 1}, binary classifiers separate single classes each others
+\item \emph{1 vs all}, separate a class from the others
+\item \emph{many vs many}, separate groups of classes
+\end{itemize}
+
+Indication in papers suggest that \emph{many vs many} should be the better approach, so we use this parameter as the default one.
+
