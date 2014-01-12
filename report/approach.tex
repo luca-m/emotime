@@ -120,7 +120,29 @@ OpenCV framework implements several AdaBoost variants like \code{Real AdaBoost},
 
 \subsection{SVM}
 
-% \cite{}
+Support Vector Machine (\emph{SVM}) is a machine learning approach that
+constructs an hyperplane, which maximizes the distance between the training
+data of any class, performing a classification.
+
+Since results in \cite{Littlewort04dynamicsof} show that linear SVM performs
+slightly better than non-linear approaches, we used only \emph{Linear SVM} for
+its faster training speed. Specifically, we used the linear SVM implementation
+of \emph{OpenCV}, which realizes a \emph{C-Support Linear SVM}, or \emph{Linear
+SVM} with \emph{Soft Margin}.
+
+\begin{align}
+  \min & \frac{1}{2} \boldsymbol{\omega}^T \boldsymbol{\omega} + C*\sum_{i=1}^l \xi_i\\
+  & y_i * (\boldsymbol{\omega}^T \phi(\textbf{x}_i) + b) \geq 1 - \xi_i,\\
+  & \xi_i \geq 0, i = 1, \dots, l
+  \label{mt:lin_svm}
+\end{align}
+
+Where $\boldsymbol{\omega} \cdot \textbf{x} - b = 0$ is the hyperplane:
+$\boldsymbol{\omega}$ is the normal vector to the hyperplane and $\textbf{x}_i
+\in \mathbb{R}^n, i = 1,\dots,l$ are the training vector.  $y \in \mathbb{R}^l,
+y_i \in \{1, -1\}$ is a class indicator, $\xi_i$ is a non-negative slack
+variable measuring the degree of misclassification on $\textbf{x}_i$. The
+parameter $C$ gives a weight to these misclassification variables.
 
 \subsection{Dataset}
 
