@@ -4,15 +4,15 @@ In this section we will discuss the parameter used for the algorithm adopted in 
 
 \subsection{Face Detection Parameters}
 
-OpenCV support several parameter for multi-scale detection, from the classifier to use, to scale factor and minimum object size. We performed several test using a quick and dirty python script to test which values provide good accuracy. After some empirical test we figure out that considering a 640x480 figure a the minimum face size of size of 120x200 produce good detection (face/image ratio is nearly 10\%). But for ensuring to detect all possible treatable faces for our system we setted up a minimum size of 30x60, this value is related to the resizing performed before feature extraction, in our experiments we chose 48x48, as performed also in\cite{Littlewort04dynamicsof}. So at the moment we decided to ignore the computational overhead introduced by this choice. \\
+OpenCV support several parameter for multi-scale detection, from the classifier to use, to scale factor and minimum object size. We performed several test using a quick and dirty python script to test which values provide good accuracy. After some empirical test we figured out that considering a 640x480 figure as the minimum face size of size of 120x200 produces good detection (face/image ratio is nearly 10\%). But for ensuring to detect all possible treatable faces for our system we setted up a minimum size of 30x60, this value is related to the resizing performed before feature extraction, in our experiments we chose 48x48, as performed also in\cite{Littlewort04dynamicsof}. So at the moment we decided to ignore the computational overhead introduced by this choice. \\
 
 In the eyes detection step we decided to set the minimum object threshold to a dynamical value calculated using knowledge of face area size and a qualitative estimation of the human face proportions, in detail we consider that the width of an eye cannot be smaller than $\frac{1}{5}$ of the face width.\\
 
-Also we tried several face detector in order to see which one fits better our purposes, for example we considered the \emph{haarcascade\_ frontalface\_default.xml} and the \emph{haarcascade\_frontalface\_cbcl1.xml}. The latest one is interesting because it detect the inner part of the face, discarding the surrounding. This choice has side effects on results\ref{res:issues}.
+Also we tried several face detector in order to see which one fits better our purposes, for example we considered the \emph{haarcascade\_ frontalface\_default.xml} and the \emph{haarcascade\_frontalface\_cbcl1.xml}. The latter is interesting because it detects the inner part of the face, discarding the surrounding. This choice has side effects on results\ref{res:issues}.
 
 \subsection{Gabor Kernels Parameters}
 
-Gabor parameters selection is one of the most delicate part of the tuning process, it directly affects the features evaluated for the emotional state classification. Hopefully \cite{Littlewort04dynamicsof, Bartlett06fullyautomatic, Lades93distortioninvariant} provide some hints on  the Gabor bank parameters which can be used for achieving good results, in detail the number of $\lambda$ (wavelength) to use, number of $\theta$ (orientation) and some clues about interesting wavelength ranges are provided:
+Gabor parameters selection is one of the most delicate part of the tuning process, it directly affects the features evaluated for the emotional state classification. Hopefully \cite{Littlewort04dynamicsof, Bartlett06fullyautomatic, Lades93distortioninvariant} provide some hints on the Gabor bank parameters that can be used to achieve good results, in detail the number of $\lambda$ (wavelength) to use, number of $\theta$ (orientation) and some clues about interesting wavelength ranges are provided:
 
 \begin{itemize}
 \item $\lambda \in ( \frac{\pi}{32} \ldots \frac{\pi}{2} ) $ as suggested in \cite{Lades93distortioninvariant}
@@ -22,7 +22,7 @@ Gabor parameters selection is one of the most delicate part of the tuning proces
 \end{itemize}
 
 However despite these indications we decided to adopt a flexible approach by keeping subdivision number configurable in order to be able to refine parameters in further development stages. \\
-Least, no clear indication about the size of the kernel, so we decide to support multiple kernel size ranging from $7$ to $17$, this values have been fixed in the first testing phase, using the developed Gabor utilities for visualizing the resulting bank. 
+Least, no clear indication about the size of the kernel, so we decided to support multiple kernel size ranging from $7$ to $17$, this values have been fixed in the first testing phase, using the developed Gabor utilities for visualizing the resulting bank. 
 
 \subsection{Boosting Parameters}
 
@@ -34,9 +34,14 @@ Boosting parameters were considered in the early development stages and have ign
 \item depth of the trained decision tree
 \end{itemize}
 
-We have no clues about this parameters so we tried several configuration and the better results have been obtained via \emph{Gentle AdaBoost}, trimming weak classifiers provide a speed-up but it is a sensible operation due to distribution of classifier weights. However, as reported in \ref{res:issues} we have temporary dismissed the boosting approach due to lack of time.
+We have no clues about this parameters so we tried several configuration and the better results have been obtained via \emph{Gentle AdaBoost}, trimming weak classifiers provide a speed-up but it is a sensible operation due to distribution of classifier weights. However, as reported in~\ref{res:issues} we have temporary dismissed the boosting approach due to lack of time.
 
 \subsection{SVM Parameters}
+
+Linear SVM with soft max has only one parameter, the value \emph{C}, which
+defines how much to consider the misclassification. Since we hadn't any
+validation set, we couldn't verify how much this value could affect the train.
+We decided to leave $C=0.5$, for no particular reason.
 
 \subsection{Multiclass Strategies}
 
