@@ -59,11 +59,62 @@ Our projects also implement a simple face rotation correction algorithm, which i
 
 \subsection{Gabor Filters}
 
-% \cite{gaborTutorial}
-% \cite{Lades93distortioninvariant}
+Rawly speaking Gabor filters are \emph{linear} filter obtained by modulating a sinusoid with a \emph{Gaussian}, this kind of filters is typically used in image processing for tasks like edge detection, texture classification and face recognition\cite{gaborApplication}. These filters result particularly effective in case of a time-frequency analysis, which is an analysis technique which aim to study a signal in both time and frequency domain \emph{simultaneously}, due to multi-resolution\footnote{Multi-resolution is a method for orthonormal base creation by slicing the signal space into subspaces at different scales} and multi-orientation properties. One reason of the great success of this kind of filters is the discovery that simple cells in the human visual cortex can be modelled with this particular filter.
 
+\begin{equation}
+g(x,y;\lambda,\theta,\psi,\sigma,\gamma) = \exp\left(-\frac{x'^2+\gamma^2y'^2}{2\sigma^2}\right)\exp\left(i\left(2\pi\frac{x'}{\lambda}+\psi\right)\right)
+\end{equation}
+
+Where $x' = x \cos\theta + y \sin\theta$, $y' = -x \sin\theta + y \cos\theta$, $\lambda$ is the wavelength of the sinusoid, $\theta$ is the spatial orientation of the filter, $\phi$ is the phase offset, $\sigma$ is the standard deviation of the Gaussian support and $\gamma$ is the aspect ratio factor.
+
+\subsubsection*{Gabor Energy Filters}
+One of the basic way to deal with complex Gabor filter is to consider the magnitude of the filter response and considering the energy response of the filter. In our implementation we used the euclidean norm $\left \| g \right \|_2 = \sqrt{ g_{real}^2+g_{imag}^2 }$ due to the separate calculation of both imaginary and real part.
+
+\begin{figure}[!h]
+\centering
+\includegraphics[width=12cm]{images/gabor.png}
+\label{fig:gabor}
+\caption{Magnitude of a Gabor filter bank from \cite{gaborApplication} }
+\end{figure}
+
+% \cite{gaborTutorial}
+% \cite{gaborApplication}
+% \cite{Lades93distortioninvariant}
+\newpage
 \subsection{Boosting}
 \label{appr:boosting}
+
+Boosting is a powerful learning concept that combines the performance of many ``weak'' classifiers to produce a ``strong'' one. For ``weak classifier'' is intended a generic classifier which perform slightly better than random choice, this non-restrictive requirement open new prospective for simple and computationally cheap classifiers (eg. simple thresholds). Boosting is some kind of meta-algorithm which can be applied in a lot of cases, using different classifiers, different weighting scheme or error functions. The general concept behind this supervised learning strategy is the weighting and re-weighting of the features in order focus on weak learner misprediction, and then weight their votes\cite{rojas2009adaboost}.\\
+
+A classical case of boosting algorithm is the Adaptative Boost (\code{AdaBoost})\cite{Friedman98additivelogistic}, which one of the first boosting approaches proposed. For this reason we briefly introduce its behaviour and we introduce some variants.
+
+\begin{algorithm}
+\caption{Discrete AdaBoost algorithm (binary classification)} 
+\label{alg:adaboost}
+\begin{algorithmic}
+\STATE $i=1,\ldots,T$ training data, $x_i$ is sample and $y_i \in \{-1,+1\}$ is label
+\STATE $w_{i}^{(1)}=1$ is the initial weight of $x_i$
+\STATE $N$ iteration number
+\STATE $M$ classifier number
+\STATE $W$ is the sum of weights of all data points
+\STATE $W_e$ is sum of weight of data where considered classifier yields wrong label
+\FOR{$i \in 1,\ldots,N$ } 
+%	\FOR{$m \in 1,\ldots,M$ } 
+		\STATE find classifier $k_{m}(x)$ which minimize $W_e=\sum_{y_i \neq k_m(x_i)}{w_{i}^{(m)}}$
+		\STATE set weight of classifier to $\alpha_{m}=\frac{1}{2}ln(\frac{1-e_m}{e_m}) $, where $e_m=W_e/W$
+		\IF{$k_m(x_i) $ is a miss} 
+	 		\STATE update weights $w_{i}^{(m+1)}=w_{i}^{(m)}e^{\alpha_m}=w_{i}^{(m)}\sqrt{\frac{1-e_m}{e_m}}$
+		\ELSE
+			\STATE update weights $w_{i}^{(m+1)}=w_{i}^{(m)}e^{-\alpha_m}=w_{i}^{(m)}\sqrt{\frac{e_m}{1-e_m}}$
+ 		\ENDIF
+%\ENDFOR
+\STATE output $sign( \sum_{m \in 1 \ldots M}{ \alpha_m k_m (x)} )$
+\ENDFOR
+\end{algorithmic}
+\end{algorithm}
+
+OpenCV framework implements several AdaBoost variants like \code{Real AdaBoost}, where weak classifiers may express class probabilities $p_m(x)$ instead of $\{-1,+1\}$ values, and \code{Gentle AdaBoost} which updates weight differently $\alpha_{m}=P(y_i=1|x_i)-P(y_i=0|x_i)$. 
+
 % \cite{rojas2009adaboost}
 % \cite{Friedman98additivelogistic}
 
@@ -72,6 +123,10 @@ Our projects also implement a simple face rotation correction algorithm, which i
 % \cite{}
 
 \subsection{Dataset}
+
+Access to properly labelled data is not a trivial aspect when dealing with supervised machine learning algorithm, especially when you are not trained to label that kind of data. Emotion labelling is not a task that someone can improvise, training manual like \emph{Facial Action Coding System (FACS) Manual} exists and certification is required for preparing a scientifically valid dataset. For this reason we required access to the ``Cohn-Kanade Expression Database''\cite{Kanade2000} which contains 486 sequences from 97 posers, each sequence is tagged with FACS, contains facial feature tracking data and also have \emph{emotion labels}. \\
+
+This dataset is considered is a ``must have'' from the academical community, in fact the lot of papers about topic related to \emph{faces} use at least this dataset. For this reason we choose it for our experimentation. 
 
 % \cite{Kanade2000}
 
