@@ -91,35 +91,30 @@ namespace emotime {
     double _lambda;       /// Wavelength of sinusoidal factor
     double _gamma;        /// Spatial aspect ratio (ellipticity of the support of the Gabor function)
     double _psi;          /// Phase offset
+
     _gamma = sqrt(2);
-    _sigma = 4.0;
-    _lambda = sqrt(2);
-    _psi=0;
-    int fwidth;
-    int minfwidth = kGaborWidthMin;
-    int maxfwidth = kGaborWidthMax;
+    _psi = 0; // Symmetric
 
+    double _bandiwth;
 
-//    for (fwidth = minfwidth; fwidth < maxfwidth; fwidth += (int)
-//        ((maxfwidth-minfwidth)/((double)(nwidths<=0?1:nwidths)))) {
-//      cv::Size kernelSize(fwidth, fwidth);
+    for (_bandiwth = 1.0; _bandiwth <= 2.0; _bandiwth += 0.5) {
 
       for (_lambda = kGaborLambdaMin; _lambda < kGaborLambdaMax;
           _lambda += (kGaborLambdaMax-kGaborLambdaMin)/((double)(nlambdas<=0?1:nlambdas))) {
         //    for (int j = 0; j < kGaborPaperLamdasLen; j++) {
         //      _lambda = kGaborPaperLambdas[j];
 
-    float octave = 1;
-    _sigma = _lambda * 1/M_PI * sqrt(log(2)/2) * (pow(2,octave)+1)/(pow(2,octave)-1);
+        _sigma = _lambda * 1/M_PI * sqrt(log(2)/2) * (pow(2,_bandiwth)+1)/(pow(2,_bandiwth)-1);
 
 
-    float limit = 0.0005;
-    // x = sqrt( -2 * sigm^2 * ln(limit * sqrt(2pi * sigm^2)))
-    float factor = 2.5066282746310002 * _sigma;
-    int x = ceil(_sigma * 1.4142135623730951 * sqrt(-log(limit * factor)));
+        float limit = 0.05;
+        // x = sqrt( -2 * sigm^2 * ln(limit * sqrt(2pi * sigm^2)))
+        float factor = 2.5066282746310002 * _sigma;
+        int x = ceil(_sigma * 1.4142135623730951 * sqrt(-log(limit * factor)));
 
-    if(x % 2 == 1) x++;
-    cv::Size kernelSize(2*x + 1, 2*x + 1);
+        if(x % 2 == 1) x++;
+        cv::Size kernelSize(2*x + 1, 2*x + 1);
+//        std::cout << _sigma << " " << 2*x + 1 <<  " " << _lambda << " " << _bandiwth << std::endl;
 
         for (_theta = kGaborThetaMin; _theta < kGaborThetaMax;
             _theta += (kGaborThetaMax - kGaborThetaMin)/((double)(nthetas<=0?1:nthetas))) {
@@ -129,7 +124,7 @@ namespace emotime {
           bank.push_back(kern);
         }
       }
-//      }
+      }
     }
 
     void GaborBank::fillDefaultGaborrBank() {
