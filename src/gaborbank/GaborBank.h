@@ -17,7 +17,7 @@
 namespace emotime {
 
   /// Minimum width for a gabor filter
-  const int kGaborWidthMin = 7;
+  const int kGaborWidthMin = 5;
   /// Maximum width for a gabor filter
   const int kGaborWidthMax = 17;
   /// Minimum lambda for a gabor filter
@@ -25,14 +25,14 @@ namespace emotime {
   /// Maximum lambda for a gabor filter
   const double kGaborLambdaMax = (CV_PI/2.0);
 
-  const int kGaborPaperLambdas[] = {/*3,*/4,6,8,12/*,16,24*/};
+  const int kGaborPaperLambdas[] = {3,4,6,8,12,16,24};
 
   const int kGaborPaperLamdasLen = 4;
 
   /// Minimum tetha for a gabor filter
-  const double kGaborThetaMin = 0.001;
+  const double kGaborThetaMin = 0.0;
   /// Maximum tetha for a gabor filter
-  const double kGaborThetaMax = (CV_PI/2.0);
+  const double kGaborThetaMax = (CV_PI);
 
   /// Default gabor number of different with (gaborbank_getGaborBank)
   const double kGaborDefaultNwidth = 2.0;

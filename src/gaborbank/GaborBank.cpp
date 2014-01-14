@@ -91,7 +91,7 @@ namespace emotime {
     double _lambda;       /// Wavelength of sinusoidal factor
     double _gamma;        /// Spatial aspect ratio (ellipticity of the support of the Gabor function)
     double _psi;          /// Phase offset
-    _gamma = sqrt(2);
+    _gamma = 0.5;//sqrt(2);
     _sigma = 4.0;
     _lambda = sqrt(2);
     _psi=0;
