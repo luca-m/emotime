@@ -16,7 +16,7 @@
 #include "EmotimeGui.h"
 #include "FaceDetector.h"
 
-#include "DetectionParameters.h"
+#include "TrainingParameters.h"
 
 #include <opencv2/opencv.hpp>
 #include <iostream>

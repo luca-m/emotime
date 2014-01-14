@@ -13,6 +13,8 @@
 #include "SVMClassifier.h"
 #include "AdaBoostClassifier.h"
 
+#include "TrainingParameters.h"
+
 #include <iostream>
 #include <sstream>
 #include <string>
@@ -69,15 +71,11 @@ int main(int argc, const char* argv[]) {
 
   emotime::Classifier* classifier;
 	if (method == "svm") {
-	  double c_factor = 0.5;
-	  int max_iterations = 10000000;
-	  double error_margin = 1e-6;
-    classifier = new emotime::SVMClassifier(c_factor, max_iterations, error_margin);
+    classifier = new emotime::SVMClassifier(emotime::kCfactor,
+        emotime::kMaxIteration, emotime::kErrorMargin);
   } else {
-    int boost_type = CvBoost::GENTLE;
-    double trim_weight = 0.0;
-    double max_depth = 1.0;
-    classifier = new emotime::AdaBoostClassifier(boost_type, trim_weight, max_depth);
+    classifier = new emotime::AdaBoostClassifier(emotime::kBoostType,
+        emotime::kTrimWeight, emotime::kMaxDepth);
   }
 
   int ret = 0;
