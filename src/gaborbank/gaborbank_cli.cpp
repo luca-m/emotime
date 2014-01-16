@@ -64,24 +64,19 @@ int main( int argc, const char* argv[] ){
     cerr << "ERR: missing parameters" << endl;
     return -3;
   }
-    unsigned int width = abs(atoi(argv[1]));
-    unsigned int height = abs(atoi(argv[2]));
-    double nwidths = (atof(argv[3]));
-    double nlambdas = (atof(argv[4]));
-    double nthetas = (atof(argv[5]));
-    string infile(argv[6]);
-    string outfile(argv[7]);
+  Size size;
+  size.width = abs(atoi(argv[1]));
+  size.height = abs(atoi(argv[2]));
+  double nwidths = (atof(argv[3]));
+  double nlambdas = (atof(argv[4]));
+  double nthetas = (atof(argv[5]));
+  string infile(argv[6]);
+  string outfile(argv[7]);
 
-    Mat img = matrix_io_load(infile);
-    Mat scaled;
-    resize(img, scaled, cv::Size(width,height), 0, 0, CV_INTER_AREA);
-    img.release();
-
-    GaborBank bank;
-    bank.fillGaborBank((double) nwidths, (double) nlambdas, (double) nthetas);
-    Mat dest = bank.filterImage(scaled);
-    matrix_io_save(dest, outfile);
-
-    scaled.release();
-    dest.release();
+  Mat img = matrix_io_load(infile);
+  GaborBank bank;
+  bank.fillGaborBank((double) nwidths, (double) nlambdas, (double) nthetas);
+  Mat dest = bank.filterImage(scaled, size);
+  matrix_io_save(dest, outfile);
+  dest.release();
 }

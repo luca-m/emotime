@@ -17,17 +17,26 @@
 namespace emotime {
 
   /// Minimum width for a gabor filter
-  const int kGaborWidthMin = 5;
+  const int kGaborWidthMin = 7;
   /// Maximum width for a gabor filter
   const int kGaborWidthMax = 17;
+  /// Minimum width for a gabor filter
+  const double kGaborBandwidthMin = 1.0;
+  /// Maximum width for a gabor filter
+  const double kGaborBandwidthMax = 1.6;
   /// Minimum lambda for a gabor filter
-  const double kGaborLambdaMin = (CV_PI/32.0);
+  const double kGaborLambdaMin = 4;//(CV_PI/32.0);
   /// Maximum lambda for a gabor filter
-  const double kGaborLambdaMax = (CV_PI/2.0);
+  const double kGaborLambdaMax = 12;//(CV_PI/2.0);
 
-  const int kGaborPaperLambdas[] = {3,4,6,8,12,16,24};
+  const int kGaborPaperLambdas[] = {3,4,6,8,12,16,24,36};
 
-  const int kGaborPaperLamdasLen = 4;
+  const int kGaborPaperLamdasLen = 8;
+
+  const double kGaborGamma= 1.0;
+  
+  const double kGaborSigma= 4.0;
+  const double kGaborPsi= CV_PI/2.0;
 
   /// Minimum tetha for a gabor filter
   const double kGaborThetaMin = 0.0;
@@ -37,7 +46,7 @@ namespace emotime {
   /// Default gabor number of different with (gaborbank_getGaborBank)
   const double kGaborDefaultNwidth = 2.0;
   /// Default gabor number of different lambda (gaborbank_getGaborBank)
-  const double kGaborDefaultNlambda = 3.0;
+  const double kGaborDefaultNlambda = 5.0;
   /// Default gabor number of different theta (gaborbank_getGaborBank)
   const double kGaborDefaultNtheta = 4.0;
 
@@ -66,6 +75,8 @@ namespace emotime {
        *
        */
       void fillGaborBank(double nwidths, double nlambdas, double nthetas);
+      void fillGaborBankFormula(double nwidths, double nlambdas, double nthetas);
+      void fillGaborBankEmpiric(double nwidths, double nlambdas, double nthetas);
 
       /**
        * @brief Generates a bank of Gabor filter kernels with different orientations
@@ -85,6 +96,7 @@ namespace emotime {
        * 
        * */
       cv::Mat filterImage(cv::Mat& src);
+      cv::Mat filterImage(cv::Mat& src, cv::Size & featSize);
 
     protected:
 
@@ -125,6 +137,7 @@ namespace emotime {
        * @returns The size of the filtered image.
        * */
       cv::Size getFilteredImgSize(cv::Mat& src);
+      cv::Size getFilteredImgSize(cv::Size& size);
 
 
       /**

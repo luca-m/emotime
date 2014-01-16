@@ -84,6 +84,12 @@ namespace emotime {
 
   void GaborBank::fillGaborBank(double nwidths, double nlambdas, double nthetas) {
 
+    fillGaborBankFormula(nwidths,nlambdas,nthetas);
+    // fillGaborBankEmpiric(nwidths,nlambdas,nthetas);
+  }
+
+  void GaborBank::fillGaborBankFormula(double nwidths, double nlambdas, double nthetas){
+
     this->emptyBank();
 
     double _sigma;        /// Sigma of the Gaussian envelope
@@ -91,10 +97,49 @@ namespace emotime {
     double _lambda;       /// Wavelength of sinusoidal factor
     double _gamma;        /// Spatial aspect ratio (ellipticity of the support of the Gabor function)
     double _psi;          /// Phase offset
-    _gamma = 0.5;//sqrt(2);
-    _sigma = 4.0;
-    _lambda = sqrt(2);
-    _psi=0;
+    _gamma = kGaborGamma;
+    _sigma = kGaborSigma;
+    _lambda = 1;
+    _psi=kGaborPsi;
+
+    //double bandwidth=1.6;
+    double slratio;
+    for (double bandwidth=kGaborBandwidthMin; bandwidth<kGaborBandwidthMax;
+          bandwidth+=(kGaborBandwidthMax-kGaborBandwidthMin)/((double)(nwidths)) ) {
+      slratio = (1./CV_PI)*std::sqrt(std::log(2.0)/2.0)*((std::pow(2,bandwidth)+1)/(std::pow(2,bandwidth)-1));
+      for (_lambda = kGaborLambdaMin; _lambda < kGaborLambdaMax;
+          _lambda += (kGaborLambdaMax-kGaborLambdaMin)/((double)(nlambdas<=0?1:nlambdas))) {
+      //for (int j = 0; j < (nlambdas>kGaborPaperLamdasLen?kGaborPaperLamdasLen:nlambdas); j++) {
+      //  _lambda = kGaborPaperLambdas[j];
+        _sigma= slratio*_lambda;
+        //int n = ( std::ceil(2.5*_sigma/_gamma) >maxfwidth? : std::ceil(2.5*_sigma/_gamma)  );
+        int n = std::ceil(2.5*_sigma/_gamma); 
+        cv::Size kernelSize(2*n+1, 2*n+1);
+        
+        #ifdef DEBUG
+        //std::cerr<<"INFO:bandw="<<bandwidth<<",slratio="<<slratio<<",lambda="<<_lambda<<",sigma="<<_sigma<<",ksize="<<2*n-1<<""<<std::endl;
+        #endif
+
+        for (_theta = kGaborThetaMin; _theta < kGaborThetaMax;
+            _theta += (kGaborThetaMax - kGaborThetaMin)/((double)(nthetas<=0?1:nthetas))) {
+          emotime::GaborKernel* kern = this->generateGaborKernel(kernelSize,
+              _sigma, _theta, _lambda, _gamma, _psi, CV_32F);
+          bank.push_back(kern);
+        }
+      }
+    }
+  }
+
+  void GaborBank::fillGaborBankEmpiric(double nwidths, double nlambdas, double nthetas){
+    this->emptyBank();
+    double _sigma;        /// Sigma of the Gaussian envelope
+    double _theta;        /// Orientation of the normal to the parallel stripes of the Gabor function
+    double _lambda;       /// Wavelength of sinusoidal factor
+    double _gamma;        /// Spatial aspect ratio (ellipticity of the support of the Gabor function)
+    double _psi;          /// Phase offset
+    _gamma = kGaborGamma; 
+    _sigma = kGaborSigma;
+    _psi=kGaborPsi;
     int fwidth;
     int minfwidth = kGaborWidthMin;
     int maxfwidth = kGaborWidthMax;
@@ -105,8 +150,8 @@ namespace emotime {
 
       for (_lambda = kGaborLambdaMin; _lambda < kGaborLambdaMax;
           _lambda += (kGaborLambdaMax-kGaborLambdaMin)/((double)(nlambdas<=0?1:nlambdas))) {
-        //    for (int j = 0; j < kGaborPaperLamdasLen; j++) {
-        //      _lambda = kGaborPaperLambdas[j];
+        //      for (int j = 0; j < kGaborPaperLamdasLen; j++) {
+        //        _lambda = kGaborPaperLambdas[j];
         for (_theta = kGaborThetaMin; _theta < kGaborThetaMax;
             _theta += (kGaborThetaMax - kGaborThetaMin)/((double)(nthetas<=0?1:nthetas))) {
 
@@ -116,6 +161,7 @@ namespace emotime {
         }
       }
       }
+
     }
 
     void GaborBank::fillDefaultGaborrBank() {
@@ -125,33 +171,51 @@ namespace emotime {
 
     Size GaborBank::getFilteredImgSize(Mat & src) {
       // The output image will contain all the filtered image vertically stacked.
+      Size s=src.size();
+      return this->getFilteredImgSize(s);
+    }
+    Size GaborBank::getFilteredImgSize(Size & size) {
+      // The output image will contain all the filtered image vertically stacked.
       Size s = Size(0,0);
-      s.height = src.rows * bank.size();
-      s.width = src.cols;
+      s.height = size.height * bank.size();
+      s.width = size.width;
       return s;
     }
 
     Mat GaborBank::filterImage(Mat& src) {
-
-      Size size(0,0);
+      Size s=Size(src.cols, src.rows);
+      return filterImage(src, s);
+    }
+    
+    Mat GaborBank::filterImage(Mat & src, cv::Size & featSize) {
       unsigned int i;
       unsigned int j;
       unsigned int k;
-
-      Size s = this->getFilteredImgSize(src);
-      Mat * dest = new Mat(s, CV_32F);
+      Size size(0,0);
+      Size s = this->getFilteredImgSize(featSize);
+      Mat dest = Mat(s, CV_32F);
       Mat image;
       size.height=src.rows;
       size.width=src.cols;
-      src.convertTo(image, CV_32F);
 
+      if (size.height==0 || size.width==0){
+        std::cerr<<"WARN: cannot filter image (size="<<size<<")"<<std::endl;
+        return Mat();
+      }
+
+      src.convertTo(image, CV_32F);
+      
+      //std::cerr<<"INFO: c="<<image.cols<<",r="<<image.rows<<std::endl;
+      //resize(image,image, Size(96,96),CV_INTER_AREA);
+      
       for (k = 0; k < bank.size(); k++) {
         emotime::GaborKernel * gk = bank.at(k);
         Mat real = gk->getReal();
         Mat imag = gk->getImag();
-        Mat freal = Mat(size,CV_32F);
-        Mat fimag = Mat(size,CV_32F);
-        Mat magn  = Mat(size,CV_32F);
+        Mat freal = Mat(size, CV_32F);
+        Mat fimag = Mat(size, CV_32F);
+        Mat magn  = Mat(size, CV_32F);
+        Mat scaled  = Mat(featSize,CV_32F);
         filter2D(src, freal, CV_32F, real);
         filter2D(src, fimag, CV_32F, imag);
         // Calculating Gabor magnitude
@@ -159,14 +223,16 @@ namespace emotime {
         pow(fimag,2,fimag);
         add(fimag,freal,magn);
         sqrt(magn,magn);
+        resize(magn, scaled, featSize, 0, 0, CV_INTER_AREA);
         // Write all the filtered image vertically stacked.
         // TODO: use image1.copyTo ( Mat ( display, Rect(y,x,h,w) ) )
-        for (i = 0; i<(unsigned int)size.height; i++) {
-          for (j = 0; j<(unsigned int)size.width; j++) {
-            dest->at<float>(i + (k * size.height), j) = magn.at<float>(i,j);
+        for (i = 0; i<(unsigned int) featSize.height; i++) {
+          for (j = 0; j<(unsigned int)featSize.width; j++) {
+            dest.at<float>(i + (k * featSize.height), j) = scaled.at<float>(i,j);
           }
         }
       }
-      return *dest;
+      return dest;
     }
+
   }
