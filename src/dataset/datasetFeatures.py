@@ -7,33 +7,45 @@ import argparse
 import subprocess
 import datasetConfigParser as dcp
 import sys
+import multiprocessing
 
 from os.path import join
 from os.path import isfile
 
+def _subproc_call(args):
+    """ Wrap a subprocess.call """
+    param, comstr = args
+    retcode=subprocess.call( param, shell=False )
+    #comstr=' '.join(param)
+    if retcode==0:
+      print "INFO: done %s"%comstr
+      return (comstr,True)
+    else:
+      print "ERR: '%s' has encountered problems" % comstr 
+      return (comstr,False)
 
 def dataset_calcGaborBank(dsFolder, config):
   """ 
       Calculate features using a gabor filters bank 
   """
+  bagoftask = []
+
   for c in config['CLASSES']:
     facesFolder=join(dsFolder, join(config['FACES_FOLDER'], c))
     featsFolder=join(dsFolder, join(config['FEATURES_FOLDER'], c))
     faces=[ f for f in os.listdir(facesFolder) if isfile(join(facesFolder, f))]
+    
     for i in xrange(0, len(faces)):
       face = faces[i]
       faceFile=join(facesFolder, face)
-
-      sys.stdout.write("INFO: calculating features for %s (%d of %d)\r" % (c,
-        (i+1), len(faces)))
-      sys.stdout.flush()
-
+      #sys.stdout.write("INFO: calculating features for %s (%d of %d)\r" % (c,(i+1), len(faces)))
+      #sys.stdout.flush()
       featFolder=join(featsFolder, os.path.splitext(face)[0]) + config['FILTERED_FOLDER_SUFFIX']
       try:
         os.mkdir(featFolder)
-      except Exception: # as e:
-        #print "WARN: creation of directory failed (%s)" % str(e)
+      except Exception:
         pass
+
       featFile=join(featFolder, config['GABOR_FEAT_FNAME'])
       cmd=[config['GABOR_TOOL'], str(config['SIZE']['width']), str(config['SIZE']['height']), 
            config['GABOR_NWIDTHS'], config['GABOR_NLAMBDAS'], config['GABOR_NTHETAS'], 
@@ -41,10 +53,16 @@ def dataset_calcGaborBank(dsFolder, config):
       if 'GABOR_FILTER_FILE' in config.keys():
         if config['GABOR_FILTER_FILE'] != 'NA':
           cmd.append(config['GABOR_FILTER_FILE'])
-      retcode=subprocess.call(cmd)
-      if retcode<0:
-        print "WARN: execution has returned error %d" % retcode
-    print ""
+      
+      bagoftask.append((cmd,'GaborFileter {0}'.format(faceFile)))
+
+    # Spawining parallel task
+    nprocs = max(1, int(multiprocessing.cpu_count() * abs(float(config['TRAIN_SVM_CPU_USAGE']))))
+    results = []
+    pool = multiprocessing.Pool(processes= nprocs)
+    pool.map_async(_subproc_call, bagoftask, callback = results.append).get(2**32) # workaround for properly handling SIGINT
+    pool.close()
+    pool.join()
 
 def dataset_calcFeatures(dsFolder, config):
   """ Calculate features on dataset"""
