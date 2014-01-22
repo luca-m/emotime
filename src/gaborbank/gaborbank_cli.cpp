@@ -64,7 +64,7 @@ int main( int argc, const char* argv[] ){
     cerr << "ERR: missing parameters" << endl;
     return -3;
   }
-  Size size;
+  cv::Size size;
   size.width = abs(atoi(argv[1]));
   size.height = abs(atoi(argv[2]));
   double nwidths = (atof(argv[3]));
@@ -76,7 +76,7 @@ int main( int argc, const char* argv[] ){
   Mat img = matrix_io_load(infile);
   GaborBank bank;
   bank.fillGaborBank((double) nwidths, (double) nlambdas, (double) nthetas);
-  Mat dest = bank.filterImage(scaled, size);
+  Mat dest = bank.filterImage(img, size);
   matrix_io_save(dest, outfile);
   dest.release();
 }

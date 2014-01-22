@@ -66,15 +66,16 @@ namespace emotime {
     if (!faceFound){
       return false;
     }
-    face.copyTo(out); 
+    face.copyTo(out);
+    //face.release();
     return true;
   }
 
   bool FacePreProcessor::filterImage(Mat& src, Mat& out) {
-    Mat resized, filtered;
-    resize(src, resized, this->imgsize, 0, 0, CV_INTER_AREA);
-    filtered = this->gaborbank.filterImage(resized);
+    Mat filtered;
+    filtered = this->gaborbank.filterImage(src, this->imgsize);
     filtered.copyTo(out);
+    //filtered.release();
     return true;
   }
 

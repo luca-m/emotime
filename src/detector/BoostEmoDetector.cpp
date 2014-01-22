@@ -34,6 +34,6 @@ namespace emotime {
   }
 
   std::pair<Emotion, float> BoostEmoDetector::predict(cv::Mat& frame) {
-    return EmoDetector::predictMayorityOneVsAll(frame);
+    return EmoDetector::predictVotingOneVsAllExt(frame);
   }
 }

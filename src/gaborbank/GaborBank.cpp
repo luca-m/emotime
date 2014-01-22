@@ -107,17 +107,30 @@ namespace emotime {
     for (double bandwidth=kGaborBandwidthMin; bandwidth<kGaborBandwidthMax;
           bandwidth+=(kGaborBandwidthMax-kGaborBandwidthMin)/((double)(nwidths)) ) {
       slratio = (1./CV_PI)*std::sqrt(std::log(2.0)/2.0)*((std::pow(2,bandwidth)+1)/(std::pow(2,bandwidth)-1));
+
+#if defined(DO_LAMBDA)
       for (_lambda = kGaborLambdaMin; _lambda < kGaborLambdaMax;
           _lambda += (kGaborLambdaMax-kGaborLambdaMin)/((double)(nlambdas<=0?1:nlambdas))) {
-      //for (int j = 0; j < (nlambdas>kGaborPaperLamdasLen?kGaborPaperLamdasLen:nlambdas); j++) {
-      //  _lambda = kGaborPaperLambdas[j];
+#endif
+#if defined(DO_SIGMA)
+      for (_sigma = kGaborSigmaMin; _sigma < kGaborSigmaMax; _sigma += (kGaborSigmaMax-kGaborSigmaMin)/((double)(nlambdas<=0?1:nlambdas))) {
+#endif
+#if defined(DO_LAMBDA_P)
+      for (int j = 0; j < (nlambdas>kGaborPaperLamdasLen?kGaborPaperLamdasLen:nlambdas); j++) {
+          _lambda = kGaborPaperLambdas[j];
+#endif
+#if defined(DO_LAMBDA) || defined(DO_LAMBDA_P) 
         _sigma= slratio*_lambda;
+#endif
+#if defined(DO_SIGMA)
+        _lambda=_sigma/slratio;
+#endif
         //int n = ( std::ceil(2.5*_sigma/_gamma) >maxfwidth? : std::ceil(2.5*_sigma/_gamma)  );
         int n = std::ceil(2.5*_sigma/_gamma); 
         cv::Size kernelSize(2*n+1, 2*n+1);
         
-        #ifdef DEBUG
-        //std::cerr<<"INFO:bandw="<<bandwidth<<",slratio="<<slratio<<",lambda="<<_lambda<<",sigma="<<_sigma<<",ksize="<<2*n-1<<""<<std::endl;
+        #if defined(GABOR_DEBUG)
+        std::cerr<<"INFO:bandw="<<bandwidth<<",slratio="<<slratio<<",lambda="<<_lambda<<",sigma="<<_sigma<<",ksize="<<2*n-1<<""<<std::endl;
         #endif
 
         for (_theta = kGaborThetaMin; _theta < kGaborThetaMax;

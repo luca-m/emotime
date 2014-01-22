@@ -11,31 +11,34 @@
 #ifndef _H_GABORBANK
 #define _H_GABORBANK
 
+#define DO_SIGMA
+#define GABOR_DEBUG
+
 #include <opencv2/opencv.hpp>
 #include "GaborKernel.h"
 
+
 namespace emotime {
 
+  /* Gabor Formula consts */
+
   /// Minimum width for a gabor filter
-  const int kGaborWidthMin = 7;
+  const double kGaborBandwidthMin = 1.2;
   /// Maximum width for a gabor filter
-  const int kGaborWidthMax = 17;
-  /// Minimum width for a gabor filter
-  const double kGaborBandwidthMin = 1.0;
-  /// Maximum width for a gabor filter
-  const double kGaborBandwidthMax = 1.6;
+  const double kGaborBandwidthMax = CV_PI/2.;//1.6;
   /// Minimum lambda for a gabor filter
-  const double kGaborLambdaMin = 4;//(CV_PI/32.0);
+  const double kGaborLambdaMin = 16;//4;//(CV_PI/32.0);
   /// Maximum lambda for a gabor filter
-  const double kGaborLambdaMax = 12;//(CV_PI/2.0);
+  const double kGaborLambdaMax = 48;//12;//(CV_PI/2.0);
+  /// Minimum lambda for a gabor filter
+  const double kGaborSigmaMin = 1.0;
+  /// Maximum lambda for a gabor filter
+  const double kGaborSigmaMax = 5.0;
 
-  const int kGaborPaperLambdas[] = {3,4,6,8,12,16,24,36};
-
-  const int kGaborPaperLamdasLen = 8;
-
+  /* Gabor Misc consts*/
+  /// Gabor support shape parameter (0.5 ellipse .. 1 circle)
   const double kGaborGamma= 1.0;
-  
-  const double kGaborSigma= 4.0;
+  /// Gabor phase offset 
   const double kGaborPsi= CV_PI/2.0;
 
   /// Minimum tetha for a gabor filter
@@ -43,12 +46,23 @@ namespace emotime {
   /// Maximum tetha for a gabor filter
   const double kGaborThetaMax = (CV_PI);
 
+  const int kGaborPaperLambdas[] = {/*3,*/4,6,8,12,16,/*24,36*/};
+  const int kGaborPaperLamdasLen = 5;//8;
+  
+  /* Gabor Empiric consts */
+
+  /// Minimum width for a gabor filter
+  const int kGaborWidthMin = 7;
+  /// Maximum width for a gabor filter
+  const int kGaborWidthMax = 17;
   /// Default gabor number of different with (gaborbank_getGaborBank)
   const double kGaborDefaultNwidth = 2.0;
   /// Default gabor number of different lambda (gaborbank_getGaborBank)
   const double kGaborDefaultNlambda = 5.0;
   /// Default gabor number of different theta (gaborbank_getGaborBank)
   const double kGaborDefaultNtheta = 4.0;
+  ///   
+  const double kGaborSigma= 4.0;
 
   class GaborBank {
 
