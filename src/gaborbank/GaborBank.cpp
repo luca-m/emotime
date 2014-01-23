@@ -236,7 +236,14 @@ namespace emotime {
         pow(fimag,2,fimag);
         add(fimag,freal,magn);
         sqrt(magn,magn);
+        
         resize(magn, scaled, featSize, 0, 0, CV_INTER_AREA);
+        //double min;
+        //double max;
+        //cv::minMaxIdx(scaled, &min, &max);
+        //cv::Mat mat_u8;
+        //scaled.convertTo(mat_u8, CV_8U, 255.0/(max-min));
+        //equalizeHist(scaled,scaled);
         // Write all the filtered image vertically stacked.
         // TODO: use image1.copyTo ( Mat ( display, Rect(y,x,h,w) ) )
         for (i = 0; i<(unsigned int) featSize.height; i++) {
