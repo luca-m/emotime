@@ -84,8 +84,8 @@ namespace emotime {
 
   void GaborBank::fillGaborBank(double nwidths, double nlambdas, double nthetas) {
 
-    fillGaborBankFormula(nwidths,nlambdas,nthetas);
-    // fillGaborBankEmpiric(nwidths,nlambdas,nthetas);
+    //fillGaborBankFormula(nwidths,nlambdas,nthetas);
+    fillGaborBankEmpiric(nwidths,nlambdas,nthetas);
   }
 
   void GaborBank::fillGaborBankFormula(double nwidths, double nlambdas, double nthetas){
@@ -153,29 +153,37 @@ namespace emotime {
     _gamma = kGaborGamma; 
     _sigma = kGaborSigma;
     _psi=kGaborPsi;
-    int fwidth;
     int minfwidth = kGaborWidthMin;
     int maxfwidth = kGaborWidthMax;
-
-    for (fwidth = minfwidth; fwidth < maxfwidth; fwidth += (int)
-        ((maxfwidth-minfwidth)/((double)(nwidths<=0?1:nwidths)))) {
+    int fwidth = minfwidth;
+    
+    //for (fwidth = minfwidth; fwidth < maxfwidth; fwidth += (int)
+    //    ((maxfwidth-minfwidth)/((double)(nwidths<=0?1:nwidths)))) {
       cv::Size kernelSize(fwidth, fwidth);
 
-      for (_lambda = kGaborLambdaMin; _lambda < kGaborLambdaMax;
-          _lambda += (kGaborLambdaMax-kGaborLambdaMin)/((double)(nlambdas<=0?1:nlambdas))) {
-        //      for (int j = 0; j < kGaborPaperLamdasLen; j++) {
-        //        _lambda = kGaborPaperLambdas[j];
-        for (_theta = kGaborThetaMin; _theta < kGaborThetaMax;
-            _theta += (kGaborThetaMax - kGaborThetaMin)/((double)(nthetas<=0?1:nthetas))) {
+      for (_sigma = kGaborESigmaMin; _sigma < kGaborESigmaMax;
+          _sigma += (kGaborESigmaMax-kGaborESigmaMin)/((double)(nwidths<=0?1:nwidths))) {
+      
+      //for (_lambda = kGaborELambdaMin; _lambda < kGaborELambdaMax;
+      //    _lambda += (kGaborELambdaMax-kGaborELambdaMin)/((double)(nlambdas<=0?1:nlambdas))) {
+      for (int j = 0; j < kGaborPaperLamdasLen; j++) {
+        _lambda = kGaborPaperLambdas[j];
+        
+#if defined(GABOR_DEBUG)
+        std::cerr<<"INFO:lambda="<<_lambda<<",sigma="<<_sigma<<",ksize="<<fwidth<<""<<std::endl;
+#endif
 
-          emotime::GaborKernel* kern = this->generateGaborKernel(kernelSize,
-              _sigma, _theta, _lambda, _gamma, _psi, CV_32F);
-          bank.push_back(kern);
+          for (_theta = kGaborThetaMin; _theta < kGaborThetaMax;
+                _theta += (kGaborThetaMax - kGaborThetaMin)/((double)(nthetas<=0?1:nthetas))) {
+
+              emotime::GaborKernel* kern = this->generateGaborKernel(kernelSize,
+                                                _sigma, _theta, _lambda, _gamma, _psi, CV_32F);
+              bank.push_back(kern);
+          }
         }
       }
-      }
-
-    }
+    //}
+  }
 
     void GaborBank::fillDefaultGaborrBank() {
       this->fillGaborBank(kGaborDefaultNwidth, kGaborDefaultNtheta,
