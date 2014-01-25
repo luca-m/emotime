@@ -84,8 +84,8 @@ namespace emotime {
 
   void GaborBank::fillGaborBank(double nwidths, double nlambdas, double nthetas) {
 
-    //fillGaborBankFormula(nwidths,nlambdas,nthetas);
-    fillGaborBankEmpiric(nwidths,nlambdas,nthetas);
+    fillGaborBankFormula(nwidths,nlambdas,nthetas);
+    //fillGaborBankEmpiric(nwidths,nlambdas,nthetas);
   }
 
   void GaborBank::fillGaborBankFormula(double nwidths, double nlambdas, double nthetas){
