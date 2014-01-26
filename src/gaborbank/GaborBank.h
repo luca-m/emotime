@@ -11,7 +11,9 @@
 #ifndef _H_GABORBANK
 #define _H_GABORBANK
 
+#define GABOR_FORMULA
 #define DO_SIGMA
+//#define DO_LAMBDA_P
 #define GABOR_DEBUG
 
 #include <opencv2/opencv.hpp>
@@ -27,13 +29,13 @@ namespace emotime {
   /// Maximum width for a gabor filter
   const double kGaborBandwidthMax = CV_PI/2.;//1.6;
   /// Minimum lambda for a gabor filter
-  const double kGaborLambdaMin = 16;//4;//(CV_PI/32.0);
+  const double kGaborLambdaMin = /*16;//4;*/1./(CV_PI/2.0);
   /// Maximum lambda for a gabor filter
-  const double kGaborLambdaMax = 48;//12;//(CV_PI/2.0);
+  const double kGaborLambdaMax = /*48;//12;*/1./(CV_PI/32.0);
   /// Minimum lambda for a gabor filter
   const double kGaborSigmaMin = 1.0;
   /// Maximum lambda for a gabor filter
-  const double kGaborSigmaMax = 5.0;
+  const double kGaborSigmaMax = 8.0;
 
   /* Gabor Misc consts*/
   /// Gabor support shape parameter (0.5 ellipse .. 1 circle)
@@ -46,7 +48,8 @@ namespace emotime {
   /// Maximum tetha for a gabor filter
   const double kGaborThetaMax = (CV_PI);
 
-  const int kGaborPaperLambdas[] = {3,4,6,8,12,16,24,36};
+  const double kGaborPaperLambdas[] = {1./3, 1./4, 1./6, 1./8, 1./12, 1./16, 1./24, 1./36};
+  const double kGaborPaperCicles[] = {3, 4, 6, 8, 12, 16, 24, 36};
   const int kGaborPaperLamdasLen = 8;
   
   /* Gabor Empiric consts */
@@ -56,8 +59,8 @@ namespace emotime {
   /// Maximum width for a gabor filter
   const int kGaborWidthMax = 26;
   
-  const double kGaborELambdaMin = 1;
-  const double kGaborELambdaMax = 48;
+  const double kGaborELambdaMin = 3;//(CV_PI /32.);
+  const double kGaborELambdaMax = 32;//(CV_PI /2.);
   
   /// Default gabor number of different with (gaborbank_getGaborBank)
   const double kGaborDefaultNwidth = 1.0;

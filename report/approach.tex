@@ -59,13 +59,24 @@ Our projects also implement a simple face rotation correction algorithm, which i
 
 \subsection{Gabor Filters}
 
-Roughly speaking Gabor filters are \emph{linear} filter obtained by modulating a sinusoid with a \emph{Gaussian}, this kind of filters is typically used in image processing for tasks like edge detection, texture classification and face recognition\cite{gaborApplication}. These filters result particularly effective in case of a time-frequency analysis, which is an analysis technique that aims to study a signal in both time and frequency domain \emph{simultaneously}, due to multi-resolution\footnote{Multi-resolution is a method for orthonormal base creation by slicing the signal space into subspaces at different scales} and multi-orientation properties. One reason of the great success of this kind of filters is the discovery that simple cells in the human visual cortex can be modelled with this particular filter.
+Roughly speaking Gabor filters are \emph{linear} filter obtained by modulating a complex sinusoid with a \emph{Gaussian}, this kind of filters is typically used in image processing for tasks like edge detection, texture classification and face recognition\cite{gaborApplication}. These filters result particularly effective in case of a time-frequency analysis, which is an analysis technique that aims to study a signal in both time and frequency domain \emph{simultaneously}, due to multi-resolution\footnote{Multi-resolution is a method for orthonormal base creation by slicing the signal space into subspaces at different scales} and multi-orientation properties. One reason of the great success of this kind of filters is the discovery that simple cells in the human visual cortex can be modelled with this particular filter. In our project we adopt the following Gabor function formula:
 
 \begin{equation}
 g(x,y;\lambda,\theta,\psi,\sigma,\gamma) = \exp\left(-\frac{x'^2+\gamma^2y'^2}{2\sigma^2}\right)\exp\left(i\left(2\pi\frac{x'}{\lambda}+\psi\right)\right)
 \end{equation}
 
-Where $x' = x \cos\theta + y \sin\theta$, $y' = -x \sin\theta + y \cos\theta$, $\lambda$ is the wavelength of the sinusoid, $\theta$ is the spatial orientation of the filter, $\phi$ is the phase offset, $\sigma$ is the standard deviation of the Gaussian support and $\gamma$ is the aspect ratio factor (eg. 1.0 for circular).
+Where $x' = x \cos\theta + y \sin\theta$ and $y' = -x \sin\theta + y \cos\theta$ represent the rotated component of the complex sinusoid, $\lambda$ is the wavelength of the sinusoid, $\theta$ is the spatial orientation of the filter, $\phi$ is the phase offset, $\sigma$ is the standard deviation of the Gaussian support and $\gamma$ is the aspect ratio factor (eg. 1.0 for circular).
+Also derived parameters could be considered, for example the spatial frequency \emph{bandwitdh} of the filter is defined as:
+
+\begin{equation}
+b = log_2 \left (  \frac{ \frac{\sigma}{\lambda} \pi + \sqrt{ \frac{ln(2)}{2} )} }{  \frac{\sigma}{\lambda} \pi - \sqrt{ \frac{ln(2)}{2} )} } \right ),  \frac{ \frac{\sigma}{\lambda} = \frac{1}{\pi} \sqrt{ \frac{ln(2)}{2} } \frac{2^b + 1} { 2^b -1 } 
+\end{equation}
+These additional relationship between $\lambda$, $\theta$ and $b$ could be useful for generating Gabor filter banks\cite{gaborParams}. 
+
+\subsubsection*{Gabor Filter Bank}
+Gabor Filter banks are one of the main methodes for selection Gabor filters typically adopted in texture segmentation problems, families of filters are typically obtained by generating Gabor kernels with spatial frequencies $\lambda$, sinusoid orientation $\theta$ and bandwidth in ad hoc intervals while scaling parameters are sometimes selected intuitively and assumed to be constant. 
+
+Our implementaion rely on a slightly modified version of the \code{OpenCV} Gabor kernel function, in detail we have added the capability to generate the imaginary part of the Gabor function too, wich is missing in the original implementation.
 
 \subsubsection*{Gabor Energy Filters}
 One of the basic way to deal with complex Gabor filter is to consider the magnitude of the filter response and considering the energy response of the filter. In our implementation we used the euclidean norm $\left \| g \right \|_2 = \sqrt{ g_{real}^2+g_{imag}^2 }$ due to the separate calculation of both imaginary and real part.
@@ -75,7 +86,8 @@ One of the basic way to deal with complex Gabor filter is to consider the magnit
 \includegraphics[width=12cm]{images/gabor.png}
 \label{fig:gabor}
 \caption{Magnitude of a Gabor filter bank from \cite{gaborApplication} }
-\end{figure}
+ \end{figure}
+
 
 % \cite{gaborTutorial}
 % \cite{gaborApplication}

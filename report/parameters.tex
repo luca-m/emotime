@@ -12,17 +12,22 @@ Also we tried several face detector in order to see which one fits better our pu
 
 \subsection{Gabor Kernels Parameters}
 
-Gabor parameters selection is one of the most delicate part of the tuning process, it directly affects the features evaluated for the emotional state classification. Hopefully \cite{Littlewort04dynamicsof, Bartlett06fullyautomatic, Lades93distortioninvariant} provide some hints on the Gabor bank parameters that can be used to achieve good results, in detail the number of $\lambda$ (wavelength) to use, number of $\theta$ (orientation) and some clues about interesting wavelength ranges are provided:
+Gabor parameters selection is one of the most delicate part of the tuning process, it directly affects the features evaluated for the emotional state classification. 
+%Hopefully \cite{Littlewort04dynamicsof, Bartlett06fullyautomatic, Lades93distortioninvariant} provide some hints on the Gabor bank parameters that can be used to achieve good results, in detail the number of $\lambda$ (wavelength) to use, number of $\theta$ (orientation) and some clues about interesting wavelength ranges are provided:
+In our experimentation we decided to generate Gabor filter banks using relationship reported in previous section, and we have empirically fixed following parameters domain:
 
 \begin{itemize}
-\item $\lambda \in ( \frac{\pi}{32} \ldots \frac{\pi}{2} ) $ as suggested in \cite{Lades93distortioninvariant}
-\item $\theta \in ( 0 \ldots \frac{\pi}{2} )$
-\item suggested 5 $\lambda$ and 8 $\theta$ subdivisions
-\item same aspect ration $\gamma$ for each kernel in the bank
+  \item bandwidth between $b \in 1.2,1.6$ which is $\sim \pi \frac{2}{5}, \frac{\pi}{2} $.
+  \item $\sigma \in 1,8$, and consequentially $\lambda = \frac{\lambda}{\sigma} \sigma $ 
+  \item $\theta \in ( 0 \ldots \frac{\pi}{2} )$
+  \item kernel size determined using aspect ratio and scale of the gaussian support ($\frac{\sigma}/\frac{\gamma}$)
+%\item $\lambda \in ( \frac{\pi}{32} \ldots \frac{\pi}{2} ) $ as suggested in \cite{Lades93distortioninvariant}
+%\item suggested 5 $\lambda$ and 8 $\theta$ subdivisions
+%\item same aspect ration $\gamma$ for each kernel in the bank
 \end{itemize}
 
-However despite these indications we decided to adopt a flexible approach by keeping subdivision number configurable in order to be able to refine parameters in further development stages. \\
-Least, no clear indication about the size of the kernel, so we decided to support multiple kernel size ranging from $7$ to $17$, this values have been fixed in the first testing phase, using the developed Gabor utilities for visualizing the resulting bank. 
+We also adopted a flexible approach by keeping subdivision number configurable in order to be able to refine parameters in further development stages. 
+%Least, no clear indication about the size of the kernel, so we decided to support multiple kernel size ranging from $7$ to $17$, this values have been fixed in the first testing phase, using the developed Gabor utilities for visualizing the resulting bank. 
 
 \subsection{Boosting Parameters}
 
@@ -34,7 +39,7 @@ Boosting parameters were considered in the early development stages and have ign
 \item depth of the trained decision tree
 \end{itemize}
 
-We have no clues about this parameters so we tried several configuration and the better results have been obtained via \emph{Gentle AdaBoost}, trimming weak classifiers provide a speed-up but it is a sensible operation due to distribution of classifier weights. However, as reported in~\ref{res:issues} we have temporary dismissed the boosting approach due to lack of time.
+We have no clues about this parameters so we tried several configuration and the better results have been obtained via \emph{Gentle AdaBoost}, trimming weak classifiers provide a speed-up but it is a sensible operation due to distribution of classifier weights. However, as reported in~\ref{res:issues} we have temporary dismissed the boosting approach due to lack of time (and/or servers).
 
 \subsection{SVM Parameters}
 
@@ -45,7 +50,7 @@ We decided to leave $C=0.5$, for no particular reason.
 
 \subsection{Multiclass Strategies}
 
-Each classification algorithm adopted works only for binary classification tasks, and our problem involves 7 distinct classes. For this reason we follow the indications in \cite{Littlewort04dynamicsof, Bartlett06fullyautomatic} and implement a quite general support building a voting scheme based multi-class classifier which rely on binary classifiers.\\
+Each classification algorithm adopted works only for binary classification tasks, and our problem involves 7 distinct classes. For this reason we follow the indications in \cite{Littlewort04dynamicsof, Bartlett06fullyautomatic} and implement a quite general support building a voting scheme based multi-class classifier which rely on binary classifiers. 
 In detail we support multi-class training and detection in the following configurations:
 
 \begin{itemize}
@@ -54,4 +59,4 @@ In detail we support multi-class training and detection in the following configu
 \item \emph{many vs many}, separate groups of classes
 \end{itemize}
 
-Indication in papers suggest that \emph{many vs many} should be the better approach, so we use this parameter as the default one.
+Indication in papers suggest that \emph{many vs many} should be the better approach, but we decided to mainly focus on both \emph{1 vs all} and  \emph{many vs many}.

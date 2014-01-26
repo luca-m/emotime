@@ -32,8 +32,8 @@ namespace emotime {
   GaborKernel* GaborBank::generateGaborKernel(cv::Size ksize, double sigma, double
       theta, double lambd, double gamma, double psi, int ktype) {
 
-    double sigma_x = sigma;
-    double sigma_y = sigma/gamma;
+    double sigma_x = sigma;             // b scale factor in "Tutorial on Gabor Filters" Javier R. Movellan 
+    double sigma_y = sigma/gamma;       // a scale factor in "Tutorial on Gabor Filters" Javier R. Movellan
     int nstds = 3;
     int xmin, xmax, ymin, ymax;
     double c = cos(theta), s = sin(theta);
@@ -58,13 +58,14 @@ namespace emotime {
     Mat kernel_img(ymax - ymin + 1, xmax - xmin + 1, ktype);
 
     double scale = 1;
-    double ex = -0.5 / (sigma_x * sigma_x);
+    double ex = -0.5 / (sigma_x * sigma_x); 
     double ey = -0.5 / (sigma_y * sigma_y);
     double cscale = CV_PI * 2 / lambd;
 
     for (int y = ymin; y <= ymax; y++) {
       for (int x = xmin; x <= xmax; x++) {
-        double xr = x*c + y*s;
+        // rotating the gaussian envelope (xr,yr)
+        double xr = x*c + y*s;   
         double yr = -x*s + y*c;
         double v_real = 0.0;
         double v_img = 0.0;
@@ -84,8 +85,11 @@ namespace emotime {
 
   void GaborBank::fillGaborBank(double nwidths, double nlambdas, double nthetas) {
 
+#ifdef GABOR_FORMULA
     fillGaborBankFormula(nwidths,nlambdas,nthetas);
-    //fillGaborBankEmpiric(nwidths,nlambdas,nthetas);
+#else
+    fillGaborBankEmpiric(nwidths,nlambdas,nthetas);
+#endif
   }
 
   void GaborBank::fillGaborBankFormula(double nwidths, double nlambdas, double nthetas){
@@ -143,6 +147,8 @@ namespace emotime {
     }
   }
 
+  
+
   void GaborBank::fillGaborBankEmpiric(double nwidths, double nlambdas, double nthetas){
     this->emptyBank();
     double _sigma;        /// Sigma of the Gaussian envelope
@@ -156,19 +162,30 @@ namespace emotime {
     int minfwidth = kGaborWidthMin;
     int maxfwidth = kGaborWidthMax;
     int fwidth = minfwidth;
+   
+
     
-    //for (fwidth = minfwidth; fwidth < maxfwidth; fwidth += (int)
-    //    ((maxfwidth-minfwidth)/((double)(nwidths<=0?1:nwidths)))) {
+
+    for (fwidth = minfwidth; fwidth < maxfwidth; fwidth += (int)
+        ((maxfwidth-minfwidth)/((double)(nwidths<=0?1:nwidths)))) {
       cv::Size kernelSize(fwidth, fwidth);
 
-      for (_sigma = kGaborESigmaMin; _sigma < kGaborESigmaMax;
-          _sigma += (kGaborESigmaMax-kGaborESigmaMin)/((double)(nwidths<=0?1:nwidths))) {
-      
-      //for (_lambda = kGaborELambdaMin; _lambda < kGaborELambdaMax;
-      //    _lambda += (kGaborELambdaMax-kGaborELambdaMin)/((double)(nlambdas<=0?1:nlambdas))) {
+      //for (_sigma = kGaborESigmaMin; _sigma < kGaborESigmaMax;
+      //    _sigma += (kGaborESigmaMax-kGaborESigmaMin)/((double)(nwidths<=0?1:nwidths))) {
+      _sigma = kGaborSigma;
+#if defined(DO_LAMBDA_P)
       for (int j = 0; j < kGaborPaperLamdasLen; j++) {
-        _lambda = kGaborPaperLambdas[j];
-        
+              _lambda =(128./2*CV_PI) / kGaborPaperCicles[j];
+#else
+      //_lambda=kGaborELambdaMin;
+      //double _log_delta = 0;//log10(_lambda);
+      //for (int j=0; j<(nlambdas<=0?1:nlambdas); j++ ) {         // Logarithmic scale
+      //  _lambda = std::pow( 10 , log10(kGaborSigmaMin)+_log_delta); 
+      //  _log_delta += (log10(kGaborELambdaMax)-log10(kGaborELambdaMin))/(double)(nlambdas<=0?1.:nlambdas);
+
+      for (_lambda = kGaborELambdaMin; _lambda < kGaborELambdaMax;
+              _lambda += std::pow(10, (log(kGaborELambdaMax)-log(kGaborELambdaMin))/((double)(nlambdas<=0?1:nlambdas)) ) ) {
+#endif
 #if defined(GABOR_DEBUG)
         std::cerr<<"INFO:lambda="<<_lambda<<",sigma="<<_sigma<<",ksize="<<fwidth<<""<<std::endl;
 #endif
