@@ -25,7 +25,7 @@ namespace emotime {
   /* Gabor Formula consts */
 
   /// Minimum width for a gabor filter
-  const double kGaborBandwidthMin = 1.2;
+  const double kGaborBandwidthMin = 1.3;
   /// Maximum width for a gabor filter
   const double kGaborBandwidthMax = CV_PI/2.;//1.6;
   /// Minimum lambda for a gabor filter
@@ -35,7 +35,7 @@ namespace emotime {
   /// Minimum lambda for a gabor filter
   const double kGaborSigmaMin = 1.0;
   /// Maximum lambda for a gabor filter
-  const double kGaborSigmaMax = 8.0;
+  const double kGaborSigmaMax = 6.0;
 
   /* Gabor Misc consts*/
   /// Gabor support shape parameter (0.5 ellipse .. 1 circle)
