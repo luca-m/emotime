@@ -14,7 +14,7 @@
 #define GABOR_FORMULA
 #define DO_SIGMA
 //#define DO_LAMBDA_P
-#define GABOR_DEBUG
+//#define GABOR_DEBUG
 
 #include <opencv2/opencv.hpp>
 #include "GaborKernel.h"
