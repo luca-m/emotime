@@ -4,8 +4,8 @@ In this section we will discuss the parameter used for the algorithm adopted in 
 
 \subsection{Face Detection Parameters}
 
-OpenCV support several parameter for multi-scale detection, from the classifier to use, to scale factor and minimum object size. We adopted an empirical approach and used quick-and-dirty python script to test face detection parameters directly using OpenCV implementation: we figured out that considering a 640x480 figure as the minimum face size of size of 120x200 produces good detection (face/image area ratio is nearly 10\%). 
-%But in order to ensure detection for all treatable faces we setted up a minimum size of 30x60, this value is related to the resizing performed before feature extraction, in our experiments we chose 48x48. So, at the moment, we decided to ignore the computational overhead introduced by this choice. 
+OpenCV support several parameter for multi-scale detection, from the classifier to use, to scale factor and minimum object size. We adopted an empirical approach and used quick-and-dirty python script to test face detection parameters directly using OpenCV implementation: we figured out that considering a 640x490 figure as the minimum face size of size of 120x200 produces good detection on available samples (face/image area ratio aroutd 7-10\%). 
+But in order to ensure detection for all treatable faces we setted up a minimum size of 30x60, this value is related to the resizing performed before feature extraction, in our experiments we chose 48x48.
 
 Regarding the eyes detection step, we decided to set the minimum object threshold to a dynamical value calculated using knowledge of face area size and a qualitative estimation of the human face proportions, in detail we consider that the width of an eye cannot be smaller than $\frac{1}{5}$ of the face width.
 
