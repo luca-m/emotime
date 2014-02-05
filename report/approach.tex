@@ -47,7 +47,7 @@ This detection methodology use an huge amount of simple Haar features to train a
 \caption{Haar feature example from \cite{Viola01rapidobject} }
 \end{figure}
 
-The OpenCV implementation also support \emph{multiscale detection}, which performs several detection steps rescaling the input image in order to identify object with different size with respect to the training sample sizes. High performance is reached due to the use of the \emph{integral image} for feature calculation. With this approach a single haar-feature can be calculated with 3/4 lookups and a couple of arithmetic operations. The integral image is calculated with the following formula: $ ii(x,y) = \sum_{x' \leq x, y' \leq y}{ i(x',y') } $.\\
+The OpenCV implementation also support \emph{multiscale detection}, which performs several detection steps rescaling the input image in order to identify object with different size with respect to the training sample sizes. High performance are reached thanks to the adoption of the \emph{integral image} for feature calculation. With this technique, a single haar-feature can be calculated with 3/4 lookups and a couple of arithmetic operations. The integral image is calculated with the following formula: $ ii(x,y) = \sum_{x' \leq x, y' \leq y}{ i(x',y') } $.\\
 
 However, AdaBoost and Haar features are not the only choice, OpenCV implementation also support \emph{local binary patterns} based features and other boosting algorithms (eg. \code{RealBoost}, \code{GentleBoost}, \code{Discrete AdaBoost}, \ldots).
 
@@ -62,14 +62,15 @@ Our projects also implement a simple face rotation correction algorithm, which i
 Roughly speaking Gabor filters are \emph{linear} filter obtained by modulating a complex sinusoid with a \emph{Gaussian}, this kind of filters is typically used in image processing for tasks like edge detection, texture classification and face recognition\cite{gaborApplication}. These filters result particularly effective in case of a time-frequency analysis, which is an analysis technique that aims to study a signal in both time and frequency domain \emph{simultaneously}, due to multi-resolution\footnote{Multi-resolution is a method for orthonormal base creation by slicing the signal space into subspaces at different scales} and multi-orientation properties. One reason of the great success of this kind of filters is the discovery that simple cells in the human visual cortex can be modelled with this particular filter. In our project we adopt the following Gabor function formula:
 
 \begin{equation}
-g(x,y;\lambda,\theta,\psi,\sigma,\gamma) = \exp\left(-\frac{x'^2+\gamma^2y'^2}{2\sigma^2}\right)\exp\left(i\left(2\pi\frac{x'}{\lambda}+\psi\right)\right)
+g(x,y,\lambda,\theta,\psi,\sigma,\gamma) = \exp \left( - \frac{ x'^2 + \gamma^2 y'^2 }{ 2 \sigma^2} \right ) \exp \left( i \left( 2 \pi \frac{x'}{\lambda} + \psi \right ) \right )
 \end{equation}
 
-Where $x' = x \cos\theta + y \sin\theta$ and $y' = -x \sin\theta + y \cos\theta$ represent the rotated component of the complex sinusoid, $\lambda$ is the wavelength of the sinusoid, $\theta$ is the spatial orientation of the filter, $\phi$ is the phase offset, $\sigma$ is the standard deviation of the Gaussian support and $\gamma$ is the aspect ratio factor (eg. 1.0 for circular).
+Where $x' = x \cos\theta + y \sin\theta$ and $y' = -x \sin\theta + y \cos\theta$ represent the rotated component of the complex sinusoid, $\lambda$ is the wavelength of the sinusoid, $\theta$ is the spatial orientation of the filter, $\phi$ is the phase offset, $\sigma$ is the standard deviation of the Gaussian support and $\gamma$ is the aspect ratio factor (eg. 1.0 for a circular shape).
+
 Also derived parameters could be considered, for example the spatial frequency \emph{bandwitdh} of the filter is defined as:
 
 \begin{equation}
-b = log_2 \left (  \frac{ \frac{\sigma}{\lambda} \pi + \sqrt{ \frac{ln(2)}{2} )} }{  \frac{\sigma}{\lambda} \pi - \sqrt{ \frac{ln(2)}{2} )} } \right ),  \frac{ \frac{\sigma}{\lambda} = \frac{1}{\pi} \sqrt{ \frac{ln(2)}{2} } \frac{2^b + 1} { 2^b -1 } 
+b = log_2 \left ( \frac{ \frac{\sigma}{\lambda} \pi + \sqrt{ \frac{ln(2)}{2} )} }{  \frac{\sigma}{\lambda} \pi - \sqrt{ \frac{ln(2)}{2} )} } \right ),  \frac{\sigma}{\lambda} = \frac{1}{\pi} \sqrt{ \frac{ln(2)}{2} } \frac{2^b+1}{2^b-1} 
 \end{equation}
 These additional relationship between $\lambda$, $\theta$ and $b$ could be useful for generating Gabor filter banks\cite{gaborParams}. 
 
@@ -79,13 +80,13 @@ Gabor Filter banks are one of the main methodes for selection Gabor filters typi
 Our implementaion rely on a slightly modified version of the \code{OpenCV} Gabor kernel function, in detail we have added the capability to generate the imaginary part of the Gabor function too, wich is missing in the original implementation.
 
 \subsubsection*{Gabor Energy Filters}
-One of the basic way to deal with complex Gabor filter is to consider the magnitude of the filter response and considering the energy response of the filter. In our implementation we used the euclidean norm $\left \| g \right \|_2 = \sqrt{ g_{real}^2+g_{imag}^2 }$ due to the separate calculation of both imaginary and real part.
+One of the basic way to deal with complex Gabor filter is to consider the magnitude of the filter response and considering the energy response of the filter. In our implementation we used the euclidean norm $ \left \| g \right \|_2 = \sqrt{ g_{real}^2 + g_{imag}^2 }$ due to the separate calculation of both imaginary and real part.
 
 \begin{figure}[!h]
 \centering
 \includegraphics[width=12cm]{images/gabor.png}
 \label{fig:gabor}
-\caption{Magnitude of a Gabor filter bank from \cite{gaborApplication} }
+\caption{Gabor filter bank from \cite{gaborApplication} }
  \end{figure}
 
 
@@ -96,9 +97,9 @@ One of the basic way to deal with complex Gabor filter is to consider the magnit
 \subsection{Boosting}
 \label{appr:boosting}
 
-Boosting is a powerful learning concept that combines the performance of many ``weak'' classifiers to produce a ``strong'' one. For ``weak classifier'' is intended a generic classifier that performs slightly better than random choice, this non-restrictive requirement open new prospective for simple and computationally cheap classifiers (eg. simple thresholds). Boosting is some kind of meta-algorithm which can be applied in a lot of cases, using different classifiers, different weighting scheme or error functions. The general concept behind this supervised learning strategy is the weighting and re-weighting of the features in order focus on weak learner misprediction, and then weight their votes\cite{rojas2009adaboost}.\\
+Boosting is a powerful learning concept that combines the performance of many ``weak'' classifiers to produce a ``strong'' one. For ``weak classifier'' is intended a generic classifier that performs slightly better than random choice, this non-restrictive requirement open new prospective for simple and computationally cheap classifiers (eg. simple thresholds). Boosting is a sort of meta-algorithm that can be applied in a numerous scenario adopting different weak classifiers, different weighting scheme, or also different error function. The general concept behind this supervised learning strategy is the weighting and re-weighting of the features in order \emph{focus on the mis-predictions}\cite{rojas2009adaboost}.
 
-A classical case of boosting algorithm is the Adaptative Boost (\code{AdaBoost})\cite{Friedman98additivelogistic}, which one of the first boosting approaches proposed. For this reason we briefly introduce its behaviour and we introduce some variants.
+A classical case of boosting algorithm is the Adaptive Boost (\code{AdaBoost})\cite{Friedman98additivelogistic}, one of the first boosting approaches proposed. For this reason we briefly introduce its behaviour:
 
 \begin{algorithm}
 \caption{Discrete AdaBoost algorithm (binary classification)} 
@@ -125,7 +126,7 @@ A classical case of boosting algorithm is the Adaptative Boost (\code{AdaBoost})
 \end{algorithmic}
 \end{algorithm}
 
-OpenCV framework implements several AdaBoost variants like \code{Real AdaBoost}, where weak classifiers may express class probabilities $p_m(x)$ instead of $\{-1,+1\}$ values, and \code{Gentle AdaBoost} which updates weight differently $\alpha_{m}=P(y_i=1|x_i)-P(y_i=0|x_i)$. 
+\code{OpenCV} framework implements several AdaBoost variants like \code{Real AdaBoost}, where weak classifiers may express class probabilities $p_m(x)$ instead of $\{-1,+1\}$ values, and \code{Gentle AdaBoost} which updates weight differently $\alpha_{m}=P(y_i=1|x_i)-P(y_i=0|x_i)$. 
 
 % \cite{rojas2009adaboost}
 % \cite{Friedman98additivelogistic}
@@ -159,9 +160,9 @@ Support Vector Machine (\emph{SVM}) is a machine learning approach that
 
 \subsection{Dataset}
 
-Access to properly labelled data is not a trivial aspect when dealing with supervised machine learning algorithm, especially when you are not trained to label that kind of data. Emotion labelling is not a task that someone can improvise, training manual like \emph{Facial Action Coding System (FACS) Manual} exists and certification is required for preparing a scientifically valid dataset. For this reason we required access to the ``Cohn-Kanade Expression Database''\cite{Kanade2000} which contains 486 sequences from 97 posers, each sequence is tagged with FACS, contains facial feature tracking data and also have \emph{emotion labels}. \\
-
-This dataset is considered is a ``must have'' from the academical community, in fact the lot of papers about topic related to \emph{faces} use at least this dataset. For this reason we choose it for our experimentation. 
+Access to properly labelled data is not a trivial aspect when dealing with supervised machine learning algorithm, especially when you are not trained to label that kind of data. Emotion labelling is not a task that someone can improvise: training manual like \emph{Facial Action Coding System (FACS) Manual} exists and certifications are required in order to prepare scientifically acceptable dataset.
+ 
+For this reason we required access to the ``Cohn-Kanade Expression Database''\cite{Kanade2000} which contains 486 sequences from 97 posers, each sequence is tagged with FACS, contains facial feature tracking data and also have \emph{emotion labels}. This dataset is considered is a \emph{``must have''} from the academical community, in fact the great part of the publications about topic related to \emph{faces} cite it as one of the adopted dataset.
 
 % \cite{Kanade2000}
 
