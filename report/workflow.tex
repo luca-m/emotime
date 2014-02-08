@@ -1,0 +1,65 @@
+\section{Workflow}
+
+The original workflow was:
+
+\begin{enumerate}
+  \item Dataset preparation and AdaBoost training.
+    \begin{itemize}
+      \item \textbf{LM} Python tool development for automatic training.
+      \item \textbf{LM} Tools and functions for AdaBoost training using OpenCV.
+      \item \textbf{DB} Tools and functions for feature extraction by means of Gabor Filter.
+    \end{itemize}
+  \item AdaBoost feature selection and SVM training.
+    \begin{itemize}
+      \item \textbf{LM} AdaBoost feature selection and specialized gabor filter.
+      \item \textbf{DB} Tools and functions for SVM training using OpenCV.
+    \end{itemize}
+  \item Testing
+    \begin{itemize}
+      \item \textbf{LM} Prediction tools and functions for AdaBoost prediction
+      \item \textbf{DB} Prediction tools and functions for SVM prediction
+    \end{itemize}
+  \item End-User application
+    \begin{itemize}
+      \item \textbf{LM,DB} GUI for video, webcam and images.
+      \item \textbf{DB} Release of dynamic libraries and trained classifiers.
+    \end{itemize}
+\end{enumerate}
+
+However during the completion of point 1 we faced various problem using
+AdaBoost (more details in~\ref{res:issues}) and we discarded it. Thus, the
+workflow adapted:
+
+\begin{enumerate}
+  \item Dataset preparation and AdaBoost training.
+    \begin{itemize}
+      \item \textbf{LM} Python tool development for automatic training.
+      \item \textbf{LM} Tools and functions for AdaBoost training using OpenCV.
+      \item \textbf{DB} Tools and functions for feature extraction by means of Gabor Filter.
+    \end{itemize}
+  \item Improved feature extraction and SVM training.
+    \begin{itemize}
+      \item \textbf{LM} Implementation of face rotation using eye position.
+      \item \textbf{DB} Tools and functions for SVM training using OpenCV.
+    \end{itemize}
+  \item Testing and Refractoring
+    \begin{itemize}
+      \item \textbf{LM} Tools and GUIs for determination of Gabor parameters.
+      \item \textbf{DB} Prediction tools and functions for prediction.
+      \item \textbf{LM,DB} Code refractoring from functions to classes.
+    \end{itemize}
+  \item Parameters optimization
+    \begin{itemize}
+      \item \textbf{LM,DB} Study of papers and formulae for determination of
+        SVM parameters.
+      \item \textbf{LM,DB} Study of papers and formulae for determination of
+        Gabor parameters.
+    \end{itemize}
+  \item End-User application
+    \begin{itemize}
+      \item \textbf{LM,DB} GUI for video, webcam and images.
+      \item \textbf{DB} Release of dynamic libraries and trained classifiers.
+    \end{itemize}
+\end{enumerate}
+
+The study of SVM parameters was discarded for the absence of a validation set.
