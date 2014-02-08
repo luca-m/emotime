@@ -85,6 +85,10 @@ Train some models:
 
     ./train_models.sh svm 1vsallext ./dataset
 
+Or better:
+
+    ./train_models.py --cfg dataset.cfg --mode svm --prep-train-mode 1vsAll --eye-correction dsFolder
+
 Or also:
 
     python datasetCropFaces.py [-h] [--eye-correction] dsFolder

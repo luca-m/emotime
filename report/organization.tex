@@ -90,7 +90,7 @@ Any further adjustment to the configuration parameters must be
 \subsubsection*{Classifier training}
 
 \begin{verbatim}
-./train_models.sh svm 1vsallext ./dataset
+python ./train_models.py --cfg dataset.cfg --mode svm --prep-train-mode 1vsAll --eye-correction /path/to/dataset
 \end{verbatim}
 
 Or also:
