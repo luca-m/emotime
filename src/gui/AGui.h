@@ -1,8 +1,8 @@
 /**
- * aGui.h
- * Copyright (C) 2014 luca.mella@studio.unibo.it
  *
- * Distributed under terms of the CC-BY-NC license.
+ * @file    AGui.h
+ * @brief   Defines the class AGui
+ *
  */
 
 #ifndef AGUI_H
@@ -26,14 +26,14 @@ using namespace emotime;
 namespace emotime {
 
   /**
-  * @class    AGui
-  * @date    12/31/2013 10:53:55 AM
-  *
-  * @brief   Generic GUI
-  *
-  * @details
-  *
-  */
+   * @class    AGui
+   * @date    12/31/2013 10:53:55 AM
+   *
+   * @brief   Generic GUI
+   *
+   * @details
+   *
+   */
   class AGui {
 
     public:
@@ -43,14 +43,15 @@ namespace emotime {
        *
        *  @param[in]      capt  A capture instance
        *  @param[in]      fp    The face preprocessor to use
-       *  @param[in]      detect  An emodetector instance
+       *  @param[in]      detect  An EmoDetector instance
        *  @param[in]      fps  Desired frame per second
+       *  @param[in]      title The title of the GUI
        *
        */
       AGui(ACapture* capt, FacePreProcessor* fp, EmoDetector* detect, int fps, string title="AGui: Main Emotime GUI");
-      
+
       /**
-       *  @brief    Start the gui
+       *  @brief    Starts the gui
        *
        *  @return   False if something wrong.
        *
@@ -84,12 +85,12 @@ namespace emotime {
        *  @return         False if there is no next frame
        *
        */
-      virtual bool nextFrame(); 
-      
+      virtual bool nextFrame();
+
       /**
        *  @brief          A new frame is available
        *
-       *  @param[in]      frame The new frame that will be drawn after returing
+       *  @param[in,out]      frame The new frame that will be drawn after returing
        *  @param[in]      prediction The predicted emotion
        *
        *  @return         False if something wrong

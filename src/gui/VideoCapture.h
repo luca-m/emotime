@@ -1,8 +1,8 @@
 /**
- * VideoCapture.h
- * Copyright (C) Luca Mella <luca.mella@studio.unibo.it>
  *
- * Distributed under terms of the CC-BY-NC license.
+ * @file    VideoCapture.h
+ * @brief   Contains the implementation of VideoCapture
+ *
  */
 
 #ifndef VIDEOCAPTURE_H
@@ -11,6 +11,7 @@
 #include "ACapture.h"
 
 namespace emotime{
+
   /**
    * @class    VideoCapture
    *
@@ -26,31 +27,46 @@ namespace emotime{
       /**
        * @brief Open a video from input device (eg. Camera)
        *
-       * @param[in] devide number
-       * @param[in] capture grayscale
+       * @param[in] deviceID opencv device id
+       * @param[in] grayScale True if the frame should be captured in grayscale.
        *
-       * */
-      VideoCapture(int deviceID, bool grayScale); 
-      
+       */
+      VideoCapture(int deviceID, bool grayScale);
+
       /**
        * @brief Open a video from video file.
        *
-       * @param[in] video path
-       * @param[in] capture grayscale
-       * */
+       * @param[in] infile video path
+       * @param[in] grayScale True if the frame should be captured in grayscale.
+       */
       VideoCapture(string infile, bool grayScale);
-      
+
       ~VideoCapture();
 
+
+      /**
+       *  @brief          Returns true if the device or file was opened
+       *
+       *  @return         Returns true if the device or file was opened
+       *
+       */
       bool isReady();
 
     protected:
 
-      bool extractFrame(Mat& frm) {
-        return cap.read(frm);
-      }
+      /**
+       *  @brief          Extract a frame from the device
+       *
+       *  @param[in,out]      frm The frame to fill
+       *
+       *  @return         The result of cap.read
+       *
+       */
+      bool extractFrame(Mat& frm);
 
     private:
+
+      /// The opencv video capture
       cv::VideoCapture cap;
   };
 

@@ -1,7 +1,10 @@
 /**
- *  aGUui.cpp
  *
- * */
+ * @file    AGui.cpp
+ * @brief   Contains the implementation for AGui
+ *
+ */
+
 #include "AGui.h"
 
 namespace emotime{
@@ -13,7 +16,7 @@ namespace emotime{
        mainWinTitle = title;
        this->fps = fps;
      }
-  
+
   bool AGui::run() {
     if(!init()) {
       return false;

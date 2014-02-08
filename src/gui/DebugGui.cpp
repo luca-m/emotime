@@ -1,8 +1,8 @@
 /**
- * DebugGui.cpp
- * Copyright (C) 2014 Luca Mella <luca.mella@studio.unibo.it>
  *
- * Distributed under terms of the CC-BY-NC license.
+ * @file    DebugGui.cpp
+ * @brief   Contains the implementation of DebugGui
+ *
  */
 
 #include "DebugGui.h"

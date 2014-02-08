@@ -1,13 +1,23 @@
 /**
- * EmotimeGui.cpp
- * Copyright (C) Luca Mella <luca.mella@studio.unibo.it>
  *
- * Distributed under terms of the CC-BY-NC license.
+ * @file    EmotimeGui.cpp
+ * @brief   Implementation of EmotimeGUI
+ *
  */
 
 #include "EmotimeGui.h"
 
 namespace emotime{
+
+  EmotimeGui::EmotimeGui(FacePreProcessor* fp, EmoDetector* detect, int fps) :
+    EmotimeGui::AGui(new WebcamCapture(true), fp, detect, fps, "Emotime!") {
+
+  }
+
+  EmotimeGui::EmotimeGui(ACapture* capture, FacePreProcessor* fp, EmoDetector*
+      detect, int fps) : EmotimeGui::AGui(capture, fp, detect, fps,
+        "Emotime!") {
+   }
 
   EmotimeGui::~EmotimeGui() {
     //delete this->capture;

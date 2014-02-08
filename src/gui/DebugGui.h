@@ -1,8 +1,8 @@
 /**
- * DebugGui.h
- * Copyright (C) 2014 luca.mella@studio.unibo.it
  *
- * Distributed under terms of the CC-BY-NC license.
+ * @file    DebugGui.h
+ * @brief   Defines the class DebugGui
+ *
  */
 
 #ifndef DEBUGGUI_H
@@ -13,13 +13,12 @@
 namespace emotime{
 
   /**
-  * @class    ADebugGui
-  * @author   Luca Mella
-  * @date
-  *
-  * @brief   GUI for debugging purpose
-  *
-  */
+   * @author   Luca Mella
+   * @date
+   *
+   * @brief   GUI for debugging purpose
+   *
+   */
   class DebugGui: public AGui {
 
     public:
@@ -41,10 +40,24 @@ namespace emotime{
       /// Title for features window
       string featsWinTitle;
 
+      /**
+       *  @brief          Initialize the GUI
+       *
+       *  @return         False if something wrong
+       */
       bool init();
 
+      /**
+       *  @brief          Produce a new frame, showing the given prediction
+       *
+       *  @param[in,out]      frame The image to be filled
+       *  @param[in]     prediction The prediction to show
+       *
+       *  @return         False if something wrong.
+       *
+       */
       bool newFrame(Mat& frame, pair<Emotion, float> prediction);
-  
+
   };
 
 }

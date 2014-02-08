@@ -1,8 +1,8 @@
 /**
- * ImageCapture.cpp
- * Copyright (C) Luca Mella <luca.mella@studio.unibo.it>
  *
- * Distributed under terms of the CC-BY-NC license.
+ * @file    ImageCapture.cpp
+ * @brief   Contains the implementation of ImageCapture
+ *
  */
 
 #include "ImageCapture.h"

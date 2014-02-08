@@ -29,6 +29,10 @@ namespace emotime{
     }
   }
 
+  bool VideoCapture::extractFrame(Mat& frm) {
+    return cap.read(frm);
+  }
+
 }
 
 

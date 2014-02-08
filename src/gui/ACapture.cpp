@@ -1,8 +1,7 @@
 /**
- * ACapture.cpp
- * Copyright (C) Luca Mella <luca.mella@studio.unibo.it>
+ * @file    ACapture.cpp
+ * @brief   Implementation of ACapture
  *
- * Distributed under terms of the CC-BY-NC license.
  */
 
 #include "ACapture.h"

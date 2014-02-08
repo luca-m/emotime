@@ -1,9 +1,10 @@
 /**
- * WebcamCapture.h
- * Copyright (C) Luca Mella <luca.mella@studio.unibo.it>
  *
- * Distributed under terms of the CC-BY-NC license.
+ * @file    WebcamCapture.h
+ * @brief   Contains the definition of WebcamCapture
+ *
  */
+
 
 #ifndef WEBCAMCAPTURE_H
 #define WEBCAMCAPTURE_H
@@ -11,7 +12,8 @@
 #include "VideoCapture.h"
 
 namespace emotime {
-/**
+
+  /**
    * @class    WebcamCapture
    *
    * @brief   Capture implementation using a Webcam

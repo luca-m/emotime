@@ -1,8 +1,6 @@
 /**
  *
  * @file    emotimegui_cli.cpp
- * @author  Daniele Bellavista (daniele.bellavista@studio.unibo.it)
- * @date    12/31/2013 11:05:55 AM
  * @brief   Emotime GUI command line interface
  *
  * @details
@@ -42,6 +40,18 @@ const double kNLambdas = 5;
 /// N-Thetas used during training
 const double kNThetas = 4;
 
+/**
+ *  @brief          Prints the CLI banner
+ *
+ */
+void banner();
+
+/**
+ *  @brief          Prints the CLI help
+ *
+ */
+void help();
+
 void help() {
 	cout << "Usage:" << endl;
 	cout << "   emotimegui_cli <faceDetecXML> <eyeDetectXML> <width> <height> <nwidths> <nlambdas> <nthetas> [<mode>] <classifier>{<classifier>}" << endl;
@@ -63,6 +73,16 @@ void banner() {
 	cout << "     GUI for emotime" << endl;
 }
 
+
+/**
+ *  @brief          Main
+ *
+ *  @param[in]      argc
+ *  @param[in]     argv
+ *
+ *  @returns  1
+ *
+ */
 int main(int argc, const char* argv[]) {
   if (argc < 5) {
 		banner();

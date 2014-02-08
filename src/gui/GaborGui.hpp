@@ -1,9 +1,10 @@
 /**
- * GaborGui.hpp
- * Copyright (C) Luca Mella <luca.mella@studio.unibo.it>
  *
- * Distributed under terms of the CC-BY-NC license.
+ * @file    GaborGui.hpp
+ * @brief   Contains the implementation and definition of GaborGui
+ *
  */
+
 
 #ifndef GABORGUI_H
 #define GABORGUI_H
@@ -19,44 +20,40 @@
 namespace emotime{
 
   /**
-   * @class GaburGui
-   *
    * @brief Gui for visualizing gabor bank effects
    *
-   * @description
-   *
-   * */
+   */
   class GaborGui {
-    
+
     protected:
-      
+
       /// The frame capture device
       ACapture* capture;
-      ///
+      /// The title for the main window
       string mainWinTitle;
-      ///
+      /// The title for the gabor window
       string gaborWinTitle;
-      ///
+      /// The size to be used for image resizing
       Size size;
-      ///
+      /// nwidths param of GaborBank::fillGaborBank
       int  nwidths;
-      ///
+      /// nlambdas param of GaborBank::fillGaborBank
       int  nlambdas;
-      ///
+      /// nthetas param of GaborBank::fillGaborBank
       int  nthetas;
-      ///
+      /// The current gui frame
       Mat currframe;
-    
+
     protected:
- 
+
       /**
        * @brief OpenCV trackbar callback function
        *
-       * @param[in] new value
-       * @param[in] The GaburGui object reference
+       * @param[in] newVal new value
+       * @param[in] obj The GaburGui object reference
        *
-       * */ 
-      static void on_trackbar(int newVal, void *obj){
+       */
+      static void on_trackbar(int newVal, void *obj) {
         GaborBank gaborbank;
         Mat frame;
         Mat gaborframe;
@@ -66,7 +63,7 @@ namespace emotime{
         double min;
         double max;
         #ifdef DEBUG
-        cout<<"DEBUG: Parameters changed, reconfiguring.. (this@"<<obj<<")"<<endl; 
+        cout<<"DEBUG: Parameters changed, reconfiguring.. (this@"<<obj<<")"<<endl;
         #endif
         GaborGui* ths = (GaborGui*) obj;
         if (ths==NULL){
@@ -74,7 +71,7 @@ namespace emotime{
         }
         Mat copy;
         ths->currframe.copyTo(frame);
-        resize(ths->currframe, resized, ths->size, 0, 0, CV_INTER_AREA); 
+        resize(ths->currframe, resized, ths->size, 0, 0, CV_INTER_AREA);
         cout<<"DEBUG: recreating gabor filter bank "<<ths->nwidths<<","<<ths->nlambdas<<","<<ths->nthetas <<endl;
         gaborbank=GaborBank();
         gaborbank.fillGaborBank(ths->nwidths, ths->nlambdas, ths->nthetas);
@@ -84,13 +81,20 @@ namespace emotime{
         convertScaleAbs(gaborframe, scaled, 255/max);
         equalizeHist(scaled, scaled);
         resize(scaled, magnified, Size(scaled.size().width*5, scaled.size().height*5), 0, 0, CV_INTER_LINEAR);
-        
+
         imshow(ths->mainWinTitle.c_str(), ths->currframe);
         imshow(ths->gaborWinTitle.c_str(), magnified);
       }
 
     public:
-      
+
+
+      /**
+       *  @brief          Creates a GaborGui with the given ACapture
+       *
+       *  @param[in]      cap The ACapture to use
+       *
+       */
       GaborGui(ACapture* cap) {
         capture=cap;
         size=Size(48,48);
@@ -99,8 +103,14 @@ namespace emotime{
         nthetas=4;
         mainWinTitle=string("GaborGui: Gabor parameter tuning");
         gaborWinTitle=string("GaborGui: Gabor features");
-      } 
-      
+      }
+
+      /**
+       *  @brief          Initialize windows and trackbars
+       *
+       *  @return         Always returns true
+       *
+       */
       bool init(){
 	       namedWindow(mainWinTitle.c_str(), WINDOW_NORMAL);
 	       namedWindow(gaborWinTitle.c_str(), WINDOW_AUTOSIZE);
@@ -109,7 +119,14 @@ namespace emotime{
          createTrackbar("nthetas",mainWinTitle.c_str(), &nthetas, 12, GaborGui::on_trackbar, this);
          return true;
       }
-      
+
+
+      /**
+       *  @brief          Capture the next frame and reset the trackbar
+       *
+       *  @return         Returns false if no frame are available
+       *
+       */
       bool nextFrame(){
         Mat frame;
         Mat featvector;
@@ -118,20 +135,28 @@ namespace emotime{
           frame.copyTo(currframe);
           on_trackbar(0, this);
           return true;
-        } else{ 
+        } else{
           return false;
         }
       }
-      
+
+
+      /**
+       *  @brief          Produce a new frame at every keystroke
+       *
+       *  @return         Returns when no more frame are available. The value
+       *                  is always true.
+       *
+       */
       bool run(){
         init();
         while (nextFrame()){
             waitKey(0);
-        } 
+        }
         return true;
 
       }
-  }; 
+  };
 
 }
 

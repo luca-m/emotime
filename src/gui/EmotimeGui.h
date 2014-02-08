@@ -1,8 +1,8 @@
 /**
- * EmotimeGui.h
- * Copyright (C) Luca Mella <luca.mella@studio.unibo.it>
  *
- * Distributed under terms of the CC-BY-NC license.
+ * @file    EmotimeGui.h
+ * @brief   Definition of EmotimeGUI
+ *
  */
 
 #ifndef EMOTIMEGUI_H
@@ -13,48 +13,56 @@
 #include "WebcamCapture.h"
 
 namespace emotime{
- 
+
   /**
    * @class EmotimeGui
    *
-   * @brief Emotime sample webcam gui. 
+   * @brief Gui that detects emotion.
    *
-   * @description
-   *
-   * */ 
+   */
   class EmotimeGui : public AGui {
 
     public:
 
       /**
-       * @brief EmotimeGui creator with webcam 
+       *  @brief          Creates an EmotimeGUI with a webcam capture
        *
-       * @param[in]
-       * @param[in] 
-       * @param[in] 
+       *  @param[in]      fp    The face preprocessor to use
+       *  @param[in]      detect  An EmoDetector instance
+       *  @param[in]      fps  Desired frame per second
        *
-       * */
-      EmotimeGui(FacePreProcessor* fp, EmoDetector* detect, int fps) : AGui(new WebcamCapture(true), fp, detect, fps, "Emotime!"){}
-      /**
-       * @brief EmotimeGui creator
-       *
-       * @param[in]
-       * @param[in] 
-       * @param[in] 
-       * @param[in] 
-       *
-       * */
-      EmotimeGui(ACapture * capture, FacePreProcessor* fp, EmoDetector* detect, int fps) : AGui(capture, fp, detect, fps, "Emotime!"){}
+       */
+      EmotimeGui(FacePreProcessor* fp, EmoDetector* detect, int fps);
+
+       /**
+        *  @brief          Creates an EmotimeGUI with a custom capture
+        *
+        *  @param[in]      capture    The ACapture to use
+        *  @param[in]      fp    The face preprocessor to use
+        *  @param[in]      detect  An EmoDetector instance
+        *  @param[in]      fps  Desired frame per second
+        *
+        */
+      EmotimeGui(ACapture * capture, FacePreProcessor* fp, EmoDetector* detect, int fps);
 
       ~EmotimeGui();
 
     protected:
 
+
+      /**
+       *  @brief          Prints the prediction over the frame
+       *
+       *  @param[in,out]      frame The frame filled with the prediction
+       *  @param[in]          prediction The prediction to display
+       *
+       *  @returns Always returns true
+       */
       bool newFrame(Mat& frame, pair<Emotion, float> prediction);
 
     private:
-  
-  };  
+
+  };
 
 }
 
