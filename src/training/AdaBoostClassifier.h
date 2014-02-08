@@ -38,7 +38,7 @@ namespace emotime {
        *
        *  @see CvBoostParams::CvBoostParams
        */
-      AdaBoostClassifier(int boost_type, double trim_weight, double max_depth);
+      AdaBoostClassifier(int boost_type, double trim_weight, int max_depth);
       ~AdaBoostClassifier();
 
       bool save(std::string outfile);

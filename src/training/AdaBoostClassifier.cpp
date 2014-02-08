@@ -20,7 +20,7 @@ using std::endl;
 
 namespace emotime {
 
-  AdaBoostClassifier::AdaBoostClassifier(int boost_type, double trim_weight, double max_depth) {
+  AdaBoostClassifier::AdaBoostClassifier(int boost_type, double trim_weight, int max_depth) {
     this->params.boost_type = boost_type;
     this->params.weak_count = 0;
     this->params.weight_trim_rate = trim_weight;

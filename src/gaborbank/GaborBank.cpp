@@ -128,7 +128,7 @@ namespace emotime {
         _lambda=_sigma/slratio;
 #endif
         //int n = ( std::ceil(2.5*_sigma/_gamma) >maxfwidth? : std::ceil(2.5*_sigma/_gamma)  );
-        int n = std::ceil(2.5*_sigma/_gamma); 
+        int n = (int)std::ceil(2.5*_sigma/_gamma); 
         cv::Size kernelSize(2*n+1, 2*n+1);
 
         #if defined(GABOR_DEBUG)
@@ -211,7 +211,7 @@ namespace emotime {
     Size GaborBank::getFilteredImgSize(cv::Size & size) {
       // The output image will contain all the filtered image vertically stacked.
       Size s = Size(0,0);
-      s.height = size.height * bank.size();
+      s.height = (int) (size.height * bank.size());
       s.width = size.width;
       return s;
     }

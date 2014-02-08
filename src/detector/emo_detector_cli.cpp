@@ -144,7 +144,7 @@ int main(int argc, const char *argv[]) {
         cout << "Emotion predicted: " << emotionStrings(prediction.first) << " with score " << prediction.second << endl;
         cout << "Insert the image file path: " << endl;
       } catch (int ee) {
-        cerr << "ERR: Something wrong with '" << infile << "'" << endl;
+        cerr << "ERR: Something wrong with '" << infile << "' (" << ee << ")" << endl;
       }
     }
 

@@ -36,7 +36,7 @@ namespace emotime{
        *  @see AdaBoostClassifier
        *
        */
-      BoostEmoDetector(int boost_type, double trim_weight, double max_depth);
+      BoostEmoDetector(int boost_type, double trim_weight, int max_depth);
 
       /**
        *  @brief          Initialize the emodetector with boost parameters and
@@ -50,7 +50,7 @@ namespace emotime{
        *  @see AdaBoostClassifier
        *
        */
-      BoostEmoDetector(int boost_type, double trim_weight, double max_depth,
+      BoostEmoDetector(int boost_type, double trim_weight, int max_depth,
           std::map<std::string, std::pair<vector<Emotion>, Classifier*> >
           detmap_ext);
 
@@ -67,7 +67,7 @@ namespace emotime{
       /// The opencv trim weight value
       double trim_weight;
       /// Algorithm max depth
-      double max_depth;
+      int max_depth;
   };
 
 }
