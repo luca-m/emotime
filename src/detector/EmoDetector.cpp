@@ -51,7 +51,7 @@ namespace emotime {
     }
   };
 
-  void EmoDetector::init(const map<string, pair<vector<Emotion>, Classifier*> >& detmap_ext) {
+  void EmoDetector::init(const std::map<std::string, std::pair<std::vector<Emotion>, Classifier*> >& detmap_ext) {
     this->detectors_ext = detmap_ext;
 
     for(map<string, pair<vector<Emotion>, Classifier*> >::const_iterator ii = detmap_ext.begin();
@@ -65,7 +65,7 @@ namespace emotime {
 
   }
 
-  EmoDetector::EmoDetector(map<string, pair<vector<Emotion>, Classifier*> >& detmap_ext) {
+  EmoDetector::EmoDetector(std::map<std::string, std::pair<std::vector<Emotion>, Classifier*> >& detmap_ext) {
     init(detmap_ext);
   }
 

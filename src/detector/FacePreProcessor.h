@@ -1,9 +1,7 @@
 /**
- * @class   FacePreProcessor
  *
- * @brief   Class for preprocessing a face before training.
- *
- * @details
+ * @file    FacePreProcessor.h
+ * @brief   Definition of FacePreProcessor
  *
  */
 
@@ -24,14 +22,55 @@
 
 namespace emotime{
 
+  /**
+   * @class   FacePreProcessor
+   *
+   * @brief   Class for preprocessing a face before training.
+   *
+   * @details
+   *
+   */
   class FacePreProcessor{
 
     public:
 
+
+      /**
+       *  @brief          Creates a FacePreProcessor specifying FaceDetector and GaborBank parameters.
+       *
+       *  @param[in]      faceDetectorConfig  The configuration file for face detection
+       *  @param[in]      eyesDetectorConfig  The configuration file for eye
+       *                  detection. If the value is "none", the eye
+       *                  configuration is ignored.
+       *  @param[in]      width Resized with of the face
+       *  @param[in]      height Resized height of the face
+       *  @param[in]      nwidths nwidhts parameter of GaborBank::fillGaborBank
+       *  @param[in]      nlambdas nlambdas parameter of GaborBank::fillGaborBank
+       *  @param[in]      nthetas nthetas parameter of GaborBank::fillGaborBank
+       *
+       *  @see  FaceDetector
+       *  @see  GaborBank
+       *
+       */
       FacePreProcessor(std::string faceDetectorConfig, std::string eyesDetectorConfig,
           int width, int height, double nwidths, double nlambdas, double
           nthetas);
 
+      /**
+       *  @brief          Creates a FacePreProcessor specifying FaceDetector
+       *                  and GaborBank parameters. This constructor disables the eye detection.
+       *
+       *  @param[in]      faceDetectorConfig  The configuration file for face detection
+       *  @param[in]      width Resized with of the face
+       *  @param[in]      height Resized height of the face
+       *  @param[in]      nwidths nwidhts parameter of GaborBank::fillGaborBank
+       *  @param[in]      nlambdas nlambdas parameter of GaborBank::fillGaborBank
+       *  @param[in]      nthetas nthetas parameter of GaborBank::fillGaborBank
+       *
+       *  @see  FaceDetector
+       *  @see  GaborBank
+       *
+       */
       FacePreProcessor(std::string faceDetectorConfig, int width, int height, double
           nwidths, double nlambdas, double nthetas);
 
@@ -41,7 +80,7 @@ namespace emotime{
        *  @brief          Extract the features from the given image
        *
        *  @param[in]      src The image to analyze
-       *  @param[in.out]  out The feature vector
+       *  @param[in,out]  out The feature vector
        *
        *  @return         True if the operation succedede
        *

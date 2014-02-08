@@ -67,6 +67,15 @@ void banner() {
 	cout << "     Detect emotions using trained classificator" << endl;
 }
 
+/**
+ *  @brief          Main
+ *
+ *  @param[in]      argc
+ *  @param[in]     argv
+ *
+ *  @returns  1
+ *
+ */
 int main(int argc, const char *argv[]) {
   if (argc < 9) {
 		banner();

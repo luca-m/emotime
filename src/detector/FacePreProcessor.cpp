@@ -15,7 +15,7 @@ using cv::Mat;
 
 namespace emotime {
 
-  void FacePreProcessor::init(string faceDetectorConfig, string eyesDetectorConfig, int
+  void FacePreProcessor::init(std::string faceDetectorConfig, std::string eyesDetectorConfig, int
       width, int height, double nwidths, double nlambdas, double nthetas) {
 
     this->imgsize.width = width;
@@ -31,14 +31,14 @@ namespace emotime {
     this->gaborbank.fillGaborBank(this->nwidths, this->nlambdas, this->nthetas);
   }
 
-  FacePreProcessor::FacePreProcessor(string faceDetectorConfig, string
+  FacePreProcessor::FacePreProcessor(std::string faceDetectorConfig, std::string
       eyesDetectorConfig, int width, int height, double nwidths, double
       nlambdas, double nthetas) {
     init(faceDetectorConfig, eyesDetectorConfig, width, height, nwidths,
         nlambdas, nthetas);
   }
 
-  FacePreProcessor::FacePreProcessor(string faceDetectorConfig, int width, int
+  FacePreProcessor::FacePreProcessor(std::string faceDetectorConfig, int width, int
       height, double nwidths, double nlambdas, double nthetas) {
     init(faceDetectorConfig, "", width, height, nwidths, nlambdas, nthetas);
   }

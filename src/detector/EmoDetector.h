@@ -1,10 +1,7 @@
 /**
- * @class   EmoDetector
  *
- * @brief   Generic class for performing multi-class classification using
- *          binary classifiers.
- *
- * @details
+ * @file    EmoDetector.h
+ * @brief   Contains definition of EmoDetector and Emotion
  *
  */
 
@@ -30,19 +27,29 @@ namespace emotime {
 
   /// Emotion identification
   enum Emotion {
+    /// NEUTRAL emotion
     NEUTRAL = 0,
+    /// ANGER emotion
     ANGER = 1,
+    /// CONTEMPT emotion
     CONTEMPT = 2,
+    /// DISGUST emotion
     DISGUST = 3,
+    /// FEAR emotion
     FEAR = 4,
+    /// HAPPY emotion
     HAPPY = 5,
+    /// SADNESS emotion
     SADNESS = 6,
+    /// SURPRISE emotion
     SURPRISE = 7,
+    /// OTHERS emotion
     OTHERS = 8,
+    /// UNKNOWN emotion
     UNKNOWN = 9
   };
 
-  /** 
+  /**
    * @brief Retrieve the string associated with an emotion
    *
    * @param[in] emo The enum value
@@ -51,6 +58,15 @@ namespace emotime {
    */
   std::string emotionStrings(Emotion emo);
 
+  /**
+   * @class   EmoDetector
+   *
+   * @brief   Generic class for performing multi-class classification using
+   *          binary classifiers.
+   *
+   * @details
+   *
+   */
   class EmoDetector {
 
     public:
@@ -82,8 +98,13 @@ namespace emotime {
       virtual ~EmoDetector();
 
       /**
-       * Return true if the given emotion is present * @return 
-       * */
+       * Return true if the given emotion is present
+       *
+       * @param[in]  name  The name to search
+       *
+       * @return true if the given emotion is present
+       *
+       */
       bool contains(std::string& name);
 
       /**
@@ -121,7 +142,11 @@ namespace emotime {
       std::pair<Emotion, float> predictMayorityOneVsAll(cv::Mat& frame);
 
       /**
-       * @brieg Apply the default prediction method
+       * @brief Apply the default prediction method
+       *
+       * @param[in] frame The image to predict
+       *
+       * @return The predicted emotion
        */
       virtual std::pair<Emotion, float> predict(cv::Mat& frame);
 
