@@ -1,4 +1,8 @@
 # Emotime Video Debug Gui Tool
+
+find_package(OpenCV COMPONENTS opencv_core opencv_ml opencv_imgproc
+  opencv_highgui opencv_objdetect REQUIRED)
+
 add_executable(emotimevideodebug_cli emotimevideodebug_cli.cpp 
         ACapture.cpp VideoCapture.cpp AGui.cpp DebugGui.cpp
         ../detector/EmoDetector.cpp ../detector/BoostEmoDetector.cpp ../detector/FacePreProcessor.cpp ../detector/SVMEmoDetector.cpp
