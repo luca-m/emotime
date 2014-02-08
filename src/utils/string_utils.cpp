@@ -1,11 +1,8 @@
 /**
  *
  * @file    string_utils.cpp
- * @author  Daniele Bellavista (daniele.bellavista@studio.unibo.it)
  * @date    12/30/2013 02:26:11 PM
- * @brief   
- *
- * @details 
+ * @brief   string_utils.h implementation
  *
  */
 
@@ -14,8 +11,7 @@
 using std::string;
 using std::vector;
 
-vector<string> split_string(const string& str, const string& sequence)
-{
+std::vector<std::string> split_string(const std::string& str, const std::string& sequence) {
   size_t p = 0, p2;
   vector<string> res;
   res.reserve(str.size()/2);
