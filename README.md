@@ -76,7 +76,7 @@ Cross-compiling for windows:
 
 Proof of concept model trained using faces extracted using the detector `cbcl1` are available for download, mulclass strategy [1 vs all](https://dl.dropboxusercontent.com/u/7618747/dataset_svm_354_cbcl1_1vsall.zip) and [cbcl1_with many vs many](https://dl.dropboxusercontent.com/u/7618747/dataset_svm_354_cbcl1_1vsallext.zip) can be found.
 
-_NOTE: remember that this is a prototype
+_NOTE: remember that this is a prototype_
 
 ### Usage
 
