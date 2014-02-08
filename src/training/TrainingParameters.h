@@ -1,11 +1,8 @@
 /**
  *
  * @file    TrainingParameters.h
- * @author  Daniele Bellavista (daniele.bellavista@studio.unibo.it)
  * @date    01/10/2014 01:50:29 AM
- * @brief   
- *
- * @details 
+ * @brief   Global parameter algorithm
  *
  */
 
@@ -16,12 +13,18 @@
 
 namespace emotime {
 
+  /// SVM C factor parameter
   const double kCfactor = 0.5;
+  /// SVM max interation termination criteria
   const int kMaxIteration = 1000000;
+  /// SVM error margin termination criteria
   const double kErrorMargin = 1e-6;
 
+  /// AdaBoost algorithm type
   const int kBoostType = CvBoost::GENTLE;
+  /// AdaBoost trim weight value
   const double kTrimWeight = 0.0;
+  /// AdaBoost max algorithm depth
   const double kMaxDepth = 1.0;
 
 }

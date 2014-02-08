@@ -1,10 +1,7 @@
 /**
- * @class    Classifier
  *
- * @brief   Represent a general classifier method, capable of training, saving
- *          and loading the status and predicting a class.
- *
- * @details
+ * @file    Classifier.h
+ * @brief   Definition of Classifier
  *
  */
 
@@ -16,6 +13,15 @@
 
 namespace emotime {
 
+  /**
+   * @class   Classifier
+   *
+   * @brief   Represent a general classifier method, capable of training, saving
+   *          and loading the status and predicting a class.
+   *
+   * @details
+   *
+   */
   class Classifier {
 
     public:

@@ -2,7 +2,7 @@
  *
  * @file    Classifier.cpp
  *
- * @brief   The classifier implementation
+ * @brief   The Classifier implementation
  *
  * @details
  *

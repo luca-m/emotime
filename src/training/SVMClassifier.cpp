@@ -2,10 +2,7 @@
  *
  * @file    SVMClassifier.cpp
  *
- * @date    01/09/2014 09:02:53 PM
- * @brief
- *
- * @details
+ * @brief   Implementation of SVMClassifier
  *
  */
 

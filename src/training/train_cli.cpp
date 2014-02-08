@@ -57,6 +57,15 @@ void banner() {
   cout << "" << endl;
 }
 
+/**
+ *  @brief          Main
+ *
+ *  @param[in]      argc
+ *  @param[in]     argv
+ *
+ *  @returns  1
+ *
+ */
 int main(int argc, const char* argv[]) {
 
   if (argc < 4) {

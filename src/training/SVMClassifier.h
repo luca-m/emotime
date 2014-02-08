@@ -1,9 +1,7 @@
 /**
- * @class   SVMClassifier
  *
- * @brief   Classifier specialization using SVM.
- *
- * @details
+ * @file    SVMClassifier.h
+ * @brief   Definition of SVMClassifier
  *
  */
 
@@ -17,10 +15,26 @@
 
 namespace emotime {
 
+  /**
+   * @class   SVMClassifier
+   *
+   * @brief   Classifier specialization using SVM.
+   *
+   * @details
+   *
+   */
   class SVMClassifier : public Classifier {
 
     public:
 
+      /**
+       *  @brief          Create a linear C svm classifier.
+       *
+       *  @param[in]      C_factor  The algorithm C factor
+       *  @param[in]      max_iteration Maximum number of iteration termination criteria
+       *  @param[in]      error_margin Minimum error termination criteria
+       *
+       */
       SVMClassifier(double C_factor, int max_iteration, double error_margin);
       ~SVMClassifier();
 
