@@ -4,7 +4,12 @@ Emotime
 _Recognizing emotional states in faces_
 
 ----------------------------------------------
-Copyleft [CC-BY-NC 2013](http://creativecommons.org/licenses/by-nc/3.0/)
+
+Authors: Luca Mella, Daniele Bellavista
+Development Status: Prototype 
+Copyleft: [CC-BY-NC 2013](http://creativecommons.org/licenses/by-nc/3.0/)
+
+----------------------------------------------
 
 ## Goal
 This project aims to recognize main facial expressions (neutral, anger, disgust, fear, joy, sadness, surprise) in image
@@ -35,6 +40,7 @@ stuff that could be useful to get in this topic:
       \-->detector     Multiclass detector and preprocessor
       \-->utils        String and IO utilities, CSV supports, and so on..
     doc                Documentation (doxigen)
+    report             Class project report (latex)
     resources          Containing third party resources (eg. OpenCV haar classifiers)
     assets             Binary folder
     test               Some testing scripts here
