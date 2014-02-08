@@ -43,14 +43,15 @@ stuff that could be useful to get in this topic:
 
 Dependencies:
 
-* CMake > 2.8
-* Python > 2.7, < 3.0
-* OpenCV > 2.4.5
+* `CMake >= 2.8`
+* `Python >= 2.7, < 3.0`
+* `OpenCV >= 2.4.5`
 
 Compiling on linux:
 
-* mkdir build; cd build
-* cmake .. ; make ; make install
+* `mkdir build` 
+* `cd build`
+* `cmake .. ; make ; make install` - now the `asset` folder should be populated
 
 Cross-compiling for windows:
 
@@ -63,9 +64,26 @@ Cross-compiling for windows:
 * Then generate the project and compile it.
 * This was tested with Visual Studio 12 64 bit.
 
-Compiling on linux:
+## Detection and Prediction
 
-* TODO: CMakeGui
+Proof of concept model trained using faces extracted using the detector `cbcl1` are available for download, mulclass strategy [1 vs all](https://dl.dropboxusercontent.com/u/7618747/dataset_svm_354_cbcl1_1vsall.zip) and [cbcl1_with many vs many](https://dl.dropboxusercontent.com/u/7618747/dataset_svm_354_cbcl1_1vsallext.zip) can be found.
+
+_NOTE: remember that this is a prototype
+
+### Usage
+
+Video gui:
+
+    echo "VIDEOPATH" | ./emotimevideo_cli FACEDETECTORXML (EYEDETECTORXML|none) WIDTH HEIGHT NWIDTHS NLAMBDAS NTHETAS (svm|ada) (TRAINEDCLASSIFIERSXML)+
+
+Cam gui:
+
+    ./emotimegui_cli FACEDETECTORXML (EYEDETECTORXML|none) WIDTH HEIGHT NWIDTHS NLAMBDAS NTHETAS (svm|ada) (TRAINEDCLASSIFIERSXML)+
+
+Or:
+
+    ./gui.py --mode svm --eye-correction <dataset_path>
+
 
 ## Training
 
@@ -101,27 +119,9 @@ Training with _native_ tool:
 
     TBD
 
-## Detection and Prediction
-
-### Usage
-
-
-Video gui:
-
-    echo "<VIDEOPATH>"|./emotimevideo_cli FACEDETECTORXML (EXEDETECTORXML|none) WIDTH HEIGHT NWIDTHS NLAMBDAS NTHETAS (svm|ada) (TRAINEDCLASSIFIERSXML)+
-
-Cam gui:
-
-    ./emotimegui_cli FACEDETECTORXML (EXEDETECTORXML|none) WIDTH HEIGHT NWIDTHS NLAMBDAS NTHETAS (svm|ada) (TRAINEDCLASSIFIERSXML)+
-
-Or:
-
-    ./gui.py --mode svm --eye-correction <dataset_path>
-
 ## Further Development
 
 * Validation dataset
-* Much more training samples, some emotions in Cohn-Kanade are under-sampled.
-* Better GUI
-* Better CLI tools
+* Finest parameter tuning
+* Extend training dataset
 
