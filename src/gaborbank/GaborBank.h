@@ -1,18 +1,21 @@
 /**
- * @class    GaborBank
+ *
+ * @file    GaborBank.h
  * @author
  * @date
- *
- * @brief   Representation of a gabor bank
- *
- * @details
+ * @brief   Contains class and constant for generation of gabor banks.
  *
  */
+
 #ifndef _H_GABORBANK
 #define _H_GABORBANK
 
+/// If defined, uses the mathematical correlation between the parameters.
+/// Otherwise an empirical value of lambda is used.
 #define GABOR_FORMULA
+/// If defined, uses sigma as independent value
 #define DO_SIGMA
+
 //#define DO_LAMBDA_P
 //#define GABOR_DEBUG
 
@@ -24,43 +27,49 @@ namespace emotime {
 
   /* Gabor Formula consts */
 
-  /// Minimum width for a gabor filter
+  /// Minimum bandwidth for a gabor filter
   const double kGaborBandwidthMin = 1.3;
-  /// Maximum width for a gabor filter
+  /// Maximum bandwidth for a gabor filter
   const double kGaborBandwidthMax = CV_PI/2.;//1.6;
-  /// Minimum lambda for a gabor filter
+  /// Minimum wavelength for a gabor filter
   const double kGaborLambdaMin = /*16;//4;*/1./(CV_PI/2.0);
-  /// Maximum lambda for a gabor filter
+  /// Maximum wavelength for a gabor filter
   const double kGaborLambdaMax = /*48;//12;*/1./(CV_PI/32.0);
-  /// Minimum lambda for a gabor filter
+  /// Minimum sigma for a gabor filter
   const double kGaborSigmaMin = 1.0;
-  /// Maximum lambda for a gabor filter
+  /// Maximum sigma for a gabor filter
   const double kGaborSigmaMax = 6.0;
-
-  /* Gabor Misc consts*/
-  /// Gabor support shape parameter (0.5 ellipse .. 1 circle)
-  const double kGaborGamma= 1.0;
-  /// Gabor phase offset 
-  const double kGaborPsi= CV_PI/2.0;
-
-  /// Minimum tetha for a gabor filter
+  /// Minimum orientation for a gabor filter
   const double kGaborThetaMin = 0.0;
-  /// Maximum tetha for a gabor filter
+  /// Maximum orientation for a gabor filter
   const double kGaborThetaMax = (CV_PI);
 
+  /* Gabor Misc consts*/
+
+  /// Gabor support shape parameter (0.5 ellipse .. 1 circle)
+  const double kGaborGamma= 1.0;
+  /// Gabor phase offset
+  const double kGaborPsi= CV_PI/2.0;
+
+  /// Lambda values suggested in the paper. Used only if DO_LAMBDA_P is enabled
+  /// and DO_SIGMA is disabled.
   const double kGaborPaperLambdas[] = {1./3, 1./4, 1./6, 1./8, 1./12, 1./16, 1./24, 1./36};
-  const double kGaborPaperCicles[] = {3, 4, 6, 8, 12, 16, 24, 36};
+  /// Length of kGaborPaperLambdas
   const int kGaborPaperLamdasLen = 8;
-  
+  /// Unused
+  // const double kGaborPaperCicles[] = {3, 4, 6, 8, 12, 16, 24, 36};
+  /// Empirical minimum value of wavelength
+  const double kGaborELambdaMin = 3;//(CV_PI /32.);
+  /// Empirical maximum value of wavelength
+  const double kGaborELambdaMax = 32;//(CV_PI /2.);
+
   /* Gabor Empiric consts */
 
   /// Minimum width for a gabor filter
   const int kGaborWidthMin = 20;
   /// Maximum width for a gabor filter
   const int kGaborWidthMax = 26;
-  
-  const double kGaborELambdaMin = 3;//(CV_PI /32.);
-  const double kGaborELambdaMax = 32;//(CV_PI /2.);
+
   
   /// Default gabor number of different with (gaborbank_getGaborBank)
   const double kGaborDefaultNwidth = 1.0;
@@ -72,9 +81,31 @@ namespace emotime {
   const double kGaborESigmaMin = 1.0;
   /// Maximum sigma for a gabor filter
   const double kGaborESigmaMax = 5.0;
-  ///   
+  /// Empirical value for Sigma
   const double kGaborSigma= 4.0;
 
+  /**
+   * @class    GaborBank
+   * @author
+   * @date
+   *
+   * @brief   Representation of a gabor bank.
+   *
+   * @details A GaborBank is a collection of gabor filters, with different
+   *          bandwidth, size, sigma, wavelength (lambda) and orientation (theta).
+   *          Parameters are subdivided between a minimum value and a maximum value.
+   *          At compile time it can be configured to use different approaches to generate
+   *          the bank:
+   *            - GABOR_FORMULA: enables the use of the mathematical
+   *              correlation between the parameters using bandwidth, theta and
+   *              lambda or sigma as independent values. Otherwise an empirical
+   *              value of sigma (kGaborSigma) it's used and different values of
+   *              size, lambda and theta are used.
+   *            - DO_SIGMA: uses sigma as independent value, Otherwise lambda is
+   *              used. If lambda is used and DO_LAMBDA_P is defined,
+   *              kGaborPaperLambdas are used.
+   *
+   */
   class GaborBank {
 
     public:
@@ -82,16 +113,30 @@ namespace emotime {
       ~GaborBank();
 
       /**
-       * @brief Genereates a bank of Gabor filter kernels with different orientations and
-       *        frequencies using custom values
+       * @brief If GABOR_FORMULA is defined, it calls fillGaborBankFormula,
+       *        otherwise it calls fillGaborBankEmpiric.
        *
-       * @param [in]     nwidths    Number of different dimension
-       * @param [in]     nlambdas   Number of different wavelengths
+       * @param [in]  nwidthsOrBandwith    Depends on the method called
+       * @param [in]  nlambdasOrSigma      Number of different wavelengths or sigmas (depends on DO_SIGMA)
+       * @param [in]  nthetas              Number of different orientations
+       *
+       */
+      void fillGaborBank(double nwidthsOrBandwith, double nlambdasOrSigma, double nthetas);
+
+      /**
+       * @brief Genereates a bank of Gabor filter kernels with different bandwidth, orientations and
+       *        wavelength using custom values.
+       *
+       * @param [in]     nBandwith    Number of different bandwidth
+       * @param [in]     nlambdasOrSigma   Number of different wavelengths or sigma (depends on DO_SIGMA).
        * @param [in]     nthetas    Number of different orientations
        *
-       * @details This function generates \p nwidths * \p nlambdas * \p nthetas
-       * kernels by partitioning the ranges [GABOR_WIDTH_MIN, GABOR_WITH_MAX],
-       * [GABOR_LAMBDA_MIN, GABOR_LAMBDA_MAX] and [GABOR_THETA_MIN, GABOR_THETA_MAX].
+       * @details This function generates \p nwidths * \p nlambdasOrSigma * \p nthetas
+       *          kernels by partitioning the ranges [kGaborBandwidthMin, kGaborBandwidthMax],
+       *          [kGaborLambdaMin, kGaborLambdaMax] and [kGaborThetaMin, kGaborThetaMax]. If
+       *          DO_SIGMA is defined, the range [kGaborSigmaMin,
+       *          kGaborSigmaMax] is partitioned instead of [kGaborLambdaMin, kGaborLambdaMax].
+       *
        *
        * @see http://en.wikipedia.org/wiki/Gabor_filter
        * @see "Dynamics of facial expression extracted automatically from video" section 2
@@ -99,29 +144,52 @@ namespace emotime {
        * @see "Jesper Juul Henriksen Thesis" at page 22  (http://covil.sdu.dk/publications/jespermaster07.pdf)
        *
        */
-      void fillGaborBank(double nwidths, double nlambdas, double nthetas);
-      void fillGaborBankFormula(double nwidths, double nlambdas, double nthetas);
+      void fillGaborBankFormula(double nBandwith, double nlambdasOrSigma, double nthetas);
+
+      /**
+       * @brief Genereates a bank of Gabor filter kernels with different size, orientations and
+       *        wavelength using custom values
+       *
+       * @param [in]     nwidths    Number of different dimension
+       * @param [in]     nlambdas   Number of different wavelengths
+       * @param [in]     nthetas    Number of different orientations
+       *
+       * @details This function uses 
+       */
       void fillGaborBankEmpiric(double nwidths, double nlambdas, double nthetas);
 
       /**
        * @brief Generates a bank of Gabor filter kernels with different orientations
        *        and frequencies using default values
        *
-       * @details This function is a wrapper for gaborbank_getCustomGaborBank(bank,
-       * GABOR_DEFAULT_NWIDTH, GABOR_DEFAULT_NLAMBDA, GABOR_DEFAULT_NTHETA)
+       * @details This function is a wrapper for fillGaborBank with parameters
+       *          \p bank, kGaborDefaultNWidth, kGaborDefaultNLambda,
+       *          kGaborDefaultNTheta.
        *
        */
       void fillDefaultGaborrBank();
+
+      /**
+       * @brief Calls filterImage(cv::Mat& src, cv::Size& featsize) with
+       *        featsize equals to \p src size.
+       *
+       * @param [in]  src   the input image
+       *
+       * @returns The features extracted from the image.
+       */
+      cv::Mat filterImage(cv::Mat& src);
 
       /**
        * @brief Filter the input (greyscale) image with the given kernels returning
        *        the results stacked in a single image .
        *
        * @param [in]  src   the input image
-       * 
-       * */
-      cv::Mat filterImage(cv::Mat& src);
-      cv::Mat filterImage(cv::Mat& src, cv::Size & featSize);
+       * @param [in]  featSize final size of the returned image.
+       *
+       * @returns The resized features extracted from the image.
+       *
+       */
+      cv::Mat filterImage(cv::Mat& src, cv::Size& featSize);
 
     protected:
 
@@ -154,14 +222,22 @@ namespace emotime {
           double lambda, double gamma, double psi, int ktype);
 
       /**
-       * @brief Obtain the dimension needed for pre-allocating an image suitable for
-       *        being used in gaborbank_filterImage (grayscale image only)
+       * @brief Calls getFilteredImgSize(cv::Size& size) with \p src size.
        *
        * @param [in] src     the input image
        *
        * @returns The size of the filtered image.
-       * */
+       */
       cv::Size getFilteredImgSize(cv::Mat& src);
+
+      /**
+       * @brief Obtain the dimension needed for pre-allocating an image suitable for
+       *        being used in gaborbank_filterImage (grayscale image only)
+       *
+       * @param [in] size     the input image size
+       *
+       * @returns The size of the filtered image.
+       * */
       cv::Size getFilteredImgSize(cv::Size& size);
 
 

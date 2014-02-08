@@ -3,7 +3,7 @@
  * @file    GaborBank.cpp
  *
  * @date    01/09/2014 11:50:56 PM
- * @brief
+ * @brief   Contains implementation for GaborBank.h
  *
  * @details
  *
@@ -115,24 +115,22 @@ namespace emotime {
 #if defined(DO_LAMBDA)
       for (_lambda = kGaborLambdaMin; _lambda < kGaborLambdaMax;
           _lambda += (kGaborLambdaMax-kGaborLambdaMin)/((double)(nlambdas<=0?1:nlambdas))) {
-#endif
-#if defined(DO_SIGMA)
+#elif defined(DO_SIGMA)
       for (_sigma = kGaborSigmaMin; _sigma < kGaborSigmaMax; _sigma += (kGaborSigmaMax-kGaborSigmaMin)/((double)(nlambdas<=0?1:nlambdas))) {
-#endif
-#if defined(DO_LAMBDA_P)
+#elif defined(DO_LAMBDA_P)
       for (int j = 0; j < (nlambdas>kGaborPaperLamdasLen?kGaborPaperLamdasLen:nlambdas); j++) {
           _lambda = kGaborPaperLambdas[j];
 #endif
+
 #if defined(DO_LAMBDA) || defined(DO_LAMBDA_P) 
         _sigma= slratio*_lambda;
-#endif
-#if defined(DO_SIGMA)
+#elif defined(DO_SIGMA)
         _lambda=_sigma/slratio;
 #endif
         //int n = ( std::ceil(2.5*_sigma/_gamma) >maxfwidth? : std::ceil(2.5*_sigma/_gamma)  );
         int n = std::ceil(2.5*_sigma/_gamma); 
         cv::Size kernelSize(2*n+1, 2*n+1);
-        
+
         #if defined(GABOR_DEBUG)
         std::cerr<<"INFO:bandw="<<bandwidth<<",slratio="<<slratio<<",lambda="<<_lambda<<",sigma="<<_sigma<<",ksize="<<2*n-1<<""<<std::endl;
         #endif
@@ -146,8 +144,6 @@ namespace emotime {
       }
     }
   }
-
-  
 
   void GaborBank::fillGaborBankEmpiric(double nwidths, double nlambdas, double nthetas){
     this->emptyBank();
@@ -186,6 +182,7 @@ namespace emotime {
       for (_lambda = kGaborELambdaMin; _lambda < kGaborELambdaMax;
               _lambda += std::pow(10, (log(kGaborELambdaMax)-log(kGaborELambdaMin))/((double)(nlambdas<=0?1:nlambdas)) ) ) {
 #endif
+
 #if defined(GABOR_DEBUG)
         std::cerr<<"INFO:lambda="<<_lambda<<",sigma="<<_sigma<<",ksize="<<fwidth<<""<<std::endl;
 #endif
@@ -203,16 +200,15 @@ namespace emotime {
   }
 
     void GaborBank::fillDefaultGaborrBank() {
-      this->fillGaborBank(kGaborDefaultNwidth, kGaborDefaultNtheta,
-          kGaborDefaultNlambda);
+      this->fillGaborBank(kGaborDefaultNwidth, kGaborDefaultNlambda, kGaborDefaultNtheta);
     }
 
-    Size GaborBank::getFilteredImgSize(Mat & src) {
+    Size GaborBank::getFilteredImgSize(cv::Mat & src) {
       // The output image will contain all the filtered image vertically stacked.
       Size s=src.size();
       return this->getFilteredImgSize(s);
     }
-    Size GaborBank::getFilteredImgSize(Size & size) {
+    Size GaborBank::getFilteredImgSize(cv::Size & size) {
       // The output image will contain all the filtered image vertically stacked.
       Size s = Size(0,0);
       s.height = size.height * bank.size();
@@ -220,12 +216,12 @@ namespace emotime {
       return s;
     }
 
-    Mat GaborBank::filterImage(Mat& src) {
+    Mat GaborBank::filterImage(cv::Mat& src) {
       Size s=Size(src.cols, src.rows);
       return filterImage(src, s);
     }
     
-    Mat GaborBank::filterImage(Mat & src, cv::Size & featSize) {
+    Mat GaborBank::filterImage(cv::Mat & src, cv::Size & featSize) {
       unsigned int i;
       unsigned int j;
       unsigned int k;

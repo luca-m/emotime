@@ -1,11 +1,7 @@
 /**
- * @class    GaborKernel
- * @author
- * @date
  *
- * @brief   Representation of a gabor kernel
- *
- * @details
+ * @file    GaborKernel.h
+ * @brief   Contains the declaration of GaborKernel
  *
  */
 
@@ -16,6 +12,16 @@
 
 namespace emotime {
 
+  /**
+   * @class    GaborKernel
+   * @author
+   * @date
+   *
+   * @brief   Representation of a gabor kernel
+   *
+   * @details
+   *
+   */
   class GaborKernel {
 
     public:
