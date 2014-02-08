@@ -57,6 +57,15 @@ void banner() {
    cout << "     orientations and frequencies. (Gabor magnitude)" << endl;
 }
 
+/**
+ *  @brief          Main
+ *
+ *  @param[in]      argc
+ *  @param[in]     argv
+ *
+ *  @returns  1
+ *
+ */
 int main(int argc, const char* argv[]){
   if (argc < 5) {
     banner();
