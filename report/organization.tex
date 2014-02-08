@@ -59,8 +59,10 @@ We have tested the compilation and usage on windows 8.1 using Visual Studio 12
         not in the right position} the project will likely not be able to
         compile due to missing reference to \code{opencv2/opencv} or similar.
     \end{enumerate}
-  \item Then generate the project and compile it.
-  \item This was tested with Visual Studio 12 64 bit.
+  \item Then generate the project and compile the project \code{ALL\_BUILD}
+  \item If the compilation succeeded, compile the project \code{INSTALL}
+  \item Now all scripts, configuration and tools should be in the directory
+    \code{assets} in the project source directory.
 \end{enumerate}
 
 \subsection{Usage}
