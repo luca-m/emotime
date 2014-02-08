@@ -17,11 +17,26 @@ add_subdirectory(utils)
 add_subdirectory(detector)
 add_subdirectory(gui)
 
+find_package(OpenCV COMPONENTS opencv_core opencv_ml opencv_imgproc
+  opencv_highgui opencv_objdetect REQUIRED)
+
 # Emotime library
-add_library(emotime SHARED facedetector/FaceDetector.cpp
-      detector/EmoDetector.cpp detector/BoostEmoDetector.cpp detector/SVMEmoDetector.cpp detector/FacePreProcessor.cpp
-      gaborbank/GaborBank.cpp gaborbank/GaborKernel.h
-      utils/matrix_io.cpp utils/string_utils.cpp)
+add_library(emotime SHARED  facedetector/FaceDetector.cpp
+                            detector/EmoDetector.cpp
+                            detector/BoostEmoDetector.cpp
+                            detector/SVMEmoDetector.cpp
+                            training/Classifier.cpp
+                            training/AdaBoostClassifier.cpp
+                            training/SVMClassifier.cpp
+                            detector/FacePreProcessor.cpp
+                            gaborbank/GaborBank.cpp
+                            gaborbank/GaborKernel.h
+                            utils/matrix_io.cpp
+                            utils/string_utils.cpp
+                                                  )
+
+target_link_libraries(emotime ${OpenCV_LIBS})
+
 INSTALL(TARGETS emotime DESTINATION ${ASSETDIR})
 
 INSTALL(FILES facedetector/FaceDetector.h
