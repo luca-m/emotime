@@ -1,4 +1,9 @@
 
+IF (MSVC)
+  # Setting the xecutables as console applications
+  SET (CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /SUBSYSTEM:CONSOLE")
+ENDIF (MSVC)
+
 include_directories(${SRCDIR}/training)
 include_directories(${SRCDIR}/facedetector)
 include_directories(${SRCDIR}/gaborbank)
