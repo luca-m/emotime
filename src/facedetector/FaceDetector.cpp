@@ -3,7 +3,7 @@
  * @file    FaceDetector.cpp
  *
  * @date    01/10/2014 12:26:04 AM
- * @brief
+ * @brief   Implementation for FaceDetector
  *
  * @details
  *
@@ -23,7 +23,7 @@ using std::vector;
 
 namespace emotime {
 
-  FaceDetector::FaceDetector(string face_config_file, string eye_config_file){
+  FaceDetector::FaceDetector(std::string face_config_file, std::string eye_config_file){
     cascade_f.load(face_config_file);
     if (eye_config_file != string("none")) {
       cascade_e.load(eye_config_file);
@@ -35,7 +35,7 @@ namespace emotime {
     assert(!cascade_f.empty());
   }
 
-  FaceDetector::FaceDetector(string face_config_file) {
+  FaceDetector::FaceDetector(std::string face_config_file) {
     cascade_f.load(face_config_file);
     this->doEyesRot = false;
     assert(!cascade_f.empty());
@@ -49,7 +49,7 @@ namespace emotime {
 
   }
 
-  bool FaceDetector::detectFace(Mat& img, Rect& face) {
+  bool FaceDetector::detectFace(cv::Mat& img, cv::Rect& face) {
     vector<Rect> faces;
     // detect faces
     assert(!cascade_f.empty());
@@ -77,7 +77,7 @@ namespace emotime {
     return true;
   }
 
-  bool FaceDetector::detectEyes(Mat& img, Point& eye1, Point& eye2){
+  bool FaceDetector::detectEyes(cv::Mat& img, cv::Point& eye1, cv::Point& eye2){
     vector<Rect> eyes;
     // detect faces
     assert(!cascade_e.empty());
@@ -139,7 +139,7 @@ namespace emotime {
     return true;
   }
 
-  bool FaceDetector::detect(Mat& img, Mat& face) {
+  bool FaceDetector::detect(cv::Mat& img, cv::Mat& face) {
     bool hasFace;
     bool hasEyes;
     Rect faceRegion;

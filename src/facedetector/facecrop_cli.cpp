@@ -3,7 +3,7 @@
  * @file    facecrop_cli.cpp
  *
  * @date    01/10/2014 12:33:58 AM
- * @brief
+ * @brief   CLI utils for face cropping
  *
  * @details
  *
@@ -50,6 +50,15 @@ void banner(){
  	cout << "     Crop faces from images" << endl;
 }
 
+/**
+ *  @brief          Main
+ *
+ *  @param[in]      argc
+ *  @param[in]     argv
+ *
+ *  @returns  1
+ *
+ */
 int main( int argc, const char* argv[] ){
 	if (argc < 4) {
 		banner();
