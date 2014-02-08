@@ -199,9 +199,9 @@ namespace emotime {
         eyecenter=Point(left.x+(right.x-left.x)/2, lower.y+(upper.y-lower.y)/2);
         // rotate image
 //        float c0=std::sqrt(std::pow(tribase.x-upper.x,2)+std::pow(tribase.y-upper.y,2));
-        float c1=std::sqrt(std::pow(tribase.x-lower.x,2)+std::pow(tribase.y-lower.y,2));
-        float ip=std::sqrt(std::pow(upper.x-lower.x,2)  +std::pow(upper.y-lower.y  ,2));
-        float angle=(left.x==lower.x?1:-1)*std::acos(c1/ip)*(180.0f/CV_PI)/2.0;
+        double c1=std::sqrt(std::pow(tribase.x-lower.x,2)+std::pow(tribase.y-lower.y,2));
+        double ip=std::sqrt(std::pow(upper.x-lower.x,2)  +std::pow(upper.y-lower.y  ,2));
+        double angle=(left.x==lower.x?1:-1)*std::acos(c1/ip)*(180.0f/CV_PI)/2.0;
         
         if (/*std::abs(angle)<20.0 && */std::abs(angle)<kMaxRotationAngle){
           Mat rotMat = getRotationMatrix2D(eyecenter, angle, 1.0);
