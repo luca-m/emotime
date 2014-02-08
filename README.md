@@ -26,20 +26,18 @@ stuff that could be useful to get in this topic:
 
 ## Project Structure
 
-```
-src
-  \-->dataset 		 Scripts for dataset management
-  \-->facecrop 		 Utilities and modules for face cropping and registration
-  \-->gaborbank		 Utilities and modules for generating gabor filters and image filtering
-  \-->adaboost 		 Utilities and modules for adaboost train, prediction, and feature selection
-  \-->svm          Utilities and modules for svm training and prediction
-  \-->detector     Multiclass detector and preprocessor
-  \-->utils        String and IO utilities, CSV supports, and so on..
-doc                Documentation (doxigen)
-resources          Containing third party resources (eg. OpenCV haar classifiers)
-assets             Binary folder
-test               Some testing scripts here
-```
+    src
+      \-->dataset 		 Scripts for dataset management
+      \-->facecrop 		 Utilities and modules for face cropping and registration
+      \-->gaborbank		 Utilities and modules for generating gabor filters and image filtering
+      \-->adaboost 		 Utilities and modules for adaboost train, prediction, and feature selection
+      \-->svm          Utilities and modules for svm training and prediction
+      \-->detector     Multiclass detector and preprocessor
+      \-->utils        String and IO utilities, CSV supports, and so on..
+    doc                Documentation (doxigen)
+    resources          Containing third party resources (eg. OpenCV haar classifiers)
+    assets             Binary folder
+    test               Some testing scripts here
 
 ## Build
 
@@ -48,8 +46,6 @@ Dependencies:
 * CMake > 2.8
 * Python > 2.7, < 3.0
 * OpenCV > 2.4.5
-
-~~_NOTE: OpenCV CvMLData is used for loading training files, but if you try to run the ML-Training procedure as is you could encounter some problem related to OpenCV default values and size of training data. For the sake of simplicity you MAY NEEED to make CvMLData.read.csv capable of reading bigger data. In order to do it you should RECOMPILE and REINSTALL OpenCV after a very quick modification. In detail you should go to `opencv-2.x.x` folder, then edit `modules/ml/src/data.cpp`, find the `read_csv` method, find the `storage = cvCreateMemStorage();` line and specify a bigger value than the default one (eg.`storage = cvCreateMemStorage(256*2048)` instead of 64K)_~~
 
 Compiling on linux:
 
