@@ -54,4 +54,5 @@ if __name__ == "__main__":
     dataset_cropFaces(args.dsFolder, config, args.eye_correction)
   except Exception as e:
     print "ERR: something wrong (%s)" % str(e)
+    sys.exit(1)
 

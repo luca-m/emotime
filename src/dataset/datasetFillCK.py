@@ -3,6 +3,7 @@
   Import the Chon-Kanade plus database to a dataset.
 """
 import os
+import sys
 import shutil
 import argparse
 import datasetConfigParser as dcp
@@ -78,5 +79,5 @@ if __name__ == "__main__":
     dataset_fillCohnKanade(args.dsFolder, args.ckFolder, args.ckEmoFolder, config)
   except Exception as e:
     print "ERR: something wrong (%s)" % str(e)
-  
+    sys.exit(1)
 

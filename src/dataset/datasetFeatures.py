@@ -18,7 +18,7 @@ def _subproc_call(args):
     retcode=subprocess.call( param, shell=False )
     #comstr=' '.join(param)
     if retcode==0:
-      print "INFO: done %s"%comstr
+      #print "INFO: done %s"%comstr
       return (comstr,True)
     else:
       print "ERR: '%s' has encountered problems" % comstr 
@@ -80,5 +80,6 @@ if __name__ == "__main__":
     dataset_calcFeatures(args.dsFolder, config)
   except Exception as e:
     print "ERR: something wrong (%s)" % str(e)
+    sys.exit(1)
 
 
