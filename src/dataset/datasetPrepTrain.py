@@ -3,6 +3,7 @@
 
 """
 import cv2
+import sys
 import os
 import itertools
 import argparse
@@ -143,4 +144,5 @@ if __name__ == "__main__":
     dataset_prepTrainFiles(args.dsFolder, args.mode, config)
   except Exception as e:
     print "ERR: something wrong (%s)" % str(e)
+    sys.exit(1)
 

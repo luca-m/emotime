@@ -25,7 +25,7 @@ namespace emotime {
   /// AdaBoost trim weight value
   const double kTrimWeight = 0.0;
   /// AdaBoost max algorithm depth
-  const double kMaxDepth = 1.0;
+  const int kMaxDepth = 1;
 
 }
 

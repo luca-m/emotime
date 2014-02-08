@@ -3,6 +3,7 @@
    Train with Adaboost and select relevant features 
 """
 import argparse
+import sys
 import os
 import subprocess
 import multiprocessing
@@ -76,5 +77,5 @@ if __name__ == "__main__":
     dataset_run_training(args.dsFolder, config, args.mode)
   except Exception as e:
     print "ERR: something wrong (%s)" % str(e)
-
+    sys.exit(1)
 

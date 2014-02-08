@@ -3,7 +3,7 @@
 import argparse
 import datasetConfigParser as dcp
 import os
-
+import sys
 
 def launch_gui(dsfolder, config, mode, eye_detection, do_prints=True):
 
@@ -50,3 +50,4 @@ if __name__ == "__main__":
     launch_gui(args.dsFolder, config, args.mode, args.eye_correction)
   except Exception as e:
     print "ERR: something wrong (%s)" % str(e)
+    sys.exit(1)

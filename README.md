@@ -54,7 +54,14 @@ Compiling on linux:
 
 Cross-compiling for windows:
 
-* TODO: CMake Toolchain for MinGW
+* Using CMake or CMakeGUI, select emotime as source folder and configure.
+* If it complains about setting the variable `OpenCV_DIR` set it to the appropriate path so that:
+  - C:/path/to/opencv/dir/ contains the libraries (`*.lib`)
+  - C:/path/to/opencv/dir/include contains the include directories (opencv and opencv2)
+  - **IF the include directory is missing** the project will likely not be able
+    to compile due to missing reference to `opencv2/opencv` or similar.
+* Then generate the project and compile it.
+* This was tested with Visual Studio 12 64 bit.
 
 Compiling on linux:
 

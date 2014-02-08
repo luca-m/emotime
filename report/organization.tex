@@ -19,6 +19,19 @@ assets             Binary folder
 
 \end{verbatim}
 
+In order to configure, compile and run this project one must have:
+
+\begin{itemize}
+  \item CMake $\ge$ 2.8
+  \item Opencv $\ge$ 2.4.5
+  \item Python $\ge$ 2.7
+\end{itemize}
+
+Although python is not strictly required, the usage of the individual tools
+without python is not recommended.
+
+\subsection{Compilation on Linux}
+
 Just like any other \emph{CMake} projects, the first step is to initialize the
 compilation by doing:
 
@@ -31,11 +44,32 @@ cmake ../
 The \code{make install} command, or equivalent, compiles and moves binaries and
 scripts in the \code{assets} directory.
 
+\subsection{Compilation on Windows}
+
+We have tested the compilation and usage on windows 8.1 using Visual Studio 12
+64bit. However it should work with any version:
+
+\begin{enumerate}
+  \item Using CMake or CMakeGUI, select emotime as source folder and configure.
+  \item If it complains about setting the variable \code{OpenCV\_DIR} set it to the appropriate path so that:
+    \begin{enumerate}
+      \item \code{C:/path/to/opencv/dir/} contains the libraries (\code{*.lib})
+      \item \code{C:/path/to/opencv/dir/include} contains the include
+        directories (opencv and opencv2). \textbf{IF the include directory is
+        not in the right position} the project will likely not be able to
+        compile due to missing reference to \code{opencv2/opencv} or similar.
+    \end{enumerate}
+  \item Then generate the project and compile the project \code{ALL\_BUILD}
+  \item If the compilation succeeded, compile the project \code{INSTALL}
+  \item Now all scripts, configuration and tools should be in the directory
+    \code{assets} in the project source directory.
+\end{enumerate}
+
 \subsection{Usage}
 
 The general usage is to initialize the \code{dataset} directory, fill it with
 images from the \code{CK} database, train the classifiers with those images and
-launch the GUI. Algorithm parameters can be changed editing
+launch the GUI\@. Algorithm parameters can be changed editing
 \code{assets/default.cfg} prior to initialization.
 
 \subsubsection*{Initialize and fill a dataset}

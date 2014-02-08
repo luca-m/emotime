@@ -19,8 +19,8 @@ std::string matrix_io_fileExt( std::string & file){
 
 std::string matrix_io_fileName( std::string & file){
   int nameBegin=std::max( (int) file.find_last_of(string(PATH_SEPARATOR))+1, 0 );
-  int nameEnd=file.find_last_of(".");
-  int extLen= file.substr(nameEnd, file.length()-nameEnd).length();
+  size_t nameEnd=file.find_last_of(".");
+  size_t extLen= file.substr(nameEnd, file.length()-nameEnd).length();
   return file.substr( std::max( (int) file.find_last_of(string(PATH_SEPARATOR))+1, 0 ) , file.length()-nameBegin-extLen );
 }
 std::string matrix_io_fileBaseName(std::string & file){

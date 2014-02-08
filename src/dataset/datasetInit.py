@@ -3,6 +3,7 @@
    Initialize a dataset  
 """
 import os
+import sys
 import argparse
 import datasetConfigParser as dcp
 
@@ -50,4 +51,5 @@ if __name__ == "__main__":
     dataset_init(args.dsFolder, config, args.config, args.cfg)
   except Exception as e:
     print "ERR: something wrong (%s)" % str(e)
+    sys.exit(1)
 
