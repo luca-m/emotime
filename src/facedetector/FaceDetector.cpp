@@ -24,12 +24,12 @@ using std::vector;
 namespace emotime {
 
   FaceDetector::FaceDetector(std::string face_config_file, std::string eye_config_file){
-    
+
     if (face_config_file.find(std::string("cbcl1"))!=std::string::npos){
       this->faceMinSize=Size(30, 60);
     } else {
-      this->faceMinSize=Size(120,200); 
-    } 
+      this->faceMinSize=Size(120,200);
+    }
 
     cascade_f.load(face_config_file);
     if (eye_config_file != string("none")) {
@@ -130,7 +130,7 @@ namespace emotime {
         val1=tmp;
         eye1.x=tmpe.x;
         eye1.y=tmpe.y;
-      } else if (area>val1){ 
+      } else if (area>val1){
         // second
         val1=area;
         eye1.x=x+w/2;
@@ -176,10 +176,10 @@ namespace emotime {
       hasEyes=detectEyes(plainFace, eye1, eye2);
       if (hasEyes){
         // eyes are initially relative to face patch
-        eye1.x+=faceRegion.x; 
-        eye2.x+=faceRegion.x; 
-        eye1.y+=faceRegion.y; 
-        eye2.y+=faceRegion.y; 
+        eye1.x+=faceRegion.x;
+        eye2.x+=faceRegion.x;
+        eye1.y+=faceRegion.y;
+        eye2.y+=faceRegion.y;
         Point left,right,upper,lower,tribase,eyecenter;
         if (eye1.x<eye2.x){
           left=eye1;
@@ -202,7 +202,7 @@ namespace emotime {
         double c1=std::sqrt(std::pow(tribase.x-lower.x,2)+std::pow(tribase.y-lower.y,2));
         double ip=std::sqrt(std::pow(upper.x-lower.x,2)  +std::pow(upper.y-lower.y  ,2));
         double angle=(left.x==lower.x?1:-1)*std::acos(c1/ip)*(180.0f/CV_PI)/2.0;
-        
+
         if (/*std::abs(angle)<20.0 && */std::abs(angle)<kMaxRotationAngle){
           Mat rotMat = getRotationMatrix2D(eyecenter, angle, 1.0);
           warpAffine(imgGray, imgGray, rotMat, imgGray.size());
@@ -213,7 +213,7 @@ namespace emotime {
         }
       }
     }
-    // copy equalized and rotated face to out image 
+    // copy equalized and rotated face to out image
     #ifndef TRAINING_BUILD
     cv::resize(plainFace,plainFace, kFaceSizeLimit, cv::INTER_LINEAR);
     #endif

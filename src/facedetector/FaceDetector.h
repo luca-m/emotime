@@ -17,13 +17,15 @@
 #include <opencv2/opencv.hpp>
 
 namespace emotime {
- 
-  /// Performance saving constant. Limit the dimension of the face retrieved. (NOT GOOD FOR TRAINING) 
+
+  /// Performance saving constant. Limit the dimension of the face retrieved. (NOT GOOD FOR TRAINING)
   const cv::Size kFaceSizeLimit = cv::Size(128,128);
-  
-  #ifdef TRAINING_BUILD  
+
+  #ifdef TRAINING_BUILD
+  /// Maximum rotation allowed for eye correction
   const float kMaxRotationAngle = 10.0f;
   #else
+  /// Maximum rotation allowed for eye correction
   const float kMaxRotationAngle = 20.0f;
   #endif
 
