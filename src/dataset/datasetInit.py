@@ -33,10 +33,10 @@ def dataset_init(dsPath, config, cfgFile, dsCfgName):
   if not os.path.exists(pth):
     os.makedirs(pth)
   # Copy configuration
-  with open(cfgFile, "r") as conf:
-    configuration = conf.read()
-    with open(join(dsPath, dsCfgName), "w") as nconf:
-      nconf.write(configuration)
+  #with open(cfgFile, "r") as conf:
+    #configuration = conf.read()
+    #with open(join(dsPath, dsCfgName), "w") as nconf:
+      #nconf.write(configuration)
 
 if __name__ == "__main__":
   parser = argparse.ArgumentParser()

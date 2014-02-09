@@ -75,7 +75,7 @@ if __name__ == "__main__":
   
   try:
     config={}
-    config=dcp.parse_ini_config(join(args.dsFolder, args.cfg))
+    config=dcp.parse_ini_config(args.cfg)
     dataset_fillCohnKanade(args.dsFolder, args.ckFolder, args.ckEmoFolder, config)
   except Exception as e:
     print "ERR: something wrong (%s)" % str(e)

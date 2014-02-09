@@ -90,7 +90,7 @@ if __name__ == "__main__":
 
   try:
     config = {}
-    config = dcp.parse_ini_config(os.path.join(args.dsFolder, args.cfg))
+    config = dcp.parse_ini_config(args.cfg)
     dataset_verify_prediction(args.dsFolder, config, args.mode, args.eye_correction)
   except Exception as e:
     print "ERR: something wrong (%s)" % str(e)

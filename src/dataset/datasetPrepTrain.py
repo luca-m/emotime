@@ -140,7 +140,7 @@ if __name__ == "__main__":
   args = parser.parse_args()
   try:
     config={}
-    config=dcp.parse_ini_config(join(args.dsFolder, args.cfg))
+    config=dcp.parse_ini_config(args.cfg)
     dataset_prepTrainFiles(args.dsFolder, args.mode, config)
   except Exception as e:
     print "ERR: something wrong (%s)" % str(e)

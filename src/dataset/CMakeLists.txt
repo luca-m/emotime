@@ -1,6 +1,6 @@
 
 # Configuration
-CONFIGURE_FILE(default.cfg ${ASSETDIR} COPYONLY)
+CONFIGURE_FILE(example_dataset.cfg ${ASSETDIR} COPYONLY)
 CONFIGURE_FILE(datasetConfigParser.py ${ASSETDIR} COPYONLY)
 # Dataset tools
 CONFIGURE_FILE(datasetInit.py ${ASSETDIR} COPYONLY)

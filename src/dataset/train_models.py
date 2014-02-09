@@ -6,8 +6,9 @@ import sys
 import os
 
 if __name__ == "__main__":
+
   parser = argparse.ArgumentParser()
-  parser.add_argument("--cfg", help="Dataset config file name", required=True)
+  parser.add_argument("--cfg", help="Dataset config file name", default='dataset.cfg')
   parser.add_argument("dsFolder", help="Dataset base folder")
   parser.add_argument("--mode", choices=['adaboost', 'svm'], help="training mode: adaboost or svm", required=True)
   parser.add_argument("--prep-train-mode", choices=['1vsAllExt', '1vsAll', '1vs1'], help="Training set preparation mode: 1vsall, 1vsall extended, 1vs1", required=True)
@@ -15,6 +16,25 @@ if __name__ == "__main__":
   parser.add_argument("--skip-facecrop", action="store_true", help="WARNING: To be set only if the facecropping was already performed with the same configuration file!")
 
   args = parser.parse_args()
+
+  print " ** Emotime ** "
+  print "   > Luca Mella"
+  print "   > Daniele Bellavista"
+  print ""
+  print " [*] Remember! Before using the training, the dataset folder must be"
+  print "     initialized with datasetInit.py and datasetFillCK.py"
+  print ""
+
+  if not os.path.isfile(args.cfg):
+    print " [#] ERROR: configuration file", args.cfg, "doesn't exists at path", os.path.abspath(args.cfg)
+    print ""
+    sys.exit(1)
+
+  if not os.path.isdir(args.dsFolder):
+    print " [#] ERROR: dataset folder", args.dsFolder, "doesn't exists at path", os.path.abspath(args.dsFolder)
+    print ""
+    sys.exit(1)
+
 
   print " [*] Parameters: "
   print "   [>] Dataset folder: " + args.dsFolder
