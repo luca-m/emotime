@@ -9,7 +9,7 @@ import datasetConfigParser as dcp
 
 from os.path import join
 
-def dataset_init(dsPath, config, cfgFile, dsCfgName):
+def dataset_init(dsPath, config):
   """ 
       Initialize dataset 
   """
@@ -42,13 +42,12 @@ if __name__ == "__main__":
   parser = argparse.ArgumentParser()
   parser.add_argument("--cfg", default="dataset.cfg", help="Dataset config file name")
   parser.add_argument("dsFolder", help="Dataset folder path")
-  parser.add_argument("config", help="Configuration file to use for dataset initialization")
   args = parser.parse_args()
-  
+
   try:
     config={}
-    config=dcp.parse_ini_config(args.config)
-    dataset_init(args.dsFolder, config, args.config, args.cfg)
+    config=dcp.parse_ini_config(args.cfg)
+    dataset_init(args.dsFolder, config)
   except Exception as e:
     print "ERR: something wrong (%s)" % str(e)
     sys.exit(1)

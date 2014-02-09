@@ -104,7 +104,7 @@ code labels (aka Action Units) and emotion labels (neutral, anger, contempt, dis
 
 Initialize and fill a dataset:
 
-    python2 datasetInit.py [-h] dsPath config
+    python2 datasetInit.py [-h] --cfg dataset.cfg dsPath
     python2 datasetFillCK.py [-h] datasetFolder cohnKanadeFolder cohnKanadeEmotionsFolder
 
 Train some models:

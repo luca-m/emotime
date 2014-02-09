@@ -72,43 +72,62 @@ the \code{PATH}.
 
 The general usage is to initialize the \code{dataset} directory, fill it with
 images from the \code{CK} database, train the classifiers with those images and
-launch the GUI\@. Algorithm parameters can be changed editing
-\code{assets/default.cfg} prior to initialization.
+launch the GUI\@. Algorithm parameters are set using a configuration file. An
+example of the configuration file is \code{assets/example\_dataset.cfg}. This file
+will be overwritten at every \code{make install}.
+
+By default python scripts search the configuration file named
+\code{./dataset.cfg}, but with the parameter \code{--cfg /path/to/cfg} any
+configuration file can be used.
 
 \subsubsection*{Initialize and fill a dataset}
 
 \begin{verbatim}
-python2 datasetInit.py [-h] dsPath config
-python2 datasetFillCK.py [-h] datasetFolder cohnKanadeFolder
-                                      cohnKanadeEmotionsFolder
-\end{verbatim}
+python2 datasetInit.py --cfg dataset.cfg /path/to/dataset
 
-Any further adjustment to the configuration parameters must be
-\emph{``committed''} by replacing the configuration file
-\code{dataset/dataset.cfg}.
+python2 datasetFillCK.py /path/to/dataset \
+                         /path/to/cohn/kanade \
+                         /path/to/cohn/kanade/emotions
+\end{verbatim}
 
 \subsubsection*{Classifier training}
 
-You must inside a console into the \code{assest} directory, with all the
-scripts and clis present.
+Your console console working directory must be the \code{assest} directory,
+with all the scripts and clis present. Assuming your configuration is in the
+assest directory, named \code{dataset.cfg}, the script \code{train\_models.py}
+automatize the training procedure. \textbf{Remember} this script must be called
+inside the \code{assest} directory.
 
 \begin{verbatim}
-python ./train_models.py --cfg dataset.cfg --mode svm --prep-train-mode 1vsAll --eye-correction /path/to/dataset
+python ./train_models.py --cfg dataset.cfg --mode svm\
+                    --prep-train-mode {1vsAll, 1vsAllExt, 1vs1}\
+                          [--eye-correction]\
+                          /path/to/dataset
 \end{verbatim}
 
-Or also:
+Or also (in order):
 
 \begin{verbatim}
-python2 datasetCropFaces.py [-h] [--eye-correction] dsFolder
-python2 datasetFeatures.py [-h] dsFolder
-python2 datasetPrepTrain.py [-h] [--mode {1vs1,1vsAll,1vsAllExt}] dsFolder
-python2 datasetTrain.py [-h] [--mode {adaboost,svm}] dsFolder
-python2 datasetVerifyPrediction.py [-h] [--mode {adaboost,svm}]
-                                          [--eye-correction] dsFolder
+python datasetCropFaces.py [--eye-correction] /path/to/dataset
+
+python datasetFeatures.py /path/to/dataset
+
+python datasetPrepTrain.py --mode {1vs1,1vsAll,1vsAllExt}\
+                                         /path/to/dataset
+
+python datasetTrain.py --mode svm /path/to/dataset
+
+python datasetVerifyPrediction.py --mode svm\
+                               [--eye-correction] /path/to/dataset
 \end{verbatim}
 
 \subsubsection*{GUI webcam}
 
+After the classifiers have been trained, you can use them to launch the emotime
+GUI\@. The GUI uses the webcam to  detect emotions.
+
 \begin{verbatim}
-python2 gui.py [-h] [--eye-correction]
+
+python gui.py --cfg dataset.cfg --mode svm [--eye-correction]\
+                                            /path/to/dataset
 \end{verbatim}
