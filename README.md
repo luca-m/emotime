@@ -7,7 +7,7 @@ _Recognizing emotional states in faces_
 
 Authors: Luca Mella, Daniele Bellavista
 
-Development Status: Prototype 
+Development Status: Experimental 
 
 Copyleft: [CC-BY-NC 2013](http://creativecommons.org/licenses/by-nc/3.0/)
 
@@ -90,7 +90,7 @@ Cam gui:
 
 Or:
 
-    ./gui.py --mode svm --eye-correction <dataset_path>
+    ./gui.py --cfg <dataset_configuration_path> --mode svm --eye-correction <dataset_path>
 
 
 ## Training
@@ -104,8 +104,8 @@ code labels (aka Action Units) and emotion labels (neutral, anger, contempt, dis
 
 Initialize and fill a dataset:
 
-    python2 datasetInit.py [-h] --cfg dataset.cfg dsPath
-    python2 datasetFillCK.py [-h] datasetFolder cohnKanadeFolder cohnKanadeEmotionsFolder
+    python2 datasetInit.py [-h] --cfg <dataset_configuration_path> <dataset_path>
+    python2 datasetFillCK.py [-h] --cfg <dataset_configuration_path> <dataset_path> <cohnKanade_folder> <cohnKanade_emotions_folder>
 
 Train some models:
 
@@ -113,7 +113,7 @@ Train some models:
 
 Or better:
 
-    ./train_models.py --cfg dataset.cfg --mode svm --prep-train-mode 1vsAll --eye-correction dsFolder
+    ./train_models.py --cfg <dataset_configuration_path> --mode svm --prep-train-mode 1vsAll --eye-correction <dataset_folder>
 
 Or also:
 
@@ -123,9 +123,6 @@ Or also:
     python datasetTrain.py [-h] [--mode {adaboost,svm}] dsFolder 
     python datasetVerifyPrediction.py [-h] [--mode {adaboost,svm}] [--eye-correction] dsFolder
 
-Training with _native_ tool:
-
-    TBD
 
 ## Further Development
 
