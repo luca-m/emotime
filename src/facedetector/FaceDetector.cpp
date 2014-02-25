@@ -62,9 +62,9 @@ namespace emotime {
     assert(!cascade_f.empty());
     #ifndef TRAINING_BUILD 
     //cascade_f.detectMultiScale(img, faces, 1.1, 2, 0|CV_HAAR_SCALE_IMAGE, this->faceMinSize, cv::Size(img.size().width/4,img.size().height/4 ) );
-    cascade_f.detectMultiScale(img, faces, 1.1, 2, 0|CV_HAAR_SCALE_IMAGE, this->faceMinSize, cv::Size(this->faceMinSize.width*2,this->faceMinSize.height*2 ) );
+    cascade_f.detectMultiScale(img, faces, kScaleFactor, 2, 0|CV_HAAR_SCALE_IMAGE, this->faceMinSize, cv::Size(this->faceMinSize.width*3,this->faceMinSize.height*3 ) );
     #else
-    cascade_f.detectMultiScale(img, faces, 1.1, 2, 0|CV_HAAR_SCALE_IMAGE, this->faceMinSize );
+    cascade_f.detectMultiScale(img, faces, kScaleFactor, 2, 0|CV_HAAR_SCALE_IMAGE, this->faceMinSize );
     #endif
 
     if (faces.size() == 0){
@@ -94,7 +94,7 @@ namespace emotime {
     // detect faces
     assert(!cascade_e.empty());
     // Min widths and max width are taken from eyes proportions
-    cascade_e.detectMultiScale(img, eyes, 1.1, 2, 0|CV_HAAR_SCALE_IMAGE,
+    cascade_e.detectMultiScale(img, eyes, kScaleFactor, 2, 0|CV_HAAR_SCALE_IMAGE,
         Size(img.size().width/5, img.size().width/(5*2)));
 
     if (eyes.size() < 2) {

@@ -29,6 +29,9 @@ namespace emotime {
   /// Maximum rotation allowed for eye correction
   const float kMaxRotationAngle = 20.0f;
   #endif
+  /// Scale factor determines how much the image size is reduced at each scaling operation
+  const float kScaleFactor=1.3;
+
 
   /**
    * @class   FaceDetector
