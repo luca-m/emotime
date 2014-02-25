@@ -26,7 +26,7 @@ namespace emotime {
   FaceDetector::FaceDetector(std::string face_config_file, std::string eye_config_file){
 
     if (face_config_file.find(std::string("cbcl1"))!=std::string::npos){
-      this->faceMinSize=Size(30, 60);
+      this->faceMinSize=Size(90, 90);
     } else {
       this->faceMinSize=Size(120,200);
     }
@@ -60,7 +60,12 @@ namespace emotime {
     vector<Rect> faces;
     // detect faces
     assert(!cascade_f.empty());
+    #ifndef TRAINING_BUILD 
+    //cascade_f.detectMultiScale(img, faces, 1.1, 2, 0|CV_HAAR_SCALE_IMAGE, this->faceMinSize, cv::Size(img.size().width/4,img.size().height/4 ) );
+    cascade_f.detectMultiScale(img, faces, 1.1, 2, 0|CV_HAAR_SCALE_IMAGE, this->faceMinSize, cv::Size(this->faceMinSize.width*2,this->faceMinSize.height*2 ) );
+    #else
     cascade_f.detectMultiScale(img, faces, 1.1, 2, 0|CV_HAAR_SCALE_IMAGE, this->faceMinSize );
+    #endif
 
     if (faces.size() == 0){
       return false;
@@ -153,6 +158,9 @@ namespace emotime {
     Mat plainFace;
     Point eye1,eye2;
 
+    clock_t begin = clock();;
+
+
     if (img.rows == 0 || img.rows == 0){
       return false;
     }
@@ -220,6 +228,9 @@ namespace emotime {
     plainFace.copyTo(face);
     equalizeHist(face, face);
     imgGray.release();
+    clock_t end = clock();
+    double elapsed_secs = double(end - begin) / CLOCKS_PER_SEC;
+    std::cout<<"DEBUG: face detection time t="<<elapsed_secs<<" s, r="<<face.rows<<", c="<<face.cols<<std::endl;
     return true;
   }
 

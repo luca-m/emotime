@@ -15,6 +15,7 @@
 //#define TRAINING_BUILD
 
 #include <opencv2/opencv.hpp>
+#include <ctime>
 
 namespace emotime {
 
