@@ -39,6 +39,8 @@ namespace emotime {
     } else {
       this->doEyesRot = false;
     }
+
+    this->clahe = cv::createCLAHE(kCLAHEClipLimit, kCLAHEGridSize);
     assert(!cascade_f.empty());
   }
 
@@ -46,6 +48,7 @@ namespace emotime {
     cascade_f.load(face_config_file);
     this->doEyesRot = false;
     assert(!cascade_f.empty());
+    this->clahe = cv::createCLAHE(kCLAHEClipLimit, kCLAHEGridSize);
   }
 
   FaceDetector::FaceDetector() {
@@ -53,7 +56,7 @@ namespace emotime {
   }
 
   FaceDetector::~FaceDetector() {
-
+    //this->clahe->~CLAHE();
   }
 
   bool FaceDetector::detectFace(cv::Mat& img, cv::Rect& face) {
@@ -172,7 +175,9 @@ namespace emotime {
       img.copyTo(imgGray);
     }
 
-    equalizeHist(imgGray, imgGray);
+    this->clahe->apply(imgGray,imgGray);
+
+    //equalizeHist(imgGray, imgGray);
     hasFace=detectFace(imgGray, faceRegion);
 
     if (!hasFace){
@@ -205,13 +210,13 @@ namespace emotime {
         }
         tribase=Point(upper.x, lower.y);
         eyecenter=Point(left.x+(right.x-left.x)/2, lower.y+(upper.y-lower.y)/2);
-        // rotate image
-//        float c0=std::sqrt(std::pow(tribase.x-upper.x,2)+std::pow(tribase.y-upper.y,2));
+        // Rotate image
+        //double c0=std::sqrt(std::pow(tribase.x-upper.x,2)+std::pow(tribase.y-upper.y,2));
         double c1=std::sqrt(std::pow(tribase.x-lower.x,2)+std::pow(tribase.y-lower.y,2));
         double ip=std::sqrt(std::pow(upper.x-lower.x,2)  +std::pow(upper.y-lower.y  ,2));
         double angle=(left.x==lower.x?1:-1)*std::acos(c1/ip)*(180.0f/CV_PI)/2.0;
 
-        if (/*std::abs(angle)<20.0 && */std::abs(angle)<kMaxRotationAngle){
+        if (std::abs(angle)<kMaxRotationAngle){
           Mat rotMat = getRotationMatrix2D(eyecenter, angle, 1.0);
           warpAffine(imgGray, imgGray, rotMat, imgGray.size());
           //hasFace=detectFace(imgGray, faceRegion);
@@ -227,6 +232,7 @@ namespace emotime {
     #endif
     plainFace.copyTo(face);
     equalizeHist(face, face);
+    //this->clahe->apply(plainFace,face);
     imgGray.release();
     clock_t end = clock();
     double elapsed_secs = double(end - begin) / CLOCKS_PER_SEC;
