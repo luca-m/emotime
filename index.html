@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset='utf-8' />
+    <meta http-equiv="X-UA-Compatible" content="chrome=1" />
+    <meta name="description" content="Emotime : Recognizing emotional states in faces" />
+
+    <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
+
+    <title>Emotime</title>
+  </head>
+
+  <body>
+
+    <!-- HEADER -->
+    <div id="header_wrap" class="outer">
+        <header class="inner">
+          <a id="forkme_banner" href="https://github.com/luca-m/emotime">View on GitHub</a>
+
+          <h1 id="project_title">Emotime</h1>
+          <h2 id="project_tagline">Recognizing emotional states in faces</h2>
+
+            <section id="downloads">
+              <a class="zip_download_link" href="https://github.com/luca-m/emotime/zipball/master">Download this project as a .zip file</a>
+              <a class="tar_download_link" href="https://github.com/luca-m/emotime/tarball/master">Download this project as a tar.gz file</a>
+            </section>
+        </header>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div id="main_content_wrap" class="outer">
+      <section id="main_content" class="inner">
+        <h1>
+<a name="emotime" class="anchor" href="#emotime"><span class="octicon octicon-link"></span></a>Emotime</h1>
+
+<p><em>Recognizing emotional states in faces</em></p>
+
+<hr><p>Authors: Luca Mella, Daniele Bellavista</p>
+
+<p>Development Status: Experimental </p>
+
+<p>Copyleft: <a href="http://creativecommons.org/licenses/by-nc/3.0/">CC-BY-NC 2013</a></p>
+
+<hr><h2>
+<a name="goal" class="anchor" href="#goal"><span class="octicon octicon-link"></span></a>Goal</h2>
+
+<p>This project aims to recognize main facial expressions (neutral, anger, disgust, fear, joy, sadness, surprise) in image
+sequences using the approaches described in:</p>
+
+<ul>
+<li><a href="http://ieeexplore.ieee.org/xpl/articleDetails.jsp?arnumber=1384873">Dynamics of Facial Expression Extracted Automatically from Video</a></li>
+<li><a href="http://ieeexplore.ieee.org/xpl/articleDetails.jsp?arnumber=1613024">Fully Automatic Facial Action Recognition in Spontaneous Behavior</a></li>
+</ul><h2>
+<a name="references" class="anchor" href="#references"><span class="octicon octicon-link"></span></a>References</h2>
+
+<p>Here is listed some interesting material about machine learning, opencv, gabor transforms and other
+stuff that could be useful to get in this topic:</p>
+
+<ul>
+<li><a href="http://www.inf.fu-berlin.de/inst/ag-ki/rojas_home/documents/tutorials/adaboost4.pdf">AdaBoost and the Super Bowl of Classifiers</a></li>
+<li><a href="http://mplab.ucsd.edu/tutorials/gabor.pdf">Tutorial on Gabor Filters</a></li>
+<li><a href="http://disp.ee.ntu.edu.tw/%7Epujols/Gabor%20wavelet%20transform%20and%20its%20application.pdf">Gabor wavelet transform and its application</a></li>
+<li><a href="http://www.cs.umd.edu/class/spring2005/cmsc838s/assignment-projects/gabor-filter-visualization/report.pdf">Gabor Filter Visualization</a></li>
+<li><a href="http://ieeexplore.ieee.org/xpl/articleDetails.jsp?arnumber=6222016">Meta-Analyis of the First Facial Expression Recognition Challenge</a></li>
+</ul><h2>
+<a name="project-structure" class="anchor" href="#project-structure"><span class="octicon octicon-link"></span></a>Project Structure</h2>
+
+<pre><code>src
+  \--&gt;dataset        Scripts for dataset management
+  \--&gt;facecrop       Utilities and modules for face cropping and registration
+  \--&gt;gaborbank      Utilities and modules for generating gabor filters and image filtering
+  \--&gt;adaboost       Utilities and modules for adaboost train, prediction, and feature selection
+  \--&gt;svm          Utilities and modules for svm training and prediction
+  \--&gt;detector     Multiclass detector and preprocessor
+  \--&gt;utils        String and IO utilities, CSV supports, and so on..
+doc                Documentation (doxigen)
+report             Class project report (latex)
+resources          Containing third party resources (eg. OpenCV haar classifiers)
+assets             Binary folder
+test               Some testing scripts here
+</code></pre>
+
+<h2>
+<a name="build" class="anchor" href="#build"><span class="octicon octicon-link"></span></a>Build</h2>
+
+<p>Dependencies:</p>
+
+<ul>
+<li><code>CMake &gt;= 2.8</code></li>
+<li><code>Python &gt;= 2.7, &lt; 3.0</code></li>
+<li><code>OpenCV &gt;= 2.4.5</code></li>
+</ul><p>Compiling on linux:</p>
+
+<ul>
+<li>
+<code>mkdir build</code> </li>
+<li><code>cd build</code></li>
+<li>
+<code>cmake .. ; make ; make install</code> - now the <code>asset</code> folder should be populated</li>
+</ul><p>Cross-compiling for windows:</p>
+
+<ul>
+<li>Using CMake or CMakeGUI, select emotime as source folder and configure.</li>
+<li>If it complains about setting the variable <code>OpenCV_DIR</code> set it to the appropriate path so that:
+
+<ul>
+<li>C:/path/to/opencv/dir/ contains the libraries (<code>*.lib</code>)</li>
+<li>C:/path/to/opencv/dir/include contains the include directories (opencv and opencv2)</li>
+<li>
+<strong>IF the include directory is missing</strong> the project will likely not be able
+to compile due to missing reference to <code>opencv2/opencv</code> or similar.</li>
+</ul>
+</li>
+<li>Then generate the project and compile it.</li>
+<li>This was tested with Visual Studio 12 64 bit.</li>
+</ul><h2>
+<a name="detection-and-prediction" class="anchor" href="#detection-and-prediction"><span class="octicon octicon-link"></span></a>Detection and Prediction</h2>
+
+<p>Proof of concept model trained using faces extracted using the detector <code>cbcl1</code> are available for download, mulclass strategy <a href="https://dl.dropboxusercontent.com/u/7618747/dataset_svm_354_cbcl1_1vsall.zip">1 vs all</a> and <a href="https://dl.dropboxusercontent.com/u/7618747/dataset_svm_354_cbcl1_1vsallext.zip">many vs many</a> can be found.</p>
+
+<p><em>NOTE: remember that this is a prototype</em></p>
+
+<h3>
+<a name="usage" class="anchor" href="#usage"><span class="octicon octicon-link"></span></a>Usage</h3>
+
+<p>Video gui:</p>
+
+<pre><code>echo "VIDEOPATH" | ./emotimevideo_cli FACEDETECTORXML (EYEDETECTORXML|none) WIDTH HEIGHT NWIDTHS NLAMBDAS NTHETAS (svm|ada) (TRAINEDCLASSIFIERSXML)+
+</code></pre>
+
+<p>Cam gui:</p>
+
+<pre><code>./emotimegui_cli FACEDETECTORXML (EYEDETECTORXML|none) WIDTH HEIGHT NWIDTHS NLAMBDAS NTHETAS (svm|ada) (TRAINEDCLASSIFIERSXML)+
+</code></pre>
+
+<p>Or:</p>
+
+<pre><code>./gui.py --cfg &lt;dataset_configuration_path&gt; --mode svm --eye-correction &lt;dataset_path&gt;
+</code></pre>
+
+<h2>
+<a name="training" class="anchor" href="#training"><span class="octicon octicon-link"></span></a>Training</h2>
+
+<h3>
+<a name="dataset" class="anchor" href="#dataset"><span class="octicon octicon-link"></span></a>Dataset</h3>
+
+<p>The <a href="http://www.consortium.ri.cmu.edu/ckagree/">Cohn-Kanade database</a> is one of the most used faces database. Its extended version (CK+) contains also <a href="http://en.wikipedia.org/wiki/Facial_Action_Coding_System">FACS</a>
+code labels (aka Action Units) and emotion labels (neutral, anger, contempt, disgust, fear, happy, sadness, surprise).</p>
+
+<h3>
+<a name="usage-1" class="anchor" href="#usage-1"><span class="octicon octicon-link"></span></a>Usage</h3>
+
+<p>Initialize and fill a dataset:</p>
+
+<pre><code>python2 datasetInit.py [-h] --cfg &lt;dataset_configuration_path&gt; &lt;dataset_path&gt;
+python2 datasetFillCK.py [-h] --cfg &lt;dataset_configuration_path&gt; &lt;dataset_path&gt; &lt;cohnKanade_folder&gt; &lt;cohnKanade_emotions_folder&gt;
+</code></pre>
+
+<p>Train some models:</p>
+
+<pre><code>./train_models.sh svm 1vsallext ./dataset
+</code></pre>
+
+<p>Or better:</p>
+
+<pre><code>./train_models.py --cfg &lt;dataset_configuration_path&gt; --mode svm --prep-train-mode 1vsAll --eye-correction &lt;dataset_folder&gt;
+</code></pre>
+
+<p>Or also:</p>
+
+<pre><code>python datasetCropFaces.py [-h] [--eye-correction] dsFolder
+python datasetFeatures.py [-h] dsFolder 
+python datasetPrepTrain.py [-h] [--mode {1vs1,1vsAll,1vsAllExt}] dsFolder
+python datasetTrain.py [-h] [--mode {adaboost,svm}] dsFolder 
+python datasetVerifyPrediction.py [-h] [--mode {adaboost,svm}] [--eye-correction] dsFolder
+</code></pre>
+
+<h2>
+<a name="further-development" class="anchor" href="#further-development"><span class="octicon octicon-link"></span></a>Further Development</h2>
+
+<ul>
+<li>Validation dataset</li>
+<li>Finest parameter tuning</li>
+<li>Extend training dataset</li>
+</ul>
+      </section>
+    </div>
+
+    <!-- FOOTER  -->
+    <div id="footer_wrap" class="outer">
+      <footer class="inner">
+        <p class="copyright">Emotime maintained by <a href="https://github.com/luca-m">luca-m</a></p>
+        <p>Published with <a href="http://pages.github.com">GitHub Pages</a></p>
+      </footer>
+    </div>
+
+    
+
+  </body>
+</html>
