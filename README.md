@@ -76,7 +76,11 @@ Cross-compiling for windows:
 
 Proof of concept model trained using faces extracted using the detector `cbcl1` are available for download, mulclass strategy [1 vs all](https://dl.dropboxusercontent.com/u/7618747/dataset_svm_354_cbcl1_1vsall.zip) and [many vs many](https://dl.dropboxusercontent.com/u/7618747/dataset_svm_354_cbcl1_1vsallext.zip) can be found.
 
-_NOTE: remember that this is a prototype_
+
+_NOTE: watch for illumination! At the moment optimal results can be obtained in live webcam sessions using direct illumination directed to the user's face. Don't worry you are not required to blind you with a headlight._
+
+__If you'd like to try emotime without any further complication you should take a look to the [x86_64 release](https://github.com/luca-m/emotime/releases/tag/v1.1-experimental).__
+
 
 ### Usage
 
@@ -201,40 +205,9 @@ In detail 1vsAll multiclass method provide more less noisy detections during a l
 Sorry for the lack of fine tuning and detail, but it is a spare time project at the moment.. :(
 
 
-### Usage
-
-_NOTE: watch for illumination! At the moment optimal results can be obtained in live webcam sessions using direct illumination directed to the user's face. Don't worry you are not required to blind you with a headlight._
-
-__If you'd like to try emotime without any further complication you should take a look to the [x86_64 release](https://github.com/luca-m/emotime/releases/tag/v1.1-experimental).__
-
-
-_This section is not suitable for any human, it's outdated and I'll fix this mess asap.. Sorry guys_
- 
-Initialize and fill a dataset:
-
-    python2 datasetInit.py [-h] --cfg <dataset_configuration_path> <dataset_path>
-    python2 datasetFillCK.py [-h] --cfg <dataset_configuration_path> <dataset_path> <cohnKanade_folder> <cohnKanade_emotions_folder>
-
-Train some models:
-
-    ./train_models.sh svm 1vsallext ./dataset
-
-Or better:
-
-    ./train_models.py --cfg <dataset_configuration_path> --mode svm --prep-train-mode 1vsAll --eye-correction <dataset_folder>
-
-Or also:
-
-    python datasetCropFaces.py [-h] [--eye-correction] dsFolder
-    python datasetFeatures.py [-h] dsFolder 
-    python datasetPrepTrain.py [-h] [--mode {1vs1,1vsAll,1vsAllExt}] dsFolder
-    python datasetTrain.py [-h] [--mode {adaboost,svm}] dsFolder 
-    python datasetVerifyPrediction.py [-h] [--mode {adaboost,svm}] [--eye-correction] dsFolder
-
-
 ## Further Development
 
 * ~~Validation dataset~~ (or at least something have been done)
-* Finest parameter tuning
-* Extend training dataset
-
+* Performance tuning: _Bias_ or _High Variance_ ? That's the matter.
+* Refactoring dataset tools in conformity to basic software engineering principles.
+ 
