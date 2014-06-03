@@ -170,22 +170,22 @@ Sadness                   <-- Not good in live webcam sessions too
   unknown -> 0.50%
   sadness -> 0.33%
   fear -> 0.17%
-Neutral                   <-- Good in live webcam sessions too
+Neutral                   <-- Good in live webcam sessions 
   neutral -> 0.73%
   unknown -> 0.24%
   surprise -> 0.01%
   fear -> 0.01%
   contempt -> 0.01%
-Disgust                   <-- Good in live webcam sessions too
+Disgust                   <-- Good in live webcam sessions
   disgust -> 0.82%
   unknown -> 0.18%
-Anger                     <-- Almost sufficient in live webcam sessions too
+Anger                     <-- Almost sufficient in live webcam sessions
   anger -> 0.36%
   neutral -> 0.27%
   unknown -> 0.18%
   disgust -> 0.09%
   contempt -> 0.09%
-Surprise                  <-- Good in live webcam sessions too
+Surprise                  <-- Good in live webcam sessions
   surprise -> 0.94%
   neutral -> 0.06%
 Fear                      <-- Sufficient in live webcam sessions
@@ -194,7 +194,7 @@ Fear                      <-- Sufficient in live webcam sessions
   happy -> 0.17%
 Contempt                  <-- Not good in live webcam sessions too
   unknown -> 1.00%
-Happy                     <-- Good in live webcam sessions too
+Happy                     <-- Good in live webcam sessions 
   happy -> 1.00%
 ```
 
