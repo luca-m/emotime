@@ -100,8 +100,116 @@ Or:
 The [Cohn-Kanade database](http://www.consortium.ri.cmu.edu/ckagree/) is one of the most used faces database. Its extended version (CK+) contains also [FACS](http://en.wikipedia.org/wiki/Facial_Action_Coding_System)
 code labels (aka Action Units) and emotion labels (neutral, anger, contempt, disgust, fear, happy, sadness, surprise).
 
+## Validation
+
+_First, rough evaluation of the performance of the system_ 
+Validation test involved the whole system `face detector + emotion classifier`, so should not be considered relative to the _emotion classifier_ itself. 
+
+Of course, a more fine validation shuld be tackled in order to evaluate emotion classifier alone.
+For the sake of completeness the reader have to know that the _cbcl1_ face model is a good face locator rather than detector, roughly speaking it detects less but is more precise.
+
+Following results are commented with my personal - totally informal - evaluation after live webcam session.
+
+```text
+multicalss method: 1vsAllExt 
+face detector:     cbcl1
+eye correction:    no 
+width:             48
+height:            48 
+nwidths:           3 
+nlambdas:          5
+nthetas:           4
+
+Sadness                   <-- Not good in live webcam sessions too
+  sadness -> 0.67%
+  surprise -> 0.17%
+  anger -> 0.17%
+Neutral                   <-- Good in live webcam sessions
+  neutral -> 0.90%
+  contempt -> 0.03%
+  anger -> 0.03%
+  fear -> 0.02%
+  surprise -> 0.01%
+Disgust                   <-- Good in live webcam sessions
+  disgust -> 1.00%
+Anger                     <-- Good in live webcam sessions
+  anger -> 0.45%
+  neutral -> 0.36%
+  disgust -> 0.09%
+  contempt -> 0.09%
+Surprise                  <-- Good in live webcam sessions
+  surprise -> 0.94%
+  neutral -> 0.06%
+Fear                      <-- Almost Good in live webcam sessions
+  fear -> 0.67%
+  surprise -> 0.17%
+  happy -> 0.17%
+Contempt                  <-- Not good in live webcam sessions
+  neutral -> 0.50%
+  contempt -> 0.25%
+  anger -> 0.25%
+Happy                     <-- Good in live webcam sessions
+  happy -> 1.00%
+```
+
+```text
+multicalss method: 1vsAll 
+face detector:     cbcl1
+eye correction:    no 
+width:             48
+height:            48 
+nwidths:           3 
+nlambdas:          5
+nthetas:           4
+
+Sadness                   <-- Not good in live webcam sessions too
+  unknown -> 0.50%
+  sadness -> 0.33%
+  fear -> 0.17%
+Neutral                   <-- Good in live webcam sessions too
+  neutral -> 0.73%
+  unknown -> 0.24%
+  surprise -> 0.01%
+  fear -> 0.01%
+  contempt -> 0.01%
+Disgust                   <-- Good in live webcam sessions too
+  disgust -> 0.82%
+  unknown -> 0.18%
+Anger                     <-- Almost sufficient in live webcam sessions too
+  anger -> 0.36%
+  neutral -> 0.27%
+  unknown -> 0.18%
+  disgust -> 0.09%
+  contempt -> 0.09%
+Surprise                  <-- Good in live webcam sessions too
+  surprise -> 0.94%
+  neutral -> 0.06%
+Fear                      <-- Sufficient in live webcam sessions
+  fear -> 0.67%
+  surprise -> 0.17%
+  happy -> 0.17%
+Contempt                  <-- Not good in live webcam sessions too
+  unknown -> 1.00%
+Happy                     <-- Good in live webcam sessions too
+  happy -> 1.00%
+```
+
+Also main difference between the _1vsAll_ and the _1vsAllExt_ mode experimented in livecam sessions are related to the amount of unknown states registered and the stability of the detected states.
+In detail 1vsAll multiclass method provide more less noisy detections during a live web-cam session, 1vsAllExt mode instead is able to always predict a valid state for each frame processed, but sometimes it result to be more unstable during the expression transition.
+
+
+Sorry for the lack of fine tuning and detail, but it is a spare time project at the moment.. :(
+
+
 ### Usage
 
+_NOTE: watch for illumination! At the moment optimal results can be obtained in live webcam sessions using direct illumination directed to the user's face. Don't worry you are not required to blind you with a headlight._
+
+__If you'd like to try emotime without any further complication you should take a look to the [x86_64 release](https://github.com/luca-m/emotime/releases/tag/v1.1-experimental).__
+
+
+_This section is not suitable for any human, it's outdated and I'll fix this mess asap.. Sorry guys_
+ 
 Initialize and fill a dataset:
 
     python2 datasetInit.py [-h] --cfg <dataset_configuration_path> <dataset_path>
@@ -126,7 +234,7 @@ Or also:
 
 ## Further Development
 
-* Validation dataset
+* ~~Validation dataset~~ (or at least something have been done)
 * Finest parameter tuning
 * Extend training dataset
 
