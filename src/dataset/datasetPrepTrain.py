@@ -11,6 +11,7 @@ import multiprocessing
 import datasetConfigParser as dcp
 import numpy as np
 
+from string import lower
 from os.path import join
 from os.path import isfile
 from os.path import isdir
@@ -56,14 +57,12 @@ def dataset_prepare( (goodClass,badClass), dsFolder, config):
   """
   badClass = sorted(badClass)
   goodClass = sorted(goodClass)
-  #print "INFO: Preparing training file for '%s' vs. '%s' " % (','.join(goodClass), ','.join(badClass))
-
-  goodPath=[join(dsFolder, join(config['FEATURES_FOLDER'], x)) for x in goodClass]
-  badPath= [join(dsFolder, join(config['FEATURES_FOLDER'], x)) for x in badClass]
+  goodPath=[join(dsFolder, join(config['TRAINING_FEATURES'], x)) for x in goodClass]
+  badPath= [join(dsFolder, join(config['TRAINING_FEATURES'], x)) for x in badClass]
   #
-  # Note: a goodFolder should contain the filtered images (various orientation and frequency )
+  # Note: a goodFolder should contain the filtered images (various orientation and frequency)
   #       of a single sample image. So each line of the training file will be composed by its
-  #    MARKER ( Good or Bad ) plus all the pixel values of the filtered images
+  #       MARKER (Good or Bad) plus all the pixel values of the filtered images
   #
   goodFolders=[]
   for x in goodPath:
@@ -114,13 +113,13 @@ def dataset_prepTrainFiles(dsFolder, multiclassMode, config):
       #dataset_prepare(x, dsFolder, config)
       bagoftask.append((x, dsFolder, config))
 
-  if multiclassMode=='1vsAll':
+  if multiclassMode=='1vsall':
     print "INFO: preparing training files for 1 to All multiclass"
     for x in _dataset_multiclass1toAll(config):
       #dataset_prepare(x, dsFolder, config)
       bagoftask.append((x, dsFolder, config))
 
-  if multiclassMode == '1vsAllExt':
+  if multiclassMode == '1vsallext':
     print "INFO: preparing training files for 1 to All Extended multiclass"
     for x in _dataset_multiclass1toAllExt(config):
       #dataset_prepare(x, dsFolder, config)
@@ -135,13 +134,13 @@ def dataset_prepTrainFiles(dsFolder, multiclassMode, config):
 if __name__ == "__main__":
   parser = argparse.ArgumentParser()
   parser.add_argument("--cfg", default="dataset.cfg", help="Dataset config file name")
-  parser.add_argument("--mode", default="1vsAll", choices=['1vs1', '1vsAll', '1vsAllExt'], help="Training mode for multiclass classification")
+  parser.add_argument("--mode", default="1vsall", choices=['1vs1', '1vsall', '1vsallext'], help="Training mode for multiclass classification")
   parser.add_argument("dsFolder",help="Dataset base folder")
   args = parser.parse_args()
   try:
     config={}
     config=dcp.parse_ini_config(args.cfg)
-    dataset_prepTrainFiles(args.dsFolder, args.mode, config)
+    dataset_prepTrainFiles(args.dsFolder, lower(args.mode), config)
   except Exception as e:
     print "ERR: something wrong (%s)" % str(e)
     sys.exit(1)

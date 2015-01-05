@@ -89,7 +89,8 @@ int main( int argc, const char* argv[] ){
 		if (detector->detect(img, cropped)){
 		  matrix_io_save(cropped, outfile); 
     } else {
-		  cerr << "ERR: no face found.." << endl;
+      //cerr << "ERR: no face found.." << endl;
+      return 1;
     }
     delete detector;
 	}

@@ -214,9 +214,9 @@ namespace emotime {
       }
     }
     // copy equalized and rotated face to out image
-    #ifndef TRAINING_BUILD
+    //#ifndef TRAINING_BUILD
     cv::resize(plainFace,plainFace, kFaceSizeLimit, cv::INTER_LINEAR);
-    #endif
+    //#endif
     plainFace.copyTo(face);
     equalizeHist(face, face);
     imgGray.release();
