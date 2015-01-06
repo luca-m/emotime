@@ -111,15 +111,15 @@ After `mkdir build; cd build; cmake ..; make ; make install` go to the `assets` 
 
 1. Initialize a dataset using:
 
-      python datasetInit.py -cfg <CONFIGFILE> <EMPTY_DATASET_FOLDER>
+        python datasetInit.py -cfg <CONFIGFILE> <EMPTY_DATASET_FOLDER>
 
 2. Then fill it with your images or use the Cohn-Kanade importing script:
 
-      python datasetFillCK --cfg <CONFIGFILE> <DATASETFOLDER> <CKFOLDER> <CKEMOTIONFOLDER>
+        python datasetFillCK --cfg <CONFIGFILE> <DATASETFOLDER> <CKFOLDER> <CKEMOTIONFOLDER>
 
 3. Now you are ready to train models:
 
-      python train_models.py --cfg <CONFIGFILE> --mode svm --prep-train-mode [1vsall|1vsallext] <DATASETFOLDER>
+        python train_models.py --cfg <CONFIGFILE> --mode svm --prep-train-mode [1vsall|1vsallext] <DATASETFOLDER>
 
 
 ### Dataset
