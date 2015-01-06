@@ -79,8 +79,8 @@ if __name__ == "__main__":
   parser.add_argument("ckEmoFolder", help="Cohn-Kanade (CK+) emotion label folder")
   args=parser.parse_args()
   try:
-    if args.vperc < 0. or args.vperc > 1.:
-      raise new Exception('validation percentage must be in range 0-1')
+    if args.vperc < 0.0 or args.vperc > 1.0:
+      raise Exception("validation percentage must be in range 0-1 (%f)" % args.vperc)
     random.seed(args.vseed)
     config={}
     config=dcp.parse_ini_config(args.cfg)
