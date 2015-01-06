@@ -92,12 +92,35 @@ Cam gui:
 
     ./emotimegui_cli FACEDETECTORXML (EYEDETECTORXML|none) WIDTH HEIGHT NWIDTHS NLAMBDAS NTHETAS (svm|ada) (TRAINEDCLASSIFIERSXML)+
 
-Or:
+Or using the python script:
 
-    ./gui.py --cfg <dataset_configuration_path> --mode svm --eye-correction <dataset_path>
+    python gui.py --cfg <dataset_configuration_path> --mode svm --eye-correction <dataset_path>
+
+#### Binary Release and Trained Models
+
+If you just want to take a quick look to the project we strongly suggest to go to the [release section](https://github.com/luca-m/emotime/releases) and download compiled binaries for _Linux 64bit_, then:
+
+* download and unzip the binaries in an empty folder
+* run `./download_trained_models.sh`
+* Then cd assets and `./emotimegui_cli ../resources/haarcascade_frontalface_cbcl1.xml none 48 48 3 5 4 svm ../dataset_svm_354_cbcl1_1vsallext/classifiers/svm/*`
 
 
 ## Training
+
+After `mkdir build; cd build; cmake ..; make ; make install` go to the `assets` folder and:
+
+1. Initialize a dataset using:
+
+    python datasetInit.py -cfg <CONFIGFILE> <EMPTY_DATASET_FOLDER>
+
+2. Then fill it with your images or use the Cohn-Kanade importing script:
+
+    python datasetFillCK --cfg <CONFIGFILE> <DATASETFOLDER> <CKFOLDER> <CKEMOTIONFOLDER>
+
+3. Now you are ready to train models:
+
+    python train_models.py --cfg <CONFIGFILE> --mode svm --prep-train-mode [1vsall|1vsallext] <DATASETFOLDER>
+
 
 ### Dataset
 
@@ -202,12 +225,12 @@ Also main difference between the _1vsAll_ and the _1vsAllExt_ mode experimented 
 In detail 1vsAll multiclass method provide more less noisy detections during a live web-cam session, 1vsAllExt mode instead is able to always predict a valid state for each frame processed, but sometimes it result to be more unstable during the expression transition.
 
 
-Sorry for the lack of fine tuning and detail, but it is a spare time project at the moment.. :(
+Sorry for the lack of fine tuning and detail, but it is a spare time project at the moment..
+If you have any idea or suggestion feel free to write us!
 
 
 ## Further Development
 
-* ~~Validation dataset~~ (or at least something have been done)
-* Performance tuning: _Bias_ or _High Variance_ ? That's the matter.
-* Refactoring dataset tools in conformity to basic software engineering principles.
- 
+* Tuning GaborBank parameters for accuracy enhancement.
+* Tuning image sizes for better real-time performance.
+* Better handle illumination, detections are good when frontal light is in place (keep it in mind when you use it with your camera).
