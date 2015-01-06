@@ -15,7 +15,9 @@ from os.path import isfile
 def _subproc_call(args):
     """ Wrap a subprocess.call """
     param, comstr = args
-    retcode=subprocess.call( param, shell=False )
+    retcode=subprocess.call(param, shell=False )
+    sys.stdout.write('.')
+    sys.stdout.flush()
     if retcode==0:
       return (comstr,True)
     else:
@@ -38,7 +40,7 @@ def dataset_calcGaborBank(dsFolder, config, validation=False):
     facesFolder=join(dsFolder, join(FACES_FOLDER, c))
     featsFolder=join(dsFolder, join(FEATURES_FOLDER, c))
     faces=[ f for f in os.listdir(facesFolder) if isfile(join(facesFolder, f))]
-    
+    _NJOBS = len(faces) 
     for i in xrange(0, len(faces)):
       face = faces[i]
       faceFile=join(facesFolder, face)
@@ -56,7 +58,7 @@ def dataset_calcGaborBank(dsFolder, config, validation=False):
         if config['GABOR_FILTER_FILE'] != 'NA':
           cmd.append(config['GABOR_FILTER_FILE'])
       
-      bagoftask.append((cmd,'GaborFileter {0}'.format(faceFile)))
+      bagoftask.append((cmd,'GaborFilter {0}'.format(faceFile)))
 
     # Spawining parallel task
     nprocs = max(1, int(multiprocessing.cpu_count() * abs(float(config['TRAIN_SVM_CPU_USAGE']))))
