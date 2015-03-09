@@ -14,15 +14,25 @@ def dataset_init(dsPath, config):
       Initialize dataset 
   """
   for clazz in config['CLASSES']:
-    pth = join(dsPath, join(config['IMAGES_FOLDER'], clazz))
+    pth = join(dsPath, join(config['TRAINING_IMAGES'], clazz))
     if not os.path.exists(pth):
       os.makedirs(pth)
-    pth = join(dsPath, join(config['FACES_FOLDER'], clazz))
+    pth = join(dsPath, join(config['TRAINING_FACES'], clazz))
     if not os.path.exists(pth):
       os.makedirs(pth)
-    pth=join(dsPath, join(config['FEATURES_FOLDER'], clazz))
+    pth=join(dsPath, join(config['TRAINING_FEATURES'], clazz))
     if not os.path.exists(pth):
       os.makedirs(pth)
+    pth = join(dsPath, join(config['VALIDATION_IMAGES'], clazz))
+    if not os.path.exists(pth):
+      os.makedirs(pth)
+    pth = join(dsPath, join(config['VALIDATION_FACES'], clazz))
+    if not os.path.exists(pth):
+      os.makedirs(pth)
+    pth=join(dsPath, join(config['VALIDATION_FEATURES'], clazz))
+    if not os.path.exists(pth):
+      os.makedirs(pth)
+
   pth=join(dsPath, config['TRAIN_FOLDER'])
   if not os.path.exists(pth):
     os.makedirs(pth)
@@ -30,6 +40,9 @@ def dataset_init(dsPath, config):
   if not os.path.exists(pth):
     os.makedirs(pth)
   pth=join(dsPath, config['CLASSIFIER_SVM_FOLDER'])
+  if not os.path.exists(pth):
+    os.makedirs(pth)
+  pth=join(dsPath, config['CLAADAFIER_ADA_FOLDER'])
   if not os.path.exists(pth):
     os.makedirs(pth)
   # Copy configuration
@@ -49,6 +62,6 @@ if __name__ == "__main__":
     config=dcp.parse_ini_config(args.cfg)
     dataset_init(args.dsFolder, config)
   except Exception as e:
-    print "ERR: something wrong (%s)" % str(e)
+    print("ERR: something wrong (%s)" % str(e))
     sys.exit(1)
 

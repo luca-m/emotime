@@ -240,7 +240,7 @@ namespace emotime {
       src.convertTo(image, CV_32F);
       
       //std::cerr<<"INFO: c="<<image.cols<<",r="<<image.rows<<std::endl;
-      //resize(image,image, Size(96,96),CV_INTER_AREA);
+      //resize(image, image, featSize, CV_INTER_AREA);
       
       for (k = 0; k < bank.size(); k++) {
         emotime::GaborKernel * gk = bank.at(k);

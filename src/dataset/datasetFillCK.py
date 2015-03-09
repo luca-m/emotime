@@ -7,6 +7,7 @@ import sys
 import shutil
 import argparse
 import datasetConfigParser as dcp
+import random
 
 from string import strip
 from os.path import join
@@ -14,7 +15,7 @@ from os.path import isfile
 from os.path import isdir
 
 
-def dataset_fillCohnKanade( dsFolder, ckFolder, ckEmoFolder, config):
+def dataset_fillCohnKanade( dsFolder, ckFolder, ckEmoFolder, config, vperc=0.3, vseed=0):
   """ 
       Fill dataset with Cohn Kanade + data.
   """
@@ -52,13 +53,16 @@ def dataset_fillCohnKanade( dsFolder, ckFolder, ckEmoFolder, config):
           print "ERR: cannot parse emotional label for subject %s shot %s (skip:unknown_emo)" % (subj, s)
           continue
 
-      # Last picture is the final emotion, first picture is neutral
+      # Last picture is the final emotion (most intense), first picture is neutral
       to_copy = [(pics[-1], emo), (pics[0], config['CLASSES'][0])]
 
       for pic, emo in to_copy:
         print "INFO: Picture '%s' has been marked as %s" % (pic, emo)
         orig = join(ckFolder, join(subj, join(s, pic)))
-        dest = join(dsFolder, join(config['IMAGES_FOLDER'], join(emo, pic)))
+        IMAGES_FOLDER = config['TRAINING_IMAGES']
+        if random.next() <= vperc:
+            IMAGES_FOLDER = config['VALIDATION_IMAGES']
+        dest = join(dsFolder, join(IMAGES_FOLDER, join(emo, pic)))
         try:
           shutil.copy(orig, dest)
         except:
@@ -68,15 +72,19 @@ def dataset_fillCohnKanade( dsFolder, ckFolder, ckEmoFolder, config):
 if __name__ == "__main__":
   parser=argparse.ArgumentParser()
   parser.add_argument("--cfg", default="dataset.cfg", help="Dataset config file name")
-  parser.add_argument("dsFolder", help="Dataset base folder")
+  parser.add_argument("--validation-perc",dest='vperc',type=float, default=0.3, help="Validation set percentage (0-1.0)")
+  parser.add_argument("--validation-seed",dest='vseed',type=int, default=0, help="Seed used to decide when a image belong to training or validation set")
+  parser.add_argument("dsFolder", help="Dataset Base folder (will be filled with images)")
   parser.add_argument("ckFolder", help="Cohn-Kanade image database folder")
   parser.add_argument("ckEmoFolder", help="Cohn-Kanade (CK+) emotion label folder")
   args=parser.parse_args()
-  
   try:
+    if args.vperc < 0.0 or args.vperc > 1.0:
+      raise Exception("validation percentage must be in range 0-1 (%f)" % args.vperc)
+    random.seed(args.vseed)
     config={}
     config=dcp.parse_ini_config(args.cfg)
-    dataset_fillCohnKanade(args.dsFolder, args.ckFolder, args.ckEmoFolder, config)
+    dataset_fillCohnKanade(args.dsFolder, args.ckFolder, args.ckEmoFolder, config, vperc=args.vperc, vseed=args.vseed)
   except Exception as e:
     print "ERR: something wrong (%s)" % str(e)
     sys.exit(1)

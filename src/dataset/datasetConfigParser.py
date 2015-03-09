@@ -48,6 +48,8 @@ def parse_ini_config(configFile):
   config['SIZE']=size
 
 
+  config.update(fill_it(parser, 'TRAINING', False))
+  config.update(fill_it(parser, 'VALIDATION', False))
   config.update(fill_it(parser, 'FOLDER', True))
   config.update(fill_it(parser, 'SUFFIX', True))
 

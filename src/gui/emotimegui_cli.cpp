@@ -129,7 +129,7 @@ int main(int argc, const char* argv[]) {
   emodetector->init(cl_paths);
 
   // Creating and starting the EmotimeGUI
-  int fps = 30;
+  int fps = 120;
 	try {
     EmotimeGui gui(&facepreproc, emodetector, fps);
     gui.run();

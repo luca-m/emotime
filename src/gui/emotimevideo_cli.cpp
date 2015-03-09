@@ -116,7 +116,7 @@ int main(int argc, const char* argv[]){
   cout<<"Loading '"<<infile<<"'"<<endl;
   emotime::VideoCapture capture=emotime::VideoCapture(infile, true/*grayscale*/);
   // Creating and starting the EmotimeGUI
-  int fps = 30;
+  int fps = 120;
   try{
     EmotimeGui gui(&capture, &facepreproc, emodetector, fps);
     gui.run();

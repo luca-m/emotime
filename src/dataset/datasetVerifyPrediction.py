@@ -29,13 +29,13 @@ def dataset_process_results(results):
 
 
 def dataset_do_prediction(dsfolder, config, mode, eye_detection, do_prints=True):
-  faces_dir = os.path.join(dsfolder, config['IMAGES_FOLDER'])
+  faces_dir = os.path.join(dsfolder, config['VALIDATION_IMAGES'])
 
   if mode == 'svm':
     class_dir = os.path.join(dsfolder, config['CLASSIFIER_SVM_FOLDER'])
     mode_s = 'svm'
   else:
-    class_dir = os.path.join(dsfolder, config['CLASSIFIER_FOLDER'])
+    class_dir = os.path.join(dsfolder, config['CLASSIFIER_ADA_FOLDER'])
     mode_s = 'ada'
 
   execut = config['DETECTION_TOOL']
