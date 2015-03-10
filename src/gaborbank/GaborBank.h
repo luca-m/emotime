@@ -10,11 +10,18 @@
 #ifndef _H_GABORBANK
 #define _H_GABORBANK
 
-/// If defined, uses the mathematical correlation between the parameters.
+/// If defined, uses the mathematical correlation between the parameters (references below).
 /// Otherwise an empirical value of lambda is used.
 #define GABOR_FORMULA
-/// If defined, uses sigma as independent value
+/// Uses sigma as independent value in gabor bank calculation
 #define DO_SIGMA
+/// Uses lambda as independent value in gabor bank calculation
+//#define DO_LAMBDA
+/// Uses lambdas from paper  value in gabor bank calculation (both formula and empiric)
+//#define DO_LAMBDA_P 
+/// Uses lambdas linear sweep (empiric only, default logarithmic sweep)
+//#define DO_LAMBDA_L
+
 
 //#define DO_LAMBDA_P
 //#define GABOR_DEBUG
@@ -47,7 +54,7 @@ namespace emotime {
   /* Gabor Misc consts*/
 
   /// Gabor support shape parameter (0.5 ellipse .. 1 circle)
-  const double kGaborGamma= 1.0;
+  const double kGaborGamma= 0.9;
   /// Gabor phase offset
   const double kGaborPsi= CV_PI/2.0;
 
@@ -57,11 +64,9 @@ namespace emotime {
   /// Length of kGaborPaperLambdas
   const int kGaborPaperLamdasLen = 8;
   /// Unused
-  // const double kGaborPaperCicles[] = {3, 4, 6, 8, 12, 16, 24, 36};
-  /// Empirical minimum value of wavelength
-  const double kGaborELambdaMin = 3;//(CV_PI /32.);
-  /// Empirical maximum value of wavelength
-  const double kGaborELambdaMax = 32;//(CV_PI /2.);
+  const double kGaborPaperCicles[] = {3, 4, 6, 8, 12, 16, 24, 36};
+  // Gabor Filter threads to be used in multithreaded mode
+  const double kGaborFilterThreads = 3;
 
   /* Gabor Empiric consts */
 
@@ -69,6 +74,11 @@ namespace emotime {
   const int kGaborWidthMin = 20;
   /// Maximum width for a gabor filter
   const int kGaborWidthMax = 26;
+
+  /// Empirical minimum value of wavelength
+  const double kGaborELambdaMin = 3;//(CV_PI /32.);
+  /// Empirical maximum value of wavelength
+  const double kGaborELambdaMax = 32;//(CV_PI /2.);
 
   
   /// Default gabor number of different with (gaborbank_getGaborBank)
@@ -82,7 +92,9 @@ namespace emotime {
   /// Maximum sigma for a gabor filter
   const double kGaborESigmaMax = 5.0;
   /// Empirical value for Sigma
-  const double kGaborSigma= 4.0;
+  const double kGaborSigma= 2.6;
+  /// Empirical value for Lambda
+  const double kGaborLambda= CV_PI/4.0;
 
   /**
    * @class    GaborBank
