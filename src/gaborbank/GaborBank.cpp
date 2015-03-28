@@ -253,7 +253,7 @@ namespace emotime {
 
       #if defined(MULTITHREAD)
       std::future<bool> fut = async( std::launch::async,
-              [gk,k]()
+              [gk,k,dest]()
               {
                 Mat real = gk->getReal();
                 Mat imag = gk->getImag();
