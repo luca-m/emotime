@@ -35,6 +35,8 @@ namespace emotime{
       string gaborWinTitle;
       /// The size to be used for image resizing
       Size size;
+      ///
+      int  isize;
       /// nwidths param of GaborBank::fillGaborBank
       int  nwidths;
       /// nlambdas param of GaborBank::fillGaborBank
@@ -70,6 +72,8 @@ namespace emotime{
           return;
         }
         Mat copy;
+        ths->size.width=ths->isize;
+        ths->size.height=ths->isize;
         ths->currframe.copyTo(frame);
         resize(ths->currframe, resized, ths->size, 0, 0, CV_INTER_AREA);
         cout<<"DEBUG: recreating gabor filter bank "<<ths->nwidths<<","<<ths->nlambdas<<","<<ths->nthetas <<endl;
@@ -80,8 +84,7 @@ namespace emotime{
         minMaxIdx(gaborframe, &min, &max);
         convertScaleAbs(gaborframe, scaled, 255/max);
         equalizeHist(scaled, scaled);
-        resize(scaled, magnified, Size(scaled.size().width*5, scaled.size().height*5), 0, 0, CV_INTER_LINEAR);
-
+        resize(scaled, magnified, Size(scaled.size().width/ths->isize*56, scaled.size().height/ths->isize*56), 0, 0, CV_INTER_LINEAR);
         imshow(ths->mainWinTitle.c_str(), ths->currframe);
         imshow(ths->gaborWinTitle.c_str(), magnified);
       }
@@ -97,7 +100,8 @@ namespace emotime{
        */
       GaborGui(ACapture* cap) {
         capture=cap;
-        size=Size(48,48);
+        size=Size(56,56);
+        isize=56;
         nwidths=2;
         nlambdas=5;
         nthetas=4;
@@ -114,6 +118,7 @@ namespace emotime{
       bool init(){
 	       namedWindow(mainWinTitle.c_str(), WINDOW_NORMAL);
 	       namedWindow(gaborWinTitle.c_str(), WINDOW_AUTOSIZE);
+         createTrackbar("isize",mainWinTitle.c_str(), &isize, 250, GaborGui::on_trackbar, this);
          createTrackbar("nwidths",mainWinTitle.c_str(), &nwidths, 4, GaborGui::on_trackbar, this);
          createTrackbar("nlamdas",mainWinTitle.c_str(), &nlambdas, 12, GaborGui::on_trackbar, this);
          createTrackbar("nthetas",mainWinTitle.c_str(), &nthetas, 12, GaborGui::on_trackbar, this);
