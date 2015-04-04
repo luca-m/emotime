@@ -14,6 +14,7 @@ if __name__ == "__main__":
   parser.add_argument("--prep-train-mode", choices=['1vsallext', '1vsall', '1vs1'], help="Training set preparation mode: 1vsall, 1vsall extended, 1vs1", required=True)
   parser.add_argument("--eye-correction", action="store_true", help="Apply eye correction to faces")
   parser.add_argument("--skip-facecrop", action="store_true", help="WARNING: To be set only if the facecropping was already performed with the same configuration file!")
+  parser.add_argument("--skip-feature", action="store_true", help="WARNING: To be set only if the (gabor) feature calculation was already performed with the same configuration file!")
   parser.add_argument("--clean", action="store_true", help="Clean training dataset before start")
 
   args = parser.parse_args()
@@ -64,11 +65,14 @@ if __name__ == "__main__":
 ##########################################
 
 ########################### Features computation
-  print(" [2] Computing features using bank of gabor magniture filters...")
+  if not args.skip_facecrop:
+    print(" [2] Computing features using bank of gabor magniture filters...")
 
-  if subprocess.call(['python', './datasetFeatures.py'] + base_args) is not 0:
-    print(" [#] An Error occured! Exiting...")
-    sys.exit(1)
+    if subprocess.call(['python', './datasetFeatures.py'] + base_args) is not 0:
+      print(" [#] An Error occured! Exiting...")
+      sys.exit(1)
+  else:
+    print(" [2] Skipping feature calculation!")
 ##########################################
 
 ########################### Training files preparation
