@@ -65,7 +65,7 @@ if __name__ == "__main__":
 ##########################################
 
 ########################### Features computation
-  if not args.skip_facecrop:
+  if not args.skip_feature:
     print(" [2] Computing features using bank of gabor magniture filters...")
 
     if subprocess.call(['python', './datasetFeatures.py'] + base_args) is not 0:
