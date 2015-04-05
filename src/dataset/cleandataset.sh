@@ -90,5 +90,7 @@ if [ $CLEAR_CLASSIFIERS -eq 1 ]; then
   clbackup="$DSET/classifiers.$(date +"%Y%m%d-%H%M")"
   mkdir -p "$clbackup"
   mv $DSET/classifiers/* $clbackup
+  mkdir $DSET/classifiers/svm
+  mkdir $DSET/classifiers/ada
 fi
 
