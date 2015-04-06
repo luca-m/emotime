@@ -26,9 +26,9 @@ namespace emotime {
   FaceDetector::FaceDetector(std::string face_config_file, std::string eye_config_file){
 
     if (face_config_file.find(std::string("cbcl1"))!=std::string::npos){
-      this->faceMinSize=Size(30, 60);
+      this->faceMinSize=Size(30,30);
     } else {
-      this->faceMinSize=Size(120,200);
+      this->faceMinSize=Size(60,60);
     }
 
     cascade_f.load(face_config_file);
@@ -40,12 +40,14 @@ namespace emotime {
       this->doEyesRot = false;
     }
     assert(!cascade_f.empty());
+    this->clahe = cv::createCLAHE(kCLAHEClipLimit, kCLAHEGridSize);
   }
 
   FaceDetector::FaceDetector(std::string face_config_file) {
     cascade_f.load(face_config_file);
     this->doEyesRot = false;
     assert(!cascade_f.empty());
+    this->clahe = cv::createCLAHE(kCLAHEClipLimit, kCLAHEGridSize);
   }
 
   FaceDetector::FaceDetector() {
@@ -164,7 +166,8 @@ namespace emotime {
       img.copyTo(imgGray);
     }
 
-    equalizeHist(imgGray, imgGray);
+    //equalizeHist(imgGray, imgGray);
+    this->clahe->apply(imgGray,imgGray);
     hasFace=detectFace(imgGray, faceRegion);
 
     if (!hasFace){
@@ -215,7 +218,7 @@ namespace emotime {
     }
     // copy equalized and rotated face to out image
     plainFace.copyTo(face);
-    equalizeHist(face, face);
+    //equalizeHist(face, face);
     imgGray.release();
     return true;
   }

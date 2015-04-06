@@ -20,7 +20,10 @@ namespace emotime {
 
   /// Performance saving constant. Limit the dimension of the face retrieved. (NOT GOOD FOR TRAINING)
   const cv::Size kFaceSizeLimit = cv::Size(128,128);
-
+  /// Scale factor determines how much the image size is reduced at each scaling operation
+  const float kScaleFactor=1.3;
+  const double kCLAHEClipLimit = 2.0;
+  const cv::Size kCLAHEGridSize = cv::Size(8,8);
   #ifdef TRAINING_BUILD
   /// Maximum rotation allowed for eye correction
   const float kMaxRotationAngle = 10.0f;
@@ -96,7 +99,8 @@ namespace emotime {
       cv::Size faceMinSize;
       /// Perform the eye rotation?
       bool doEyesRot;
-
+      /// Contrast Limited Adaptive Histogram Equalization  
+      cv::Ptr<cv::CLAHE> clahe;
       /**
        * @brief Detect a face, setting a region with the coordinate of the first face found.
        *
