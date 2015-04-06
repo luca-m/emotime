@@ -12,77 +12,90 @@
 
 /// If defined, uses the mathematical correlation between the parameters.
 /// Otherwise an empirical value of lambda is used.
-#define GABOR_FORMULA
+//#define GABOR_FORMULA
 /// If defined, uses sigma as independent value
-#define DO_SIGMA
+//#define DO_SIGMA
+/// If defined uses lambda as indipendend value
+//#define DO_LAMBDA
+/// Use lambda values from http://ieeexplore.ieee.org/xpl/articleDetails.jsp?arnumber=1384873 
+#define DO_LAMBDA_P       
+/// Logarithmic sweep in cicles for lambda and sigma
+//#define DO_LOG_SWEEP    // nogood
 
-//#define DO_LAMBDA_P
+/// Some debug print
 //#define GABOR_DEBUG
+
+/// Calculate only real part instead of gabor magnitude as feature
+#define GABOR_ONLY_REAL         // faster
+/// Keep the maximum feature values calculated through the application of the filter 
+/// bank and shrink the feature vector at the same size of the input image.
+//#define GABOR_SHRINK          // nogood
+/// Use opencv functions to retrieve gabor kernel (almost equal)
+#define GABOR_USE_OPENCV_KERNEL // equal
 
 #include <opencv2/opencv.hpp>
 #include "GaborKernel.h"
 
 
-namespace emotime {
+  namespace emotime {
 
-  /* Gabor Formula consts */
+    /* Gabor Formula consts */
 
-  /// Minimum bandwidth for a gabor filter
-  const double kGaborBandwidthMin = 1.3;
-  /// Maximum bandwidth for a gabor filter
-  const double kGaborBandwidthMax = CV_PI/2.;//1.6;
-  /// Minimum wavelength for a gabor filter
-  const double kGaborLambdaMin = /*16;//4;*/1./(CV_PI/2.0);
-  /// Maximum wavelength for a gabor filter
-  const double kGaborLambdaMax = /*48;//12;*/1./(CV_PI/32.0);
-  /// Minimum sigma for a gabor filter
-  const double kGaborSigmaMin = 1.0;
-  /// Maximum sigma for a gabor filter
-  const double kGaborSigmaMax = 6.0;
-  /// Minimum orientation for a gabor filter
-  const double kGaborThetaMin = 0.0;
-  /// Maximum orientation for a gabor filter
-  const double kGaborThetaMax = (CV_PI);
+    /// Minimum bandwidth for a gabor filter
+    const double kGaborBandwidthMin = 1.0;
+    /// Maximum bandwidth for a gabor filter
+    const double kGaborBandwidthMax = 2.0; //CV_PI/2.;//1.6;
+    /// Minimum wavelength for a gabor filter
+    const double kGaborLambdaMin = 4;///*16;//4;*/1./(CV_PI/6.0);
+    /// Maximum wavelength for a gabor filter
+    const double kGaborLambdaMax = 4;///*48;//12;*/ 1./(CV_PI/32.0);
+    /// Minimum sigma for a gabor filter
+    const double kGaborSigmaMin = 2.0;//1.0;
+    /// Maximum sigma for a gabor filter
+    const double kGaborSigmaMax = 3.0; //6.0;
+    /// Minimum orientation for a gabor filter
+    const double kGaborThetaMin = 0.0;
+    /// Maximum orientation for a gabor filter
+    const double kGaborThetaMax = (CV_PI);
 
-  /* Gabor Misc consts*/
+    /* Gabor Misc consts*/
 
-  /// Gabor support shape parameter (0.5 ellipse .. 1 circle)
-  const double kGaborGamma= 1.0;
-  /// Gabor phase offset
-  const double kGaborPsi= CV_PI/2.0;
+    /// Gabor support shape parameter (0.5 ellipse .. 1 circle)
+    const double kGaborGamma= 0.5;
+    /// Gabor phase offset
+    const double kGaborPsi=0.0;
 
-  /// Lambda values suggested in the paper. Used only if DO_LAMBDA_P is enabled
-  /// and DO_SIGMA is disabled.
-  const double kGaborPaperLambdas[] = {1./3, 1./4, 1./6, 1./8, 1./12, 1./16, 1./24, 1./36};
-  /// Length of kGaborPaperLambdas
-  const int kGaborPaperLamdasLen = 8;
-  /// Unused
-  // const double kGaborPaperCicles[] = {3, 4, 6, 8, 12, 16, 24, 36};
-  /// Empirical minimum value of wavelength
-  const double kGaborELambdaMin = 3;//(CV_PI /32.);
-  /// Empirical maximum value of wavelength
-  const double kGaborELambdaMax = 32;//(CV_PI /2.);
+    /// Lambda values suggested in the paper. Used only if DO_LAMBDA_P is enabled
+    /// and DO_SIGMA is disabled.
+    const double kGaborPaperLambdas[] = {1./3, 1./4, 1./6, 1./8, 1./12, 1./16, 1./24, 1./36};
+    const double kGaborPaperCicles[] = {3, 4, 6, 8, 12, 16, 24, 36};
+    /// Length of kGaborPaperLambdas
+    const int kGaborPaperLambdasLen = 8;
 
-  /* Gabor Empiric consts */
+    /* Gabor Empiric consts */
+    
+    /// Empirical minimum value of wavelength
+    const double kGaborELambdaMin = 8.0;//10;//(CV_PI /32.);
+    /// Empirical maximum value of wavelength
+    const double kGaborELambdaMax = 16.0;//18;//(CV_PI /2.);
+    /// Empirical value for Sigma
+    const double kGaborSigma= 1.25;//CV_PI/2.;//2.0;
+    /// Minimum width for a gabor filter
+    const int kGaborWidthMin = 9;
+    /// Maximum width for a gabor filter
+    const int kGaborWidthMax = 20;
 
-  /// Minimum width for a gabor filter
-  const int kGaborWidthMin = 20;
-  /// Maximum width for a gabor filter
-  const int kGaborWidthMax = 26;
-
-  
-  /// Default gabor number of different with (gaborbank_getGaborBank)
-  const double kGaborDefaultNwidth = 1.0;
-  /// Default gabor number of different lambda (gaborbank_getGaborBank)
-  const double kGaborDefaultNlambda = 5.0;
-  /// Default gabor number of different theta (gaborbank_getGaborBank)
-  const double kGaborDefaultNtheta = 8.0;
-  /// Minimum sigma for a gabor filter
-  const double kGaborESigmaMin = 1.0;
-  /// Maximum sigma for a gabor filter
-  const double kGaborESigmaMax = 5.0;
-  /// Empirical value for Sigma
-  const double kGaborSigma= 4.0;
+    
+    /// Default gabor number of different with (gaborbank_getGaborBank)
+    const double kGaborDefaultNwidth = 1.0;
+    /// Default gabor number of different lambda (gaborbank_getGaborBank)
+    const double kGaborDefaultNlambda = 5.0;
+    /// Default gabor number of different theta (gaborbank_getGaborBank)
+    const double kGaborDefaultNtheta = 8.0;
+    /// Minimum sigma for a gabor filter
+    const double kGaborESigmaMin = 2.0;
+    /// Maximum sigma for a gabor filter
+    const double kGaborESigmaMax = 4.0;
 
   /**
    * @class    GaborBank
