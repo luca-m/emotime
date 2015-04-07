@@ -16,9 +16,9 @@
 /// If defined, uses sigma as independent value
 //#define DO_SIGMA
 /// If defined uses lambda as indipendend value
-//#define DO_LAMBDA
+#define DO_LAMBDA
 /// Use lambda values from http://ieeexplore.ieee.org/xpl/articleDetails.jsp?arnumber=1384873 
-#define DO_LAMBDA_P       
+//#define DO_LAMBDA_P       
 /// Logarithmic sweep in cicles for lambda and sigma
 //#define DO_LOG_SWEEP    // nogood
 
@@ -74,14 +74,18 @@
 
     /* Gabor Empiric consts */
     
+    /// Empirical value for Sigma
+    const double kGaborSigma= 3.1;//1.25;//CV_PI/2.;//2.0;
     /// Empirical minimum value of wavelength
     const double kGaborELambdaMin = 8.0;//10;//(CV_PI /32.);
     /// Empirical maximum value of wavelength
     const double kGaborELambdaMax = 16.0;//18;//(CV_PI /2.);
-    /// Empirical value for Sigma
-    const double kGaborSigma= 1.25;//CV_PI/2.;//2.0;
+    /// Minimum sigma for a gabor filter
+    const double kGaborESigmaMin = 2.0;
+    /// Maximum sigma for a gabor filter
+    const double kGaborESigmaMax = 4.0;
     /// Minimum width for a gabor filter
-    const int kGaborWidthMin = 9;
+    const int kGaborWidthMin = 12;
     /// Maximum width for a gabor filter
     const int kGaborWidthMax = 20;
 
@@ -92,10 +96,6 @@
     const double kGaborDefaultNlambda = 5.0;
     /// Default gabor number of different theta (gaborbank_getGaborBank)
     const double kGaborDefaultNtheta = 8.0;
-    /// Minimum sigma for a gabor filter
-    const double kGaborESigmaMin = 2.0;
-    /// Maximum sigma for a gabor filter
-    const double kGaborESigmaMax = 4.0;
 
   /**
    * @class    GaborBank

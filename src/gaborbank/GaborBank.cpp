@@ -196,7 +196,7 @@ namespace emotime {
       for ( _lambda = kGaborELambdaMin; _lambda < kGaborELambdaMax;
             _lambda += (kGaborELambdaMax-kGaborELambdaMin)/((double)(nlambdas<=0?1:nlambdas)) )
       #else
-      //for ( _lambda = kGaborELambdaMin; _lambda < kGaborELambdaMax;
+      for ( _lambda = kGaborELambdaMin; _lambda < kGaborELambdaMax;
             _lambda += std::pow(10,(log(kGaborELambdaMax)-log(kGaborELambdaMin))/((double)(nlambdas<=0?1:nlambdas)) ) )
       //_lambda=CV_PI/std::pow(2,1);
       //for ( int _lambda_c=1; _lambda_c<(nlambdas<=1?2:nlambdas+1);  // http://222.146.6.210/iccs99OLP/o1-10/o1-10.htm
@@ -247,18 +247,16 @@ namespace emotime {
     }
     
     Mat GaborBank::filterImage(cv::Mat & src, cv::Size & featSize) {
-      Size size(0,0);
-      size.height=src.rows;
-      size.width=src.cols;
-      if (size.height==0 || size.width==0){
-        std::cerr<<"[!] cannot filter image (size="<<size<<")"<<std::endl;
+      unsigned short int type = CV_8U;
+      if (src.size().width ==0 || src.size().height==0){
+        std::cerr<<"[!] cannot filter image (size="<<src.size()<<")"<<std::endl;
         return Mat();
       }
       Size s = this->getFilteredImgSize(featSize);
-      Mat dest = Mat::zeros(s.height, s.width, CV_32F);
+      Mat dest = Mat::zeros(s.height, s.width, type); //CV_32F);
       Mat image;
 
-      src.convertTo(image, CV_32F);
+      src.convertTo(image, type);//CV_32F);
       
       #ifdef GABOR_DEBUG
       std::cerr<<"[-] resizing image "<<image.cols<<"x"<<image.rows<<
@@ -270,29 +268,34 @@ namespace emotime {
       for (unsigned int k = 0; k < bank.size(); k++) {
         emotime::GaborKernel * gk = bank.at(k);
         Mat real = gk->getReal();
-        Mat freal = Mat::zeros(size.height, size.width, CV_32F);
-        Mat magn  = Mat::zeros(size.height, size.width, CV_32F);
-        Mat scaled = Mat(featSize,CV_32F);
+        Mat freal = Mat::zeros(image.size().height, image.size().width,type); //CV_32F);
+        Mat magn  = Mat::zeros(image.size().height, image.size().width,type); //CV_32F);
         #ifndef GABOR_ONLY_REAL
         Mat imag = gk->getImag();
-        Mat fimag = Mat(size, CV_32F);
-        filter2D(src, fimag, CV_32F, imag);
+        Mat fimag = Mat(size, type);//CV_32F);
+        filter2D(image, fimag, type/*CV_32F*/, imag);
         #endif
-        filter2D(src, freal, CV_32F, real);
+        filter2D(image, freal, type/*CV_32F*/, real);
         #ifndef GABOR_ONLY_REAL
         // Calculating Gabor magnitude
         pow(freal,2,freal);
         pow(fimag,2,fimag);
         add(fimag,freal,magn);
         sqrt(magn,magn);
-        resize(magn, scaled, featSize, CV_INTER_AREA);
+        //resize(magn, scaled, featSize, CV_INTER_AREA);
+        Mat scaled = magn;//CV_32F);
         #else
-        resize(freal, scaled, featSize, CV_INTER_AREA);
+        Mat scaled = freal;//CV_32F);
+        //resize(freal, scaled, featSize, CV_INTER_AREA);
         #endif
         #ifndef GABOR_SHRINK
         for (unsigned int i = 0; i<(unsigned int) featSize.height; i++) {
           for (unsigned int j = 0; j<(unsigned int)featSize.width; j++) {
-            dest.at<float>(i + (k * featSize.height), j) = scaled.at<float>(i,j);
+            if (type == CV_32F){
+              dest.at<float>(i + (k * featSize.height), j) = scaled.at<float>(i,j);
+            } else if (type == CV_8U){
+              dest.at<char>(i + (k * featSize.height), j) = scaled.at<char>(i,j);
+            }
           }
         }
         #else
