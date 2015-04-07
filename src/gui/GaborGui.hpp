@@ -17,6 +17,8 @@
 #include "ACapture.h"
 #include "GaborBank.h"
 
+using namespace std;
+
 namespace emotime{
 
   /**
@@ -56,14 +58,13 @@ namespace emotime{
        *
        */
       static void on_trackbar(int newVal, void *obj) {
+        double min,max;
         GaborBank gaborbank;
         Mat frame;
         Mat gaborframe;
         Mat resized;
         Mat scaled;
         Mat magnified;
-        double min;
-        double max;
         #ifdef DEBUG
         cout<<"DEBUG: Parameters changed, reconfiguring.. (this@"<<obj<<")"<<endl;
         #endif
@@ -75,16 +76,20 @@ namespace emotime{
         ths->size.width=ths->isize;
         ths->size.height=ths->isize;
         ths->currframe.copyTo(frame);
-        resize(ths->currframe, resized, ths->size, 0, 0, CV_INTER_AREA);
+        cout<<frame.type()<<frame.size()<<ths->size<<endl;
+        //resize(ths->currframe, resized, ths->size, 0, 0, CV_INTER_AREA);
         cout<<"DEBUG: recreating gabor filter bank "<<ths->nwidths<<","<<ths->nlambdas<<","<<ths->nthetas <<endl;
         gaborbank=GaborBank();
         gaborbank.fillGaborBank(ths->nwidths, ths->nlambdas, ths->nthetas);
-        gaborframe=gaborbank.filterImage(resized);
+        gaborframe=gaborbank.filterImage(frame, ths->size);
         cout<<"DEBUG: preparing for visualization"<<endl;
-        minMaxIdx(gaborframe, &min, &max);
-        convertScaleAbs(gaborframe, scaled, 255/max);
-        equalizeHist(scaled, scaled);
-        resize(scaled, magnified, Size(scaled.size().width/ths->isize*56, scaled.size().height/ths->isize*56), 0, 0, CV_INTER_LINEAR);
+        //minMaxIdx(gaborframe, &min, &max);
+        //convertScaleAbs(gaborframe, scaled, 255/max);
+        equalizeHist(gaborframe, gaborframe);
+        resize(gaborframe, magnified, 
+               Size((gaborframe.size().width/ths->isize)*56, 
+                    (gaborframe.size().height/ths->isize)*56), 
+               0, 0, CV_INTER_LINEAR);
         imshow(ths->mainWinTitle.c_str(), ths->currframe);
         imshow(ths->gaborWinTitle.c_str(), magnified);
       }

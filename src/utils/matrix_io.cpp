@@ -68,7 +68,6 @@ bool matrix_io_save( cv::Mat & mat, std::string & filePath){
         cv::minMaxIdx(mat, &min, &max);
         cv::Mat adjMap;
         cv::convertScaleAbs(mat, adjMap, 255/max);
-        equalizeHist(adjMap,adjMap);
         imwrite(file, adjMap);
       } else {
         imwrite(file, mat);
