@@ -247,46 +247,38 @@ namespace emotime {
     }
     
     Mat GaborBank::filterImage(cv::Mat & src, cv::Size & featSize) {
-      unsigned short int type = CV_8U;
+      unsigned short int type = CV_32F;  // CV_8U will break svm detectors
       if (src.size().width ==0 || src.size().height==0){
         std::cerr<<"[!] cannot filter image (size="<<src.size()<<")"<<std::endl;
         return Mat();
       }
-      Size s = this->getFilteredImgSize(featSize);
-      Mat dest = Mat::zeros(s.height, s.width, type); //CV_32F);
+      Size bankSize=this->getFilteredImgSize(featSize);
+      Mat dest = Mat::zeros(bankSize.height, bankSize.width, type);
       Mat image;
-
-      src.convertTo(image, type);//CV_32F);
-      
       #ifdef GABOR_DEBUG
       std::cerr<<"[-] resizing image "<<image.cols<<"x"<<image.rows<<
                  " to "<<featSize.height<<"x"<<featSize.width<<
                  " and apply gabor filter bank"<<std::endl;
       #endif
+      src.convertTo(image, type);
       resize(image, image, featSize, CV_INTER_AREA);
-
       for (unsigned int k = 0; k < bank.size(); k++) {
         emotime::GaborKernel * gk = bank.at(k);
         Mat real = gk->getReal();
-        Mat freal = Mat::zeros(image.size().height, image.size().width,type); //CV_32F);
-        Mat magn  = Mat::zeros(image.size().height, image.size().width,type); //CV_32F);
+        Mat freal = Mat::zeros(image.size().height, image.size().width, type);
+        filter2D(image, freal, type, real);
         #ifndef GABOR_ONLY_REAL
+        Mat scaled = freal;
+        #else
         Mat imag = gk->getImag();
-        Mat fimag = Mat(size, type);//CV_32F);
-        filter2D(image, fimag, type/*CV_32F*/, imag);
-        #endif
-        filter2D(image, freal, type/*CV_32F*/, real);
-        #ifndef GABOR_ONLY_REAL
-        // Calculating Gabor magnitude
+        Mat fimag = Mat::zeros(image.size().height, image.size().width, type);
+        Mat magn  = Mat::zeros(image.size().height, image.size().width, type);
+        filter2D(image, fimag, type, imag);
         pow(freal,2,freal);
         pow(fimag,2,fimag);
         add(fimag,freal,magn);
         sqrt(magn,magn);
-        //resize(magn, scaled, featSize, CV_INTER_AREA);
-        Mat scaled = magn;//CV_32F);
-        #else
-        Mat scaled = freal;//CV_32F);
-        //resize(freal, scaled, featSize, CV_INTER_AREA);
+        Mat scaled = magn;
         #endif
         #ifndef GABOR_SHRINK
         for (unsigned int i = 0; i<(unsigned int) featSize.height; i++) {
@@ -302,6 +294,12 @@ namespace emotime {
         cv::max(scaled,dest,dest);
         #endif
       }
+      //double min,max;
+      //minMaxIdx(dest, &min, &max);
+      //convertScaleAbs(dest, dest, 255/max);
+      //dest.convertTo(dest, CV_8U);
+      //equalizeHist(dest,dest);
+      //dest.convertTo(dest, CV_32F);
       return dest;
     }
 

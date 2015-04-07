@@ -26,7 +26,7 @@
 //#define GABOR_DEBUG
 
 /// Calculate only real part instead of gabor magnitude as feature
-#define GABOR_ONLY_REAL         // faster
+//#define GABOR_ONLY_REAL         // faster
 /// Keep the maximum feature values calculated through the application of the filter 
 /// bank and shrink the feature vector at the same size of the input image.
 //#define GABOR_SHRINK          // nogood
@@ -44,15 +44,15 @@
     /// Minimum bandwidth for a gabor filter
     const double kGaborBandwidthMin = 1.0;
     /// Maximum bandwidth for a gabor filter
-    const double kGaborBandwidthMax = 2.0; //CV_PI/2.;//1.6;
+    const double kGaborBandwidthMax = 2.0;
     /// Minimum wavelength for a gabor filter
-    const double kGaborLambdaMin = 4;///*16;//4;*/1./(CV_PI/6.0);
+    const double kGaborLambdaMin = 4;
     /// Maximum wavelength for a gabor filter
-    const double kGaborLambdaMax = 4;///*48;//12;*/ 1./(CV_PI/32.0);
+    const double kGaborLambdaMax = 12;
     /// Minimum sigma for a gabor filter
-    const double kGaborSigmaMin = 2.0;//1.0;
+    const double kGaborSigmaMin = 2.0;
     /// Maximum sigma for a gabor filter
-    const double kGaborSigmaMax = 3.0; //6.0;
+    const double kGaborSigmaMax = 4.0;
     /// Minimum orientation for a gabor filter
     const double kGaborThetaMin = 0.0;
     /// Maximum orientation for a gabor filter
@@ -75,11 +75,11 @@
     /* Gabor Empiric consts */
     
     /// Empirical value for Sigma
-    const double kGaborSigma= 3.1;//1.25;//CV_PI/2.;//2.0;
+    const double kGaborSigma= 3.1;
     /// Empirical minimum value of wavelength
-    const double kGaborELambdaMin = 8.0;//10;//(CV_PI /32.);
+    const double kGaborELambdaMin = 8.0;
     /// Empirical maximum value of wavelength
-    const double kGaborELambdaMax = 16.0;//18;//(CV_PI /2.);
+    const double kGaborELambdaMax = 16.0;
     /// Minimum sigma for a gabor filter
     const double kGaborESigmaMin = 2.0;
     /// Maximum sigma for a gabor filter
