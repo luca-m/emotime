@@ -199,7 +199,7 @@ namespace emotime {
           upper=eye1;
         }
         tribase=Point(upper.x, lower.y);
-        eyecenter=Point(left.x+(right.x-left.x)/2, lower.y+(upper.y-lower.y)/2);
+        eyecenter=Point(left.x+(right.x-left.x)/2.0, lower.y+(upper.y-lower.y)/2.0);
         // rotate image
         // float c0=std::sqrt(std::pow(tribase.x-upper.x,2)+std::pow(tribase.y-upper.y,2));
         double c1=std::sqrt(std::pow(tribase.x-lower.x,2)+std::pow(tribase.y-lower.y,2));
@@ -218,6 +218,7 @@ namespace emotime {
     }
     // copy equalized and rotated face to out image
     plainFace.copyTo(face);
+    this->clahe->apply(face,face);
     //equalizeHist(face, face);
     imgGray.release();
     return true;
