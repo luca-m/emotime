@@ -11,7 +11,6 @@
 
 #include "AdaBoostClassifier.h"
 
-
 using std::vector;
 using std::pair;
 using std::string;
@@ -22,7 +21,7 @@ namespace emotime {
 
   AdaBoostClassifier::AdaBoostClassifier(int boost_type, double trim_weight, int max_depth) {
     this->params.boost_type = boost_type;
-    this->params.weak_count = 0;
+    this->params.weak_count = kWeakCount;
     this->params.weight_trim_rate = trim_weight;
     this->params.max_depth = max_depth;
     this->params.use_surrogates = false;

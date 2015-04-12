@@ -14,18 +14,20 @@
 namespace emotime {
 
   /// SVM C factor parameter
-  const double kCfactor = 0.5;
+  const double kCfactor = 1.0;
   /// SVM max interation termination criteria
   const int kMaxIteration = 1000000;
   /// SVM error margin termination criteria
   const double kErrorMargin = 1e-6;
 
   /// AdaBoost algorithm type
-  const int kBoostType = CvBoost::GENTLE;
+  const int kBoostType = CvBoost::REAL;
   /// AdaBoost trim weight value
-  const double kTrimWeight = 0.0;
+  const double kTrimWeight = 0.95;
+  /// AdaBoost weak count 
+  const double kWeakCount = 100;
   /// AdaBoost max algorithm depth
-  const int kMaxDepth = 1;
+  const int kMaxDepth = 3;
 
 }
 

@@ -20,7 +20,7 @@
 /// Use lambda values from http://ieeexplore.ieee.org/xpl/articleDetails.jsp?arnumber=1384873 
 //#define DO_LAMBDA_P       
 /// Logarithmic sweep in cicles for lambda and sigma
-//#define DO_LOG_SWEEP    // nogood
+#define DO_LOG_SWEEP    // ok
 
 /// Some debug print
 //#define GABOR_DEBUG
@@ -31,7 +31,7 @@
 /// bank and shrink the feature vector at the same size of the input image.
 //#define GABOR_SHRINK          // nogood
 /// Use opencv functions to retrieve gabor kernel (almost equal)
-#define GABOR_USE_OPENCV_KERNEL // equal
+//#define GABOR_USE_OPENCV_KERNEL // equal
 
 #include <opencv2/opencv.hpp>
 #include "GaborKernel.h"
@@ -44,19 +44,19 @@
     /// Minimum bandwidth for a gabor filter
     const double kGaborBandwidthMin = 1.0;
     /// Maximum bandwidth for a gabor filter
-    const double kGaborBandwidthMax = 2.0;
+    const double kGaborBandwidthMax = 2.5;
     /// Minimum wavelength for a gabor filter
     const double kGaborLambdaMin = 4;
     /// Maximum wavelength for a gabor filter
-    const double kGaborLambdaMax = 12;
+    const double kGaborLambdaMax = 16;
     /// Minimum sigma for a gabor filter
     const double kGaborSigmaMin = 2.0;
     /// Maximum sigma for a gabor filter
     const double kGaborSigmaMax = 4.0;
     /// Minimum orientation for a gabor filter
-    const double kGaborThetaMin = 0.0;
+    const double kGaborThetaMin = CV_PI/2.0;
     /// Maximum orientation for a gabor filter
-    const double kGaborThetaMax = (CV_PI);
+    const double kGaborThetaMax = CV_PI+CV_PI/2.0;
 
     /* Gabor Misc consts*/
 
@@ -75,7 +75,7 @@
     /* Gabor Empiric consts */
     
     /// Empirical value for Sigma
-    const double kGaborSigma= 3.1;
+    const double kGaborSigma= 1.5;// 3.0;
     /// Empirical minimum value of wavelength
     const double kGaborELambdaMin = 8.0;
     /// Empirical maximum value of wavelength
@@ -85,9 +85,9 @@
     /// Maximum sigma for a gabor filter
     const double kGaborESigmaMax = 4.0;
     /// Minimum width for a gabor filter
-    const int kGaborWidthMin = 12;
+    const int kGaborWidthMin = 13;
     /// Maximum width for a gabor filter
-    const int kGaborWidthMax = 20;
+    const int kGaborWidthMax = 21;
 
     
     /// Default gabor number of different with (gaborbank_getGaborBank)
@@ -96,6 +96,8 @@
     const double kGaborDefaultNlambda = 5.0;
     /// Default gabor number of different theta (gaborbank_getGaborBank)
     const double kGaborDefaultNtheta = 8.0;
+    /// Default feature size
+    const unsigned int kGaborDefaultFeatureSize = 56;
 
   /**
    * @class    GaborBank
@@ -207,10 +209,12 @@
     protected:
 
     private:
-
+      unsigned int lastFeatureSize;
+      int lastNwidth;
+      int lastNlambda;
+      int lastNtheta;
       /// Gabor bank
       std::vector<emotime::GaborKernel*> bank;
-
       /**
        * @brief: Gabor Kernel generator.
        *
@@ -233,7 +237,6 @@
        */
       GaborKernel* generateGaborKernel(cv::Size ksize, double sigma, double theta,
           double lambda, double gamma, double psi, int ktype);
-
       /**
        * @brief Calls getFilteredImgSize(cv::Size& size) with \p src size.
        *
@@ -242,7 +245,6 @@
        * @returns The size of the filtered image.
        */
       cv::Size getFilteredImgSize(cv::Mat& src);
-
       /**
        * @brief Obtain the dimension needed for pre-allocating an image suitable for
        *        being used in gaborbank_filterImage (grayscale image only)
@@ -252,8 +254,6 @@
        * @returns The size of the filtered image.
        * */
       cv::Size getFilteredImgSize(cv::Size& size);
-
-
       /**
        *  @brief          Destroy the gabor bank
        */

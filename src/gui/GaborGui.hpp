@@ -82,14 +82,17 @@ namespace emotime{
         gaborbank.fillGaborBank(ths->nwidths, ths->nlambdas, ths->nthetas);
         gaborframe=gaborbank.filterImage(frame, ths->size);
         cout<<"DEBUG: preparing for visualization"<<endl;
-        scaled=gaborframe;
+        gaborframe.convertTo(scaled,CV_8U);
+        //scaled=gaborframe;
+        //cout<<"Type "<<scaled.type()<<endl;
         //minMaxIdx(gaborframe, &min, &max);
-        //convertScaleAbs(gaborframe, scaled, 255/max);
-        //gaborframe.convertTo(scaled, CV_8U);//CV_32F);
-        //equalizeHist(scaled,scaled);
-        resize(gaborframe, magnified, 
-               Size((gaborframe.size().width/ths->isize)*56, 
-                    (gaborframe.size().height/ths->isize)*56), 
+        //convertScaleAbs(gaborframe, scaled, 255.0/max);
+        //gaborframe.convertTo(scaled, CV_8U);
+        //cout<<gaborframe<<endl;
+        //cout<<"Type "<<scaled.type()<<endl;
+        resize(scaled, magnified, 
+               Size((scaled.size().width/ths->isize)*72, 
+                    (scaled.size().height/ths->isize)*72), 
                0, 0, CV_INTER_LINEAR);
         imshow(ths->mainWinTitle.c_str(), ths->currframe);
         imshow(ths->gaborWinTitle.c_str(), magnified);

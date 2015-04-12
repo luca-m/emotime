@@ -8,6 +8,8 @@
 #ifndef  __CLASSIFIER_INC__
 #define  __CLASSIFIER_INC__
 
+#include "TrainingParameters.h"
+
 #include <opencv2/opencv.hpp>
 #include <string>
 

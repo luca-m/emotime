@@ -20,13 +20,15 @@ using cv::Mat;
 namespace emotime {
 
   GaborBank::~GaborBank() {
+    this->lastFeatureSize=kGaborDefaultFeatureSize;
+    this->lastNtheta=kGaborDefaultNtheta;
+    this->lastNlambda=kGaborDefaultNlambda;
+    this->lastNwidth=kGaborDefaultNwidth;
     this->emptyBank();
   }
 
   void GaborBank::emptyBank() {
-    for (std::vector<GaborKernel*>::iterator it = this->bank.begin(); it != this->bank.end(); ++it) {
-      delete *it;
-    }
+    while(!this->bank.empty()){ delete this->bank.back(), this->bank.pop_back();}
   }
 
   GaborKernel* GaborBank::generateGaborKernel(cv::Size ksize, double sigma, double
@@ -91,6 +93,9 @@ namespace emotime {
   }
 
   void GaborBank::fillGaborBank(double nwidths, double nlambdas, double nthetas) {
+    this->lastNtheta=nthetas;
+    this->lastNlambda=nlambdas;
+    this->lastNwidth=nwidths;
     #ifdef GABOR_FORMULA
     fillGaborBankFormula(nwidths,nlambdas,nthetas);
     #else
@@ -110,8 +115,6 @@ namespace emotime {
     _gamma = kGaborGamma;
     _sigma = kGaborSigmaMin;
     _psi=kGaborPsi;
-
-    //double bandwidth=1.6;
     double slratio;
     for (double bandwidth=kGaborBandwidthMin; bandwidth<kGaborBandwidthMax;
           bandwidth+=(kGaborBandwidthMax-kGaborBandwidthMin)/((double)(nwidths)) ) {
@@ -119,33 +122,33 @@ namespace emotime {
 
       #if defined(DO_LAMBDA)
           #ifndef DO_LOG_SWEEP
-      for (_lambda = kGaborLambdaMin; _lambda < kGaborLambdaMax;
-          _lambda += (kGaborLambdaMax-kGaborLambdaMin)/((double)(nlambdas<=0?1:nlambdas))) 
-      //    _lambda=2*CV_PI/std::pow(2,1);
-      //for (int _lambda_c=1;_lambda_c<(nlambdas<=1?2:nlambdas+1); // http://222.146.6.210/iccs99OLP/o1-10/o1-10.htm
-      //     _lambda = CV_PI/std::pow(2,++_lambda_c))
+      _lambda=kGaborLambdaMin;
+      for (int _lambda_c=1; _lambda_c<(nlambdas<=1?2:nlambdas+1);  
+            _lambda = (kGaborSigmaMax-kGaborSigmaMin)/((double)(nlambdas<=0?1:nlambdas)) )
           #else
-      for (_lambda = kGaborLambdaMin; _lambda < kGaborLambdaMax;
-           _lambda += std::pow(10, (log(kGaborELambdaMax)-log(kGaborELambdaMin))/((double)(nlambdas<=0?1:nlambdas)) ) )
+      _lambda=kGaborLambdaMin*std::pow(2,1);
+      for (int _lambda_c=1; _lambda_c<(nlambdas<=1?2:nlambdas+1);  
+            _lambda = kGaborLambdaMin*std::pow(2,++_lambda_c))
           #endif
       #elif defined(DO_SIGMA)
       for (_sigma = kGaborSigmaMin; _sigma < kGaborSigmaMax; 
-          #ifndef DO_LOG_SWEEP
-           _sigma += (kGaborSigmaMax-kGaborSigmaMin)/((double)(nlambdas<=0?1:nlambdas))) 
-          #else
-          _sigma += std::pow(10, (log(kGaborESigmaMax)-log(kGaborESigmaMin))/((double)(nlambdas<=0?1:nlambdas)) ) ) 
+          #ifndef DO_LOG_SWEEP_
+           _sigma += (kGaborSifgmaMax-kGaborSigmaMin)/((double)(nlambdas<=0?1:nlambdas))) 
+          #else                
+          _sigma += std::pow(10, (log(kGaborSigmaMax)-log(kGaborSigmaMin))/((double)(nlambdas<=0?1:nlambdas)) ) ) 
           #endif
       #elif defined(DO_LAMBDA_P)
       _lambda = kGaborPaperCicles[0];
       // _lambda=2*CV_PI/std::pow(2,kGaborPaperCicles[0]);
-      for (int j = 0; j < (nlambdas>kGaborPaperLambdasLen?kGaborPaperLambdasLen:nlambdas); 
-           j++, _lambda = /* 2*CV_PI/std::pow(2,kGaborPaperCicles[j]) */ kGaborPaperCicles[j]) 
+      for (int j=0; j < (nlambdas>kGaborPaperLambdasLen?kGaborPaperLambdasLen:nlambdas); 
+           _lambda = kGaborPaperCicles[j++]) 
       #endif
           {
         #if defined(DO_LAMBDA) || defined(DO_LAMBDA_P) 
+        _lambda/=(double)this->lastFeatureSize;
         _sigma= slratio*_lambda;
         #elif defined(DO_SIGMA)
-        _lambda=_sigma/slratio;
+        _lambda=_sigma/slratio /(double)this->lastFeatureSize;
         #endif
         //int n = ( std::ceil(2.5*_sigma/_gamma) >maxfwidth? : std::ceil(2.5*_sigma/_gamma)  );
         int n = (int)std::ceil(2.5*_sigma/_gamma); 
@@ -189,26 +192,26 @@ namespace emotime {
       _sigma = kGaborSigma;
       #if defined(DO_LAMBDA_P)
       _lambda=kGaborPaperCicles[0];
-      for (int j = 0; j < (nlambdas>kGaborPaperLambdasLen?kGaborPaperLambdasLen:nlambdas);
+      for (int j=0; j < (nlambdas>kGaborPaperLambdasLen?kGaborPaperLambdasLen:nlambdas);
            _lambda=kGaborPaperCicles[j++])
       #else
       #ifndef DO_LOG_SWEEP
       for ( _lambda = kGaborELambdaMin; _lambda < kGaborELambdaMax;
-            _lambda += (kGaborELambdaMax-kGaborELambdaMin)/((double)(nlambdas<=0?1:nlambdas)) )
+            _lambda+=(kGaborELambdaMax-kGaborELambdaMin)/((double)(nlambdas<=0?1:nlambdas)))
       #else
-      for ( _lambda = kGaborELambdaMin; _lambda < kGaborELambdaMax;
-            _lambda += std::pow(10,(log(kGaborELambdaMax)-log(kGaborELambdaMin))/((double)(nlambdas<=0?1:nlambdas)) ) )
-      //_lambda=CV_PI/std::pow(2,1);
-      //for ( int _lambda_c=1; _lambda_c<(nlambdas<=1?2:nlambdas+1);  // http://222.146.6.210/iccs99OLP/o1-10/o1-10.htm
-      //      _lambda = CV_PI/std::pow(2,++_lambda_c))
+      _lambda=kGaborELambdaMin*std::pow(2,1);
+      for ( int _lambda_c=1; _lambda_c<(nlambdas<=1?2:nlambdas+1);  
+            _lambda = kGaborELambdaMin*std::pow(2,++_lambda_c))
       #endif
       #endif
       {
+         _lambda /=(double)this->lastFeatureSize;
+         //_sigma= slratio*_lambda;
          #if defined(GABOR_DEBUG)
          std::cerr<<"INFO:lambda="<<_lambda<<",sigma="<<_sigma<<",ksize="<<fwidth<<""<<std::endl;
          #endif
          _theta=kGaborThetaMin;
-         for ( int _theta_c=0; _theta_c < nthetas;
+         for ( int _theta_c=0; _theta_c < (nthetas<=0?1:nthetas);
                _theta += _theta_step, _theta_c++) {
              emotime::GaborKernel* kern = this->generateGaborKernel(kernelSize,
                                           _sigma, _theta, _lambda, _gamma, _psi, CV_32F);
@@ -252,28 +255,39 @@ namespace emotime {
         std::cerr<<"[!] cannot filter image (size="<<src.size()<<")"<<std::endl;
         return Mat();
       }
+      if (((unsigned int)featSize.width) != this->lastFeatureSize){
+        // Regenerate gabor filter to correct cycles
+        #ifdef GABOR_DEBUG
+        std::cerr<<"[-] feature size change detected, rebuilting gabor bank "<<std::endl;
+        #endif
+        this->emptyBank();
+        this->lastFeatureSize = (unsigned int) featSize.width;
+        this->fillGaborBank(this->lastNwidth, this->lastNlambda, this->lastNtheta);
+      }
       Size bankSize=this->getFilteredImgSize(featSize);
       Mat dest = Mat::zeros(bankSize.height, bankSize.width, type);
-      Mat image;
+      #ifdef GABOR_SHRINK
+      Mat tmp_dest = Mat::zeros(bankSize.height, bankSize.width, type);
+      #endif
+      Mat image; src.convertTo(image,type);
       #ifdef GABOR_DEBUG
       std::cerr<<"[-] resizing image "<<image.cols<<"x"<<image.rows<<
                  " to "<<featSize.height<<"x"<<featSize.width<<
                  " and apply gabor filter bank"<<std::endl;
       #endif
-      src.convertTo(image, type);
       resize(image, image, featSize, CV_INTER_AREA);
       for (unsigned int k = 0; k < bank.size(); k++) {
         emotime::GaborKernel * gk = bank.at(k);
         Mat real = gk->getReal();
         Mat freal = Mat::zeros(image.size().height, image.size().width, type);
-        filter2D(image, freal, type, real);
-        #ifndef GABOR_ONLY_REAL
+        filter2D(image, freal, CV_32F, real);
+        #ifdef GABOR_ONLY_REAL
         Mat scaled = freal;
         #else
         Mat imag = gk->getImag();
         Mat fimag = Mat::zeros(image.size().height, image.size().width, type);
         Mat magn  = Mat::zeros(image.size().height, image.size().width, type);
-        filter2D(image, fimag, type, imag);
+        filter2D(image, fimag, CV_32F, imag);
         pow(freal,2,freal);
         pow(fimag,2,fimag);
         add(fimag,freal,magn);
@@ -281,25 +295,27 @@ namespace emotime {
         Mat scaled = magn;
         #endif
         #ifndef GABOR_SHRINK
+        //scaled.convertTo(scaled, type);
         for (unsigned int i = 0; i<(unsigned int) featSize.height; i++) {
           for (unsigned int j = 0; j<(unsigned int)featSize.width; j++) {
             if (type == CV_32F){
               dest.at<float>(i + (k * featSize.height), j) = scaled.at<float>(i,j);
             } else if (type == CV_8U){
-              dest.at<char>(i + (k * featSize.height), j) = scaled.at<char>(i,j);
+              dest.at<uint8_t>(i + (k * featSize.height), j) = scaled.at<uint8_t>(i,j);
             }
           }
         }
         #else
-        cv::max(scaled,dest,dest);
+        cv::max(scaled, tmp_dest, tmp_dest);
         #endif
       }
-      //double min,max;
-      //minMaxIdx(dest, &min, &max);
-      //convertScaleAbs(dest, dest, 255/max);
-      //dest.convertTo(dest, CV_8U);
-      //equalizeHist(dest,dest);
-      //dest.convertTo(dest, CV_32F);
+      #ifdef GABOR_SHRINK
+      Mat tmp2_dest, thr, opened;
+      tmp_dest.convertTo(tmp2_dest,CV_8U);
+      threshold(tmp2_dest, thr, 0, 255, cv::THRESH_OTSU|cv::THRESH_BINARY);
+      morphologyEx(thr, opened, cv::MORPH_OPEN, cv::Mat::ones(1,3,CV_8U));
+      opened.convertTo(dest, CV_32F);
+      #endif
       return dest;
     }
 
