@@ -60,7 +60,7 @@ def dataset_fillCohnKanade( dsFolder, ckFolder, ckEmoFolder, config, vperc=0.3, 
         print "INFO: Picture '%s' has been marked as %s" % (pic, emo)
         orig = join(ckFolder, join(subj, join(s, pic)))
         IMAGES_FOLDER = config['TRAINING_IMAGES']
-        if random.next() <= vperc:
+        if random.random() <= vperc:
             IMAGES_FOLDER = config['VALIDATION_IMAGES']
         dest = join(dsFolder, join(IMAGES_FOLDER, join(emo, pic)))
         try:
