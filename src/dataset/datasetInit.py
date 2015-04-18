@@ -42,7 +42,7 @@ def dataset_init(dsPath, config):
   pth=join(dsPath, config['CLASSIFIER_SVM_FOLDER'])
   if not os.path.exists(pth):
     os.makedirs(pth)
-  pth=join(dsPath, config['CLAADAFIER_ADA_FOLDER'])
+  pth=join(dsPath, config['CLASSIFIER_ADA_FOLDER'])
   if not os.path.exists(pth):
     os.makedirs(pth)
   # Copy configuration
