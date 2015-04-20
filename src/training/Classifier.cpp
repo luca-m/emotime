@@ -51,6 +51,7 @@ namespace emotime {
 
     for(size_t i = 0; i < files_classes.size(); i++) {
       string fpath = files_classes.at(i).first;
+
       sample = matrix_io_load(fpath);
       Mat sample_float;
 
@@ -60,7 +61,7 @@ namespace emotime {
         sample_float=sample;
       }
       train_data.push_back(sample_float.reshape(1, 1)); // reshape(int channels, int rows)
-      train_labels.push_back(files_classes.at(i).second);
+      train_labels.push_back((float)files_classes.at(i).second);
     }
 
     return this->doTraining(train_data, train_labels);
