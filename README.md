@@ -44,7 +44,7 @@ stuff that could be useful to get in this topic:
     doc                Documentation (doxigen)
     report             Class project report (latex)
     resources          Containing third party resources (eg. OpenCV haar classifiers)
-    assets             Binary folder
+    assets             Binary folder (I know, I know, it is not beautiful)
     test               Some testing scripts here
 
 ## Build
@@ -76,6 +76,7 @@ Cross-compiling for windows:
 
 Proof of concept model trained using faces extracted using the detector `cbcl1` are available for download, mulclass strategy [1 vs all](https://dl.dropboxusercontent.com/u/7618747/dataset_svm_354_cbcl1_1vsall.zip) and [many vs many](https://dl.dropboxusercontent.com/u/7618747/dataset_svm_354_cbcl1_1vsallext.zip) can be found.
 
+__NOTE: Trained models for latest version of the code are available in the [v1.2 release page](https://github.com/luca-m/emotime/releases/tag/v1.2-experimental)__
 
 _NOTE: watch for illumination! At the moment optimal results can be obtained in live webcam sessions using direct illumination directed to the user's face. Don't worry you are not required to blind you with a headlight._
 
