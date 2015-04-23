@@ -128,7 +128,7 @@ After `mkdir build; cd build; cmake ..; make ; make install` go to the `assets` 
 The [Cohn-Kanade database](http://www.consortium.ri.cmu.edu/ckagree/) is one of the most used faces database. Its extended version (CK+) contains also [FACS](http://en.wikipedia.org/wiki/Facial_Action_Coding_System)
 code labels (aka Action Units) and emotion labels (neutral, anger, contempt, disgust, fear, happy, sadness, surprise).
 
-## Validation
+## ~~Validation~~ (old, check v1.2 release page)
 
 _First, rough evaluation of the performance of the system_ 
 Validation test involved the whole system `face detector + emotion classifier`, so should not be considered relative to the _emotion classifier_ itself. 
