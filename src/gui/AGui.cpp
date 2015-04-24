@@ -7,6 +7,17 @@
 
 #include "AGui.h"
 
+
+volatile int quit_signal=0;
+#ifdef __unix__
+#include <signal.h>
+  extern "C" void quit_signal_handler(int signum) {
+    if (quit_signal!=0) exit(0); // just exit already
+      quit_signal=1;
+    cout << "Will quit at next camera frame (repeat to kill now)\n";
+}
+#endif
+
 namespace emotime{
 
   AGui::AGui(ACapture* capt, FacePreProcessor* fp, EmoDetector* detect, int fps, string title) {
@@ -21,7 +32,11 @@ namespace emotime{
     if(!init()) {
       return false;
     }
+    #ifdef __unix__
+      signal(SIGINT,quit_signal_handler); // listen for ctrl-C
+    #endif
     while (nextFrame()) {
+      if (quit_signal) exit(0);
       int key;
       if (fps <= 0) {
         key = waitKey(0);
