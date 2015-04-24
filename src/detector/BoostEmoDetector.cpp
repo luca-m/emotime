@@ -33,7 +33,7 @@ namespace emotime {
     return new AdaBoostClassifier(this->boost_type, this->trim_weight, this->max_depth);
   }
 
-  std::pair<Emotion, float> BoostEmoDetector::predict(cv::Mat& frame) {
-    return EmoDetector::predictVotingOneVsAllExt(frame);
+  std::pair<Emotion, float> BoostEmoDetector::predict(cv::Mat& frame, std::map<Emotion,float> &votes) {
+    return EmoDetector::predictVotingOneVsAllExt(frame, votes);
   }
 }

@@ -9,8 +9,10 @@
 #define AGUI_H
 
 #include <iostream>
+#include <fstream>
 #include <string>
 #include <sstream>
+#include <ctime>
 #include <opencv2/opencv.hpp>
 
 #include "ACapture.h"
@@ -58,6 +60,14 @@ namespace emotime {
        */
       bool run();
 
+      /**
+       *  @brief    Captures a single image, prints results to output, and quits.
+       *
+       *  @return   False if something wrong.
+       *
+       */
+      bool runOnce();
+
     protected:
 
       /// Face preprocessor
@@ -81,11 +91,12 @@ namespace emotime {
 
       /**
        *  @brief          Produce the next frame
+       *  @param[in]      Set to true if you want lots of emotion data to dump to screen. 
        *
        *  @return         False if there is no next frame
        *
        */
-      virtual bool nextFrame();
+      virtual bool nextFrame(bool verbose);
 
       /**
        *  @brief          A new frame is available
@@ -102,4 +113,5 @@ namespace emotime {
 }
 
 #endif
+
 

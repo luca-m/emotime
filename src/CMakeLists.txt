@@ -19,7 +19,6 @@ add_subdirectory(facedetector)
 add_subdirectory(gaborbank)
 add_subdirectory(dataset)
 add_subdirectory(utils)
-add_subdirectory(detector)
 add_subdirectory(gui)
 
 find_package(OpenCV COMPONENTS opencv_core opencv_ml opencv_imgproc
