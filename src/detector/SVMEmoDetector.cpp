@@ -32,7 +32,7 @@ namespace emotime {
     return new SVMClassifier(this->C_factor, this->max_iteration, this->error_margin);
   }
 
-  std::pair<Emotion, float> SVMEmoDetector::predict(cv::Mat& frame) {
-    return EmoDetector::predictVotingOneVsAllExt(frame);
+  std::pair<Emotion, float> SVMEmoDetector::predict(cv::Mat& frame, std::map<Emotion,float> &votes) {
+    return EmoDetector::predictVotingOneVsAllExt(frame, votes);
   }
 }

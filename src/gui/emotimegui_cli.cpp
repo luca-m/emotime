@@ -54,8 +54,9 @@ void help();
 
 void help() {
 	cout << "Usage:" << endl;
-	cout << "   emotimegui_cli <faceDetecXML> <eyeDetectXML> <width> <height> <nwidths> <nlambdas> <nthetas> [<mode>] <classifier>{<classifier>}" << endl;
+	cout << "   emotimegui_cli [-s] [-oJSONOutputFile] <faceDetecXML> <eyeDetectXML> <width> <height> <nwidths> <nlambdas> <nthetas> [<mode>] <classifier>{<classifier>}" << endl;
 	cout << "Parameters:" << endl;
+  cout << "   -s <optional>      - This will capture a single image from webcam and print the analysis to console." << endl;
 	cout << "   <faceDetectXML>    - OpenCV cascade classifier configuration file (Haar or LBP) for face detection" << endl;
 	cout << "   <eyeDetectXML>     - OpenCV cascade classifier configuration file (Haar or LBP) for eye detection" << endl;
 	cout << "   <width>            - Width of the image, the input image will be scaled"<<endl;
@@ -91,26 +92,40 @@ int main(int argc, const char* argv[]) {
 		return -3;
 	}
 
+  int argOffset = 1;
+
+  if(!strcmp(argv[1], "-s")){
+    argOffset++;
+  }
+
   // Intializing the face detector
-	string faceDetConfig(argv[1]);
-	string eyeDetConfig(argv[2]);
-  int width = std::atoi(argv[3]);
-  int height = std::atoi(argv[4]);
-  int nwidths = std::atoi(argv[5]);
-  int nlambdas = std::atoi(argv[6]);
-  int nthetas = std::atoi(argv[7]);
+	string faceDetConfig(argv[argOffset]);
+	string eyeDetConfig(argv[argOffset+1]);
+  int width = std::atoi(argv[argOffset + 2]);
+  int height = std::atoi(argv[argOffset + 3]);
+  int nwidths = std::atoi(argv[argOffset + 4]);
+  int nlambdas = std::atoi(argv[argOffset + 5]);
+  int nthetas = std::atoi(argv[argOffset + 6]);
+
+  cout  << "Run Configuration: " << endl 
+        << "  Width: " << width << endl
+        << "  Height: " << height << endl
+        << "  nWidths: " << nwidths << endl
+        << "  nLambdas: " << nlambdas << endl
+        << "  nThetas: " << nthetas << endl;
+
   FacePreProcessor facepreproc(faceDetConfig, eyeDetConfig, width, height, nwidths, nlambdas, nthetas);
 
   // Setting the mode
   int i;
 	string mode;
-  mode = string(argv[8]);
+  mode = string(argv[argOffset + 7]);
 
 	if (mode != "svm" && mode != "ada") {
     mode = "ada";
-    i = 8;
+    i = argOffset + 7;
   } else {
-    i = 9;
+    i = argOffset + 8;
   }
 
   // Setting the classifiers
@@ -132,7 +147,12 @@ int main(int argc, const char* argv[]) {
   int fps = 120;
 	try {
     EmotimeGui gui(&facepreproc, emodetector, fps);
-    gui.run();
+    if(!strcmp(argv[1], "-s")){
+      gui.runOnce();  
+    }
+    else{
+      gui.run();
+    }
 	} catch (int e) {
 		cerr << "ERR: Exception #" << e << endl;
 		return -e;

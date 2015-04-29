@@ -132,9 +132,7 @@ namespace emotime {
     init(classifiers);
   }
 
-  pair<Emotion, float> EmoDetector::predictVotingOneVsAllExt(cv::Mat& frame) {
-
-    map<Emotion,float> votes;
+  pair<Emotion, float> EmoDetector::predictVotingOneVsAllExt(cv::Mat& frame, std::map<Emotion,float> &votes) {
 
     if (detectors_ext.size() == 0) {
       return make_pair(UNKNOWN, 0.0f);
@@ -219,8 +217,7 @@ namespace emotime {
     return best;
   }
 
-  pair<Emotion, float> EmoDetector::predictMayorityOneVsAll(cv::Mat& frame){
-    map<Emotion,float> votes;
+  pair<Emotion, float> EmoDetector::predictMayorityOneVsAll(cv::Mat& frame, std::map<Emotion,float> &votes){
 
     if (detectors_ext.size() == 0) {
       return make_pair(UNKNOWN, 0.0f);
@@ -252,11 +249,10 @@ namespace emotime {
         max_pair.second=ii->second;
       }
     }
-
     return max_pair;
   }
 
-  pair<Emotion, float> EmoDetector::predict(cv::Mat& frame) {
-    return predictMayorityOneVsAll(frame);
+  pair<Emotion, float> EmoDetector::predict(cv::Mat& frame, std::map<Emotion,float> &votes) {
+    return predictMayorityOneVsAll(frame, votes);
   }
 }
