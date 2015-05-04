@@ -7,6 +7,8 @@ _Recognizing emotional states in faces_
 
 Authors: Luca Mella, Daniele Bellavista
 
+Contributors: Rohit Krishnan
+
 Development Status: Experimental 
 
 Copyleft: [CC-BY-NC 2013](http://creativecommons.org/licenses/by-nc/3.0/)
