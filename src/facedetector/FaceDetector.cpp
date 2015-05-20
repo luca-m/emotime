@@ -32,7 +32,7 @@ namespace emotime {
     }
 
     cascade_f.load(face_config_file);
-    if (eye_config_file != string("none")) {
+    if (eye_config_file != string("none") && eye_config_file != string("")) {
       cascade_e.load(eye_config_file);
       assert(!cascade_e.empty());
       this->doEyesRot = true;
@@ -62,6 +62,8 @@ namespace emotime {
     vector<Rect> faces;
     // detect faces
     assert(!cascade_f.empty());
+    this->faceMinSize.height = img.rows / 3;
+    this->faceMinSize.width = img.cols / 4;
     cascade_f.detectMultiScale(img, faces, 1.1, 2, 0|CV_HAAR_SCALE_IMAGE, this->faceMinSize );
 
     if (faces.size() == 0){
@@ -165,6 +167,24 @@ namespace emotime {
     }else{
       img.copyTo(imgGray);
     }
+    // Scale image for better performance
+    Size max_s, curr_s, tgt_s;
+    float ratio = 0;    
+    max_s.width = 500;  
+    max_s.height = 500; 
+    curr_s.width = imgGray.cols; 
+    curr_s.height= imgGray.rows; 
+    if(curr_s.width > max_s.width){
+           ratio = max_s.width / (float) curr_s.width;    // get ratio for scaling image
+           tgt_s.width = max_s.width;             // Set new width
+           tgt_s.height = curr_s.height * ratio;  // Scale height based on ratio
+       }
+    if(curr_s.height > max_s.height){
+           ratio = max_s.height / (float) curr_s.height; // get ratio for scaling image
+           tgt_s.height = max_s.height;   // Set new height
+           tgt_s.width  = curr_s.width * ratio;    // Scale width based on ratio
+       }
+    resize(imgGray, imgGray, tgt_s , CV_INTER_AREA);
 
     //equalizeHist(imgGray, imgGray);
     this->clahe->apply(imgGray,imgGray);
