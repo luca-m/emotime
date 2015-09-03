@@ -78,12 +78,11 @@ Cross-compiling for windows:
 
 Proof of concept model trained using faces extracted using the detector `cbcl1` are available for download, mulclass strategy ~~[1 vs all](https://dl.dropboxusercontent.com/u/7618747/dataset_svm_354_cbcl1_1vsall.zip) and [many vs many](https://dl.dropboxusercontent.com/u/7618747/dataset_svm_354_cbcl1_1vsallext.zip)~~. 
 
-__NOTE: Trained models for latest version of the code are available in the ~~[v1.2 release page](https://github.com/luca-m/emotime/releases/tag/v1.2-experimental)~~. (deprecated)__
-__NOTE: Other trained model working better with master branch are available [here](https://copy.com/c4rOYmPgAYrdxdoS)__
+__NOTE: Trained models for latest version of the code are available in the ~~[v1.2 release page](https://github.com/luca-m/emotime/releases/tag/v1.2-experimental)~~ (deprecated). Other trained model working better with master branch are available [here](https://copy.com/c4rOYmPgAYrdxdoS)__
 
 _NOTE: watch for illumination! At the moment optimal results can be obtained in live webcam sessions using direct illumination directed to the user's face. Don't worry you are not required to blind you with a headlight._
 
-_If you'd like to try emotime without any further complication you should take a look to the [x86_64 release](https://github.com/luca-m/emotime/releases/tag/v1.1-experimental). (__obsolete__)_
+_If you'd like to try emotime without any further complication you should take a look to the [x86_64 release](https://github.com/luca-m/emotime/releases/tag/v1.1-experimental). ( __obsolete__ ) _
 
 
 ### Usage
