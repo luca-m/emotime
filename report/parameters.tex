@@ -1,26 +1,26 @@
 \section{Parameters}
 
-In this section we will discuss the parameter used for the algorithm adopted in the class project
+In this section, we will discuss the parameter used for the algorithm adopted in the class project.
 
 \subsection{Face Detection Parameters}
 
-OpenCV support several parameter for multi-scale detection, from the classifier to use, to scale factor and minimum object size. We adopted an empirical approach and used quick-and-dirty python script to test face detection parameters directly using OpenCV implementation: we figured out that considering a 640x490 figure as the minimum face size of size of 120x200 produces good detection on available samples (face/image area ratio aroutd 7-10\%). 
-But in order to ensure detection for all treatable faces we setted up a minimum size of 30x60, this value is related to the resizing performed before feature extraction, in our experiments we chose 48x48.
+OpenCV supports several parameters for multi-scale detection, from the classifier to use, to scale factor and minimum object size. We adopted an empirical approach and used quick-and-dirty python script to test face detection parameters directly using OpenCV implementation: we figured out that considering a 640$\times$490 figure as the minimum face size, size of 120$\times$200 produces good detection on available samples (face/image area ratio around 7-10\%).
+But in order to ensure detection for all treatable faces, we set up a minimum size of 30$\times$60. This value is related to the resizing performed before feature extraction, in our experiments we chose 48$\times$48.
 
-Regarding the eyes detection step, we decided to set the minimum object threshold to a dynamical value calculated using knowledge of face area size and a qualitative estimation of the human face proportions, in detail we consider that the width of an eye cannot be smaller than $\frac{1}{5}$ of the face width.
+Regarding the eye detection step, we decided to set the minimum object threshold to a dynamical value calculated using knowledge of face area size and a qualitative estimation of the human face proportions. In detail, we considered that the width of an eye cannot be smaller than $\frac{1}{5}$ of the face width.
 
-Also we tried several face detector in order to see which one fits better our purposes, for example we considered the \emph{haarcascade\_ frontalface\_default.xml} and the \emph{haarcascade\_frontalface\_cbcl1.xml}. The latter is interesting because it detects the inner part of the face, discarding the surrounding. This choice has side effects on results~\ref{res:issues}.
+Also we tried several face detectors in order to see which one fits better for our purposes, for example we considered the \texttt{haarcascade\_ frontalface\_default.xml} and the \texttt{haarcascade\_frontalface\_cbcl1.xml}. The latter is interesting because it detects the inner part of the face, discarding the surroundings. This choice has side effects on results~\ref{res:issues}.
 
 \subsection{Gabor Kernels Parameters}
 
-Gabor parameters selection is one of the most delicate part of the tuning process, it directly affects the features evaluated for the emotional state classification. 
+Gabor parameter selection is one of the most delicate parts of the tuning process, it directly affects the features evaluated for the emotional state classification.
 %Hopefully \cite{Littlewort04dynamicsof, Bartlett06fullyautomatic, Lades93distortioninvariant} provide some hints on the Gabor bank parameters that can be used to achieve good results, in detail the number of $\lambda$ (wavelength) to use, number of $\theta$ (orientation) and some clues about interesting wavelength ranges are provided:
-In our experimentation we decided to generate Gabor filter banks using relationship reported in previous section, and we have empirically fixed following parameters domain:
+In our experimentation, we decided to generate Gabor filter banks using relationship reported in previous section, and we have empirically fixed following parameters domain:
 
 \begin{itemize}
   \item bandwidth $b \in 1.3,1.6$, %around $\sim \pi \frac{2}{5}, \frac{\pi}{2} $,
-    ranging in common vales of bandwidth\cite{gaborBandwidth}\footnote{\url{http://www.cs.rug.nl/~imaging/simplecell.html}}.
-  \item $\sigma \in 1,6$, and consequentially $\lambda = \frac{\lambda}{\sigma} \sigma $ 
+    ranging in common values of bandwidth\cite{gaborBandwidth}\footnote{\url{http://www.cs.rug.nl/~imaging/simplecell.html}}.
+  \item $\sigma \in 1,6$, and consequentially $\lambda = \frac{\lambda}{\sigma} \sigma $
   \item $\theta \in ( 0 \ldots \frac{\pi}{2} )$
   \item kernel size determined using aspect ratio and scale of the Gaussian support ($\frac{\sigma}{\gamma}$), using the parameters above results from $5$ to $25$ pixels.
 %\item $\lambda \in ( \frac{\pi}{32} \ldots \frac{\pi}{2} ) $ as suggested in \cite{Lades93distortioninvariant}
@@ -28,12 +28,12 @@ In our experimentation we decided to generate Gabor filter banks using relations
 %\item same aspect ration $\gamma$ for each kernel in the bank
 \end{itemize}
 
-We also adopted a flexible approach by keeping subdivision number configurable in order to be able to refine parameters in further development stages. 
-%Least, no clear indication about the size of the kernel, so we decided to support multiple kernel size ranging from $7$ to $17$, this values have been fixed in the first testing phase, using the developed Gabor utilities for visualizing the resulting bank. 
+We also adopted a flexible approach by keeping subdivision number configurable in order to be able to refine parameters in further development stages.
+%Least, no clear indication about the size of the kernel, so we decided to support multiple kernel size ranging from $7$ to $17$, this values have been fixed in the first testing phase, using the developed Gabor utilities for visualizing the resulting bank.
 
 \subsection{Boosting Parameters}
 
-Boosting parameters were considered in the early development stages and have ignored in the latest phases due to the huge amount of time needed for \code{AdaBoost} training. However parameters choice involves:
+Boosting parameters were considered in the early development stages and were ignored in the later phases due to the huge amount of time needed for \code{AdaBoost} training. However parameter choice involves:
 
 \begin{itemize}
 \item Variant of the algorithm to use, in our case \code{Real AdaBoost}, \code{Discrete AdaBoost} and \code{Gentle AdaBoost}.
@@ -41,7 +41,7 @@ Boosting parameters were considered in the early development stages and have ign
 \item Depth of the trained decision tree.
 \end{itemize}
 
-We have no clues about this parameters so we tried several configuration and the better results have been obtained via \emph{Gentle AdaBoost}, trimming weak classifiers provide a speed-up but it is a sensible operation due to distribution of classifier weights. However, as reported in~\ref{res:issues} we have temporary dismissed the boosting approach due to lack of time (and/or servers).
+We have no clue about these parameters so we tried several configurations and better results have been obtained via \emph{Gentle AdaBoost}, trimming weak classifiers provides a speed-up but it is a sensible operation due to distribution of classifier weights. However, as reported in~\ref{res:issues}, we have temporarily dismissed the boosting approach due to lack of time (and/or servers).
 
 \subsection{SVM Parameters}
 
@@ -50,15 +50,15 @@ defines how much to consider the misclassification. Since we hadn't any
 validation set, we couldn't verify how much this value could affect the train.
 We decided to leave $C=0.5$, for no particular reason.
 
-\subsection{Multiclass Strategies}
+\subsection{Multi-class Strategies}
 
-Each classification algorithm adopted works only for binary classification tasks, and our problem involves 7 distinct classes. For this reason we follow the indications in \cite{Littlewort04dynamicsof, Bartlett06fullyautomatic} and implement a quite general support building a voting scheme based multi-class classifier which rely on binary classifiers. 
-In detail we support multi-class training and detection in the following configurations:
+Each classification algorithm adopted works only for binary classification tasks, and our problem involves 7 distinct classes. For this reason, we follow the indications in \cite{Littlewort04dynamicsof, Bartlett06fullyautomatic} and implement a quite general support, building a voting scheme based multi-class classifier which relies on binary classifiers.
+In detail, we support multi-class training and detection in the following configurations:
 
 \begin{itemize}
-\item \emph{1 vs 1}, binary classifiers separate single classes each others.
-\item \emph{1 vs all}, separate a class from the others.
-\item \emph{many vs many}, separate groups of classes.
+\item \emph{1 vs 1}, binary classifiers separate single classes from each other.
+\item \emph{1 vs. all}, separates a class from the others.
+\item \emph{many vs many}, separates groups of classes.
 \end{itemize}
 
-Indication in papers suggest that \emph{1 vs all} and \emph{many vs many} should be the better approaches.
+Indications in papers suggest that \emph{1 vs all} and \emph{many vs many} should be better approaches.
