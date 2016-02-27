@@ -9,7 +9,7 @@ But in order to ensure detection for all treatable faces, we set up a minimum si
 
 Regarding the eye detection step, we decided to set the minimum object threshold to a dynamical value calculated using knowledge of face area size and a qualitative estimation of the human face proportions. In detail, we considered that the width of an eye cannot be smaller than $\frac{1}{5}$ of the face width.
 
-Also we tried several face detectors in order to see which one fits better for our purposes, for example we considered the \texttt{haarcascade\_ frontalface\_default.xml} and the \texttt{haarcascade\_frontalface\_cbcl1.xml}. The latter is interesting because it detects the inner part of the face, discarding the surroundings. This choice has side effects on results~\ref{res:issues}.
+Also we tried several face detectors in order to see which one fits better for our purposes, for example we considered the \code{haarcascade\_frontalface\_ default.xml} and the \code{haarcascade\_frontalface\_cbcl1.xml}. The latter is interesting because it detects the inner part of the face, discarding the surroundings. This choice has side effects on results~\ref{res:issues}.
 
 \subsection{Gabor Kernels Parameters}
 
@@ -57,7 +57,7 @@ In detail, we support multi-class training and detection in the following config
 
 \begin{itemize}
 \item \emph{1 vs 1}, binary classifiers separate single classes from each other.
-\item \emph{1 vs. all}, separates a class from the others.
+\item \emph{1 vs all}, separates a class from the others.
 \item \emph{many vs many}, separates groups of classes.
 \end{itemize}
 
