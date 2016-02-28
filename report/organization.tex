@@ -1,20 +1,20 @@
 \section{Project organization and usage}
 
-The project is managed by \emph{CMake} and its organized as following:
+The project is managed by \emph{CMake} and it's organized as follows:
 
 \begin{verbatim}
 
 src
   \-->dataset      Scripts for dataset management
-  \-->detector     Multiclass detector and preprocessor
+  \-->detector     Multi-class detector and preprocessor
   \-->facedetector Face cropping, adjusting and registration
-  \-->gaborbank    Generation of gabor filters and image filtering
+  \-->gaborbank    Generation of Gabor filters and image filtering
   \-->gui          Graphical interfaces and interaction with videos and webcam
   \-->training     2-class training and prediction
   \-->utils        String and IO utilities, CSV supports, and so on..
 doc                Documentation (doxigen)
 report             Report sources
-resources          Containing third party resources (eg. OpenCV haar classifiers)
+resources          Containing third party resources (e.g. OpenCV haar classifiers)
 assets             Binary folder
 
 \end{verbatim}
@@ -32,7 +32,7 @@ without python is not recommended.
 
 \subsection{Compilation on Linux}
 
-Just like any other \emph{CMake} projects, the first step is to initialize the
+Just like any other \emph{CMake} project, the first step is to initialize the
 compilation by doing:
 
 \begin{verbatim}
@@ -46,21 +46,21 @@ scripts in the \code{assets} directory.
 
 \subsection{Compilation on Windows}
 
-We have tested the compilation and usage on windows 8.1 using Visual Studio 12
-64bit. However it should work with any version:
+We have tested the compilation and usage on Windows 8.1 using Visual Studio 12
+(64-bit). However, it should work with any version:
 
 \begin{enumerate}
   \item Using CMake or CMakeGUI, select emotime as source folder and configure.
-  \item If it complains about setting the variable \code{OpenCV\_DIR} set it to the appropriate path so that:
+  \item If it complains about setting the variable \code{OpenCV\_DIR}, set it to the appropriate path, so that:
     \begin{enumerate}
       \item \code{C:/path/to/opencv/dir/} contains the libraries (\code{*.lib})
       \item \code{C:/path/to/opencv/dir/include} contains the include
         directories (opencv and opencv2). \textbf{IF the include directory is
-        not in the right position} the project will likely not be able to
+        not in the right position}, the project will likely not be able to
         compile due to missing reference to \code{opencv2/opencv} or similar.
     \end{enumerate}
   \item Then generate the project and compile the project \code{ALL\_BUILD}
-  \item If the compilation succeeded, compile the project \code{INSTALL}
+  \item If the compilation succeeds, compile the project \code{INSTALL}
   \item Now all scripts, configuration and tools should be in the directory
     \code{assets} in the project source directory.
 \end{enumerate}
@@ -92,11 +92,11 @@ python2 datasetFillCK.py /path/to/dataset \
 
 \subsubsection*{Classifier training}
 
-Your console console working directory must be the \code{assest} directory,
+Your console's working directory must be the \code{assets} directory,
 with all the scripts and clis present. Assuming your configuration is in the
-assest directory, named \code{dataset.cfg}, the script \code{train\_models.py}
+assets directory, named \code{dataset.cfg}, the script \code{train\_models.py}
 automatize the training procedure. \textbf{Remember} this script must be called
-inside the \code{assest} directory.
+inside the \code{assets} directory.
 
 \begin{verbatim}
 python ./train_models.py --cfg dataset.cfg --mode svm\
@@ -124,7 +124,7 @@ python datasetVerifyPrediction.py --mode svm\
 \subsubsection*{GUI webcam}
 
 After the classifiers have been trained, you can use them to launch the emotime
-GUI\@. The GUI uses the webcam to  detect emotions.
+GUI\@. The GUI uses the webcam to detect emotions.
 
 \begin{verbatim}
 
