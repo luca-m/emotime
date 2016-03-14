@@ -1,0 +1,96 @@
+name: "EmotimeNet"
+layer {
+  name: "data"
+  type: "ImageData"
+  top: "data"
+  top: "label"
+  #transform_param {
+  #  mirror: false
+  #  crop_size: 227
+  #  #mean_file: "data/ilsvrc12/imagenet_mean.binaryproto"
+  #}
+  include {
+    phase: TEST
+  }
+  image_data_param {
+    source: "validation.list"
+    batch_size: 50
+    new_height: 96
+    new_width: 96
+  }
+}
+layer {                                                                                          
+  name: "conv1"
+  type: "Convolution"
+  bottom: "data"
+  top: "conv1"
+  convolution_param {
+    num_output: 60 
+    kernel_size: 15
+    stride: 1
+  }
+}
+layer {
+  name: "relu1"
+  type: "ReLU"                                                                                   
+  bottom: "conv1"
+  top: "conv1"
+}
+layer {
+  name: "pool1"
+  type: "Pooling"
+  bottom: "conv1"
+  top: "pool1"
+  pooling_param {
+    pool: MAX
+    kernel_size: 3
+    stride: 2
+  }
+  include {
+    phase: TEST
+  }
+}
+layer { 
+  name: "norm1" 
+  type: "LRN" 
+  bottom: "pool1" 
+  top: "norm1" 
+  lrn_param { 
+    local_size: 5 
+    alpha: 0.0001 
+    beta: 0.75 
+  } 
+}
+layer {
+  name: "fc6"
+  type: "InnerProduct"
+  bottom: "norm1"
+  top: "fc6"
+  inner_product_param {
+    num_output: 1024
+  }
+}
+layer {                                                                                          
+  name: "prob"
+  type: "Softmax"
+  bottom: "fc6"
+  top: "prob"
+}
+layer {
+  name: "accuracy"
+  type: "Accuracy"
+  bottom: "prob"
+  bottom: "label"
+  top: "accuracy"
+  include {
+    phase: TEST
+  }
+}
+layer {
+  name: "loss"
+  type: "SoftmaxWithLoss"
+  bottom: "fc6"
+  bottom: "label"
+  top: "loss"
+}
+
