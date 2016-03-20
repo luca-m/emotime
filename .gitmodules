@@ -1,0 +1,3 @@
+[submodule "src/tiny-cnn"]
+	path = src/tiny-cnn
+	url = https://github.com/nyanp/tiny-cnn
