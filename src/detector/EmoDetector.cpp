@@ -219,7 +219,7 @@ namespace emotime {
     return best;
   }
 
-  pair<Emotion, float> EmoDetector::predictMayorityOneVsAll(cv::Mat& frame){
+  pair<Emotion, float> EmoDetector::predictMajorityOneVsAll(cv::Mat& frame){
     map<Emotion,float> votes;
 
     if (detectors_ext.size() == 0) {
@@ -257,6 +257,6 @@ namespace emotime {
   }
 
   pair<Emotion, float> EmoDetector::predict(cv::Mat& frame) {
-    return predictMayorityOneVsAll(frame);
+    return predictMajorityOneVsAll(frame);
   }
 }

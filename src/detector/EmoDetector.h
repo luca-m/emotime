@@ -139,7 +139,7 @@ namespace emotime {
        *  @details
        *
        */
-      std::pair<Emotion, float> predictMayorityOneVsAll(cv::Mat& frame);
+      std::pair<Emotion, float> predictMajorityOneVsAll(cv::Mat& frame);
 
       /**
        * @brief Apply the default prediction method
